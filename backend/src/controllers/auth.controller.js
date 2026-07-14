@@ -129,7 +129,63 @@ const ownerLogin = async (req, res) => {
   }
 };
 
+
+const managerLogin = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: "Email and password are required",
+      });
+    }
+
+    const manager = await User.findOne({
+      email,
+      role: "manager",
+    }).populate("company");
+
+    if (!manager) {
+      return res.status(404).json({
+        success: false,
+        message: "Manager not found",
+      });
+    }
+
+    const isMatch = await bcrypt.compare(password, manager.password);
+
+    if (!isMatch) {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid email or password",
+      });
+    }
+
+    const token = generateToken(manager._id, manager.role);
+
+    const managerResponse = manager.toObject();
+    delete managerResponse.password;
+
+    return res.status(200).json({
+      success: true,
+      message: "Manager login successful",
+      token,
+      manager: managerResponse,
+    });
+
+  } catch (error) {
+    console.error(error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Server Error",
+    });
+  }
+};
+
 module.exports = {
   ownerSignup,
   ownerLogin,
+  managerLogin,
 };
