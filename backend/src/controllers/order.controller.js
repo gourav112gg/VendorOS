@@ -312,6 +312,61 @@ const updateOrderStatus = async (req, res) => {
     });
   }
 };
+const assignManager = async (req, res) => {
+  try {
+    const { orderId, managerId } = req.body;
+
+    if (!orderId || !managerId) {
+      return res.status(400).json({
+        success: false,
+        message: "Order ID and Manager ID are required",
+      });
+    }
+
+    const order = await Order.findOne({
+      _id: orderId,
+      company: req.user.company,
+    });
+
+    if (!order) {
+      return res.status(404).json({
+        success: false,
+        message: "Order not found",
+      });
+    }
+
+    const manager = await User.findOne({
+      _id: managerId,
+      role: "manager",
+      company: req.user.company,
+    });
+
+    if (!manager) {
+      return res.status(404).json({
+        success: false,
+        message: "Manager not found",
+      });
+    }
+
+    order.assignedManager = manager._id;
+
+    await order.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Manager assigned successfully",
+      order,
+    });
+
+  } catch (error) {
+    console.error(error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Server Error",
+    });
+  }
+};
 
 module.exports = {
   createOrder,
@@ -320,7 +375,7 @@ module.exports = {
   updateOrder,
   deleteOrder,
   assignWorker,
+  assignManager,
   getMyOrders,
   updateOrderStatus,
 };
- 

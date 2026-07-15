@@ -5,7 +5,6 @@ const protect = async (req, res, next) => {
   try {
     let token;
 
-    // Check Authorization header
     if (
       req.headers.authorization &&
       req.headers.authorization.startsWith("Bearer")
@@ -38,4 +37,21 @@ const protect = async (req, res, next) => {
   }
 };
 
-module.exports = protect;
+// Role Authorization Middleware
+const authorize = (...roles) => {
+  return (req, res, next) => {
+    if (!roles.includes(req.user.role)) {
+      return res.status(403).json({
+        success: false,
+        message: "Access denied",
+      });
+    }
+
+    next();
+  };
+};
+
+module.exports = {
+  protect,
+  authorize,
+};

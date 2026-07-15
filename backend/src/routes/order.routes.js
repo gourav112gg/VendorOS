@@ -11,10 +11,10 @@ const {
   updateOrder,
   deleteOrder,
   assignWorker,
+  assignManager,
   getMyOrders,
   updateOrderStatus,
 } = require("../controllers/order.controller");
-
 // ===============================
 // Create Order
 // ===============================
@@ -91,6 +91,13 @@ router.patch(
   protect,
   authorize("worker"),
   updateOrderStatus
+);
+
+router.patch(
+  "/assign-manager",
+  protect,
+  authorize("owner"),
+  assignManager
 );
 
 module.exports = router;
