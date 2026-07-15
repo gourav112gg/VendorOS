@@ -49,9 +49,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [loading, setLoading] = useState<boolean>(true);
   const [preferences, setPreferences] = useState<UserPreferences>({
     currency: 'INR',
-    navAlignment: 'right',
-    navStyle: 'horizontal',
-    sidebarPosition: 'left',
+    navAlignment: 'left',
+    navStyle: 'sidebar',
+    sidebarPosition: 'right',
     notifyEmail: true,
     notifySMS: false,
     notifyPush: true,
