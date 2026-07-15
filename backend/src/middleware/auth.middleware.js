@@ -29,6 +29,7 @@ const protect = async (req, res, next) => {
       success: false,
       message: "Not authorized. No token provided.",
     });
+
   } catch (error) {
     return res.status(401).json({
       success: false,
@@ -37,21 +38,4 @@ const protect = async (req, res, next) => {
   }
 };
 
-// Role Authorization Middleware
-const authorize = (...roles) => {
-  return (req, res, next) => {
-    if (!roles.includes(req.user.role)) {
-      return res.status(403).json({
-        success: false,
-        message: "Access denied",
-      });
-    }
-
-    next();
-  };
-};
-
-module.exports = {
-  protect,
-  authorize,
-};
+module.exports = protect;

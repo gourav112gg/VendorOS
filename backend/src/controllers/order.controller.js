@@ -1,25 +1,65 @@
-const User = require("../models/User");
 const Order = require("../models/Order");
-// Create Order
+const Inventory = require("../models/Inventory");
+
+// ================= CREATE ORDER =================
 const createOrder = async (req, res) => {
   try {
     const {
       customerName,
       customerPhone,
-      product,
-      quantity,
-      totalAmount,
-      notes,
+      customerAddress,
+      products,
     } = req.body;
 
+    if (
+      !customerName ||
+      !customerPhone ||
+      !customerAddress ||
+      !products ||
+      products.length === 0
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "Required fields are missing",
+      });
+    }
+
+    let totalAmount = 0;
+
+    // Validate Products
+    for (const item of products) {
+      const product = await Inventory.findOne({
+        _id: item.product,
+        company: req.user.company,
+      });
+
+      if (!product) {
+        return res.status(404).json({
+          success: false,
+          message: `Product not found: ${item.product}`,
+        });
+      }
+
+      if (product.quantity < item.quantity) {
+        return res.status(400).json({
+          success: false,
+          message: `${product.productName} is out of stock`,
+        });
+      }
+
+      totalAmount += product.price * item.quantity;
+
+      // Save actual price
+      item.price = product.price;
+    }
+
     const order = await Order.create({
+      company: req.user.company,
       customerName,
       customerPhone,
-      product,
-      quantity,
+      customerAddress,
+      products,
       totalAmount,
-      notes,
-      company: req.user.company,
     });
 
     return res.status(201).json({
@@ -38,14 +78,16 @@ const createOrder = async (req, res) => {
   }
 };
 
-// Get Orders
+// ================= GET ALL ORDERS =================
 const getOrders = async (req, res) => {
   try {
     const orders = await Order.find({
       company: req.user.company,
     })
+      .populate("products.product")
       .populate("assignedManager", "name email")
-      .populate("assignedWorker", "name email");
+      .populate("assignedWorker", "name email")
+      .sort({ createdAt: -1 });
 
     return res.status(200).json({
       success: true,
@@ -63,12 +105,14 @@ const getOrders = async (req, res) => {
   }
 };
 
+// ================= GET ORDER BY ID =================
 const getOrderById = async (req, res) => {
   try {
     const order = await Order.findOne({
       _id: req.params.id,
       company: req.user.company,
     })
+      .populate("products.product")
       .populate("assignedManager", "name email")
       .populate("assignedWorker", "name email");
 
@@ -94,6 +138,7 @@ const getOrderById = async (req, res) => {
   }
 };
 
+// ================= UPDATE ORDER =================
 const updateOrder = async (req, res) => {
   try {
     const order = await Order.findOne({
@@ -108,23 +153,7 @@ const updateOrder = async (req, res) => {
       });
     }
 
-    const {
-      customerName,
-      customerPhone,
-      product,
-      quantity,
-      totalAmount,
-      notes,
-      status,
-    } = req.body;
-
-    if (customerName) order.customerName = customerName;
-    if (customerPhone) order.customerPhone = customerPhone;
-    if (product) order.product = product;
-    if (quantity) order.quantity = quantity;
-    if (totalAmount) order.totalAmount = totalAmount;
-    if (notes) order.notes = notes;
-    if (status) order.status = status;
+    Object.assign(order, req.body);
 
     await order.save();
 
@@ -144,6 +173,7 @@ const updateOrder = async (req, res) => {
   }
 };
 
+// ================= DELETE ORDER =================
 const deleteOrder = async (req, res) => {
   try {
     const order = await Order.findOne({
@@ -175,153 +205,9 @@ const deleteOrder = async (req, res) => {
   }
 };
 
-const assignWorker = async (req, res) => {
-  try {
-    const { orderId, workerId } = req.body;
-
-    if (!orderId || !workerId) {
-      return res.status(400).json({
-        success: false,
-        message: "Order ID and Worker ID are required",
-      });
-    }
-
-    // Find Order
-    const order = await Order.findOne({
-      _id: orderId,
-      company: req.user.company,
-    });
-
-    if (!order) {
-      return res.status(404).json({
-        success: false,
-        message: "Order not found",
-      });
-    }
-
-    // Find Worker
-    const worker = await User.findOne({
-      _id: workerId,
-      role: "worker",
-      company: req.user.company,
-    });
-
-    if (!worker) {
-      return res.status(404).json({
-        success: false,
-        message: "Worker not found",
-      });
-    }
-
-    if (!worker.isAvailable) {
-      return res.status(400).json({
-        success: false,
-        message: "Worker is currently unavailable",
-      });
-    }
-
-    order.assignedWorker = worker._id;
-    order.status = "Accepted";
-
-    await order.save();
-
-    return res.status(200).json({
-      success: true,
-      message: "Worker assigned successfully",
-      order,
-    });
-
-  } catch (error) {
-    console.error(error);
-
-    return res.status(500).json({
-      success: false,
-      message: "Server Error",
-    });
-  }
-};
-const getMyOrders = async (req, res) => {
-  try {
-    const orders = await Order.find({
-      assignedWorker: req.user._id,
-    })
-      .populate("assignedManager", "name email")
-      .populate("assignedWorker", "name email");
-
-    return res.status(200).json({
-      success: true,
-      count: orders.length,
-      orders,
-    });
-
-  } catch (error) {
-    console.error(error);
-
-    return res.status(500).json({
-      success: false,
-      message: "Server Error",
-    });
-  }
-};
-
-const updateOrderStatus = async (req, res) => {
-  try {
-    const { status } = req.body;
-
-    const allowedStatus = [
-      "Accepted",
-      "Processing",
-      "Completed",
-      "Cancelled",
-    ];
-
-    if (!allowedStatus.includes(status)) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid status",
-      });
-    }
-
-    const order = await Order.findOne({
-      _id: req.params.id,
-      assignedWorker: req.user._id,
-    });
-
-    if (!order) {
-      return res.status(404).json({
-        success: false,
-        message: "Order not found or not assigned to you",
-      });
-    }
-
-    order.status = status;
-    await order.save();
-
-    return res.status(200).json({
-      success: true,
-      message: "Order status updated successfully",
-      order,
-    });
-
-  } catch (error) {
-    console.error(error);
-
-    return res.status(500).json({
-      success: false,
-      message: "Server Error",
-    });
-  }
-};
 const assignManager = async (req, res) => {
   try {
     const { orderId, managerId } = req.body;
-
-    if (!orderId || !managerId) {
-      return res.status(400).json({
-        success: false,
-        message: "Order ID and Manager ID are required",
-      });
-    }
 
     const order = await Order.findOne({
       _id: orderId,
@@ -349,7 +235,6 @@ const assignManager = async (req, res) => {
     }
 
     order.assignedManager = manager._id;
-
     await order.save();
 
     return res.status(200).json({
@@ -361,7 +246,141 @@ const assignManager = async (req, res) => {
   } catch (error) {
     console.error(error);
 
-    return res.status(500).json({
+    res.status(500).json({
+      success: false,
+      message: "Server Error",
+    });
+  }
+};
+
+const assignWorker = async (req, res) => {
+  try {
+    const { orderId, workerId } = req.body;
+
+    const order = await Order.findOne({
+      _id: orderId,
+      company: req.user.company,
+    });
+
+    if (!order) {
+      return res.status(404).json({
+        success: false,
+        message: "Order not found",
+      });
+    }
+
+    const worker = await User.findOne({
+      _id: workerId,
+      role: "worker",
+      company: req.user.company,
+    });
+
+    if (!worker) {
+      return res.status(404).json({
+        success: false,
+        message: "Worker not found",
+      });
+    }
+
+    if (!worker.isAvailable) {
+      return res.status(400).json({
+        success: false,
+        message: "Worker is unavailable",
+      });
+    }
+
+    order.assignedWorker = worker._id;
+    order.status = "Accepted";
+
+    await order.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Worker assigned successfully",
+      order,
+    });
+
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      success: false,
+      message: "Server Error",
+    });
+  }
+};
+
+const getMyOrders = async (req, res) => {
+  try {
+
+    const orders = await Order.find({
+      assignedWorker: req.user._id,
+    })
+      .populate("products.product")
+      .populate("assignedManager", "name email")
+      .populate("assignedWorker", "name email");
+
+    res.status(200).json({
+      success: true,
+      count: orders.length,
+      orders,
+    });
+
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      success: false,
+      message: "Server Error",
+    });
+  }
+};
+
+const updateOrderStatus = async (req, res) => {
+  try {
+
+    const { status } = req.body;
+
+    const allowedStatus = [
+      "Accepted",
+      "Processing",
+      "Completed",
+      "Cancelled",
+    ];
+
+    if (!allowedStatus.includes(status)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid Status",
+      });
+    }
+
+    const order = await Order.findOne({
+      _id: req.params.id,
+      assignedWorker: req.user._id,
+    });
+
+    if (!order) {
+      return res.status(404).json({
+        success: false,
+        message: "Order not found",
+      });
+    }
+
+    order.status = status;
+
+    await order.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Order status updated successfully",
+      order,
+    });
+
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
       success: false,
       message: "Server Error",
     });
@@ -374,8 +393,8 @@ module.exports = {
   getOrderById,
   updateOrder,
   deleteOrder,
-  assignWorker,
   assignManager,
+  assignWorker,
   getMyOrders,
   updateOrderStatus,
 };

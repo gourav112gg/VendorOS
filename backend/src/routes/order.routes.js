@@ -4,20 +4,22 @@ const router = express.Router();
 const protect = require("../middleware/auth.middleware");
 const authorize = require("../middleware/role.middleware");
 
+
 const {
   createOrder,
   getOrders,
   getOrderById,
   updateOrder,
   deleteOrder,
-  assignWorker,
   assignManager,
+  assignWorker,
   getMyOrders,
   updateOrderStatus,
 } = require("../controllers/order.controller");
-// ===============================
+
+// ================= OWNER & MANAGER =================
+
 // Create Order
-// ===============================
 router.post(
   "/",
   protect,
@@ -25,9 +27,7 @@ router.post(
   createOrder
 );
 
-// ===============================
 // Get All Orders
-// ===============================
 router.get(
   "/",
   protect,
@@ -35,20 +35,7 @@ router.get(
   getOrders
 );
 
-// ===============================
-// Worker Dashboard - My Orders
-// IMPORTANT: Keep this ABOVE "/:id"
-// ===============================
-router.get(
-  "/my-orders",
-  protect,
-  authorize("worker"),
-  getMyOrders
-);
-
-// ===============================
-// Get Order By ID
-// ===============================
+// Get Single Order
 router.get(
   "/:id",
   protect,
@@ -56,9 +43,7 @@ router.get(
   getOrderById
 );
 
-// ===============================
 // Update Order
-// ===============================
 router.put(
   "/:id",
   protect,
@@ -66,9 +51,7 @@ router.put(
   updateOrder
 );
 
-// ===============================
 // Delete Order
-// ===============================
 router.delete(
   "/:id",
   protect,
@@ -76,9 +59,15 @@ router.delete(
   deleteOrder
 );
 
-// ===============================
+// Assign Manager
+router.patch(
+  "/assign-manager",
+  protect,
+  authorize("owner"),
+  assignManager
+);
+
 // Assign Worker
-// ===============================
 router.patch(
   "/assign-worker",
   protect,
@@ -86,18 +75,22 @@ router.patch(
   assignWorker
 );
 
+// ================= WORKER =================
+
+// Get My Orders
+router.get(
+  "/worker/my-orders",
+  protect,
+  authorize("worker"),
+  getMyOrders
+);
+
+// Update Order Status
 router.patch(
-  "/:id/status",
+  "/worker/:id/status",
   protect,
   authorize("worker"),
   updateOrderStatus
-);
-
-router.patch(
-  "/assign-manager",
-  protect,
-  authorize("owner"),
-  assignManager
 );
 
 module.exports = router;

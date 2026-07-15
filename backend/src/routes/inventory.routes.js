@@ -10,7 +10,8 @@ const {
   updateStock,
 } = require("../controllers/inventory.controller");
 
-const { protect, authorize } = require("../middleware/auth.middleware");
+const protect = require("../middleware/auth.middleware");
+const authorize = require("../middleware/role.middleware");
 
 // Create Product (Owner only)
 router.post(

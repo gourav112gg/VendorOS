@@ -13,19 +13,28 @@ const createProduct = async (req, res) => {
       unit,
     } = req.body;
 
-    if (!productName || !sku || quantity == null || price == null) {
+    // Validation
+    if (
+      !productName ||
+      !category ||
+      !sku ||
+      quantity === undefined ||
+      price === undefined ||
+      !unit
+    ) {
       return res.status(400).json({
         success: false,
         message: "Required fields are missing",
       });
     }
 
-    const existing = await Inventory.findOne({
-      sku,
+    // Check duplicate SKU
+    const existingProduct = await Inventory.findOne({
+      sku: sku.trim(),
       company: req.user.company,
     });
 
-    if (existing) {
+    if (existingProduct) {
       return res.status(400).json({
         success: false,
         message: "SKU already exists",
@@ -34,13 +43,13 @@ const createProduct = async (req, res) => {
 
     const product = await Inventory.create({
       company: req.user.company,
-      productName,
-      category,
-      sku,
+      productName: productName.trim(),
+      category: category.trim(),
+      sku: sku.trim(),
       quantity,
-      minimumStock,
+      minimumStock: minimumStock || 0,
       price,
-      unit,
+      unit: unit.trim(),
     });
 
     return res.status(201).json({
@@ -48,7 +57,6 @@ const createProduct = async (req, res) => {
       message: "Product added successfully",
       product,
     });
-
   } catch (error) {
     console.error(error);
 
@@ -64,14 +72,13 @@ const getProducts = async (req, res) => {
   try {
     const products = await Inventory.find({
       company: req.user.company,
-    });
+    }).sort({ createdAt: -1 });
 
     return res.status(200).json({
       success: true,
       count: products.length,
       products,
     });
-
   } catch (error) {
     console.error(error);
 
@@ -101,7 +108,6 @@ const getProductById = async (req, res) => {
       success: true,
       product,
     });
-
   } catch (error) {
     console.error(error);
 
@@ -127,7 +133,24 @@ const updateProduct = async (req, res) => {
       });
     }
 
-    Object.assign(product, req.body);
+    const {
+      productName,
+      category,
+      sku,
+      quantity,
+      minimumStock,
+      price,
+      unit,
+    } = req.body;
+
+    if (productName) product.productName = productName.trim();
+    if (category) product.category = category.trim();
+    if (sku) product.sku = sku.trim();
+    if (quantity !== undefined) product.quantity = quantity;
+    if (minimumStock !== undefined)
+      product.minimumStock = minimumStock;
+    if (price !== undefined) product.price = price;
+    if (unit) product.unit = unit.trim();
 
     await product.save();
 
@@ -136,7 +159,6 @@ const updateProduct = async (req, res) => {
       message: "Product updated successfully",
       product,
     });
-
   } catch (error) {
     console.error(error);
 
@@ -168,7 +190,6 @@ const deleteProduct = async (req, res) => {
       success: true,
       message: "Product deleted successfully",
     });
-
   } catch (error) {
     console.error(error);
 
@@ -183,6 +204,13 @@ const deleteProduct = async (req, res) => {
 const updateStock = async (req, res) => {
   try {
     const { quantity } = req.body;
+
+    if (quantity === undefined) {
+      return res.status(400).json({
+        success: false,
+        message: "Quantity is required",
+      });
+    }
 
     const product = await Inventory.findOne({
       _id: req.params.id,
@@ -205,7 +233,6 @@ const updateStock = async (req, res) => {
       message: "Stock updated successfully",
       product,
     });
-
   } catch (error) {
     console.error(error);
 
