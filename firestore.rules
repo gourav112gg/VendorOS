@@ -1,0 +1,68 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function getUserData() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+
+    function isOwner(companyId) {
+      return isAuthenticated() && 
+             request.auth.token.role == 'Owner' && 
+             request.auth.token.companyId == companyId;
+    }
+
+    function isManager(companyId) {
+      return isAuthenticated() && 
+             (request.auth.token.role == 'Manager' || request.auth.token.role == 'Owner') && 
+             request.auth.token.companyId == companyId;
+    }
+
+    function isWorker(companyId) {
+      return isAuthenticated() && 
+             (request.auth.token.role == 'Worker' || request.auth.token.role == 'Manager' || request.auth.token.role == 'Owner') && 
+             request.auth.token.companyId == companyId;
+    }
+
+    // Companies collection
+    match /companies/{companyId} {
+      allow read: if isAuthenticated() && request.auth.token.companyId == companyId;
+      allow create: if isAuthenticated() && request.auth.token.role == 'Owner';
+      allow update: if isOwner(companyId);
+      allow delete: if false; // Prevention of hard deletion
+    }
+
+    // Users collection
+    match /users/{userId} {
+      allow read: if isAuthenticated() && 
+                  (request.auth.uid == userId || request.auth.token.companyId == resource.data.companyId);
+      allow create: if isAuthenticated();
+      allow update: if isAuthenticated() && 
+                    (request.auth.uid == userId || isOwner(resource.data.companyId));
+      allow delete: if isAuthenticated() && isOwner(resource.data.companyId);
+    }
+
+    // Domains collection
+    match /domains/{domainId} {
+      allow read: if isAuthenticated() && request.auth.token.companyId == resource.data.companyId;
+      allow create, update, delete: if isAuthenticated() && isOwner(request.auth.token.companyId);
+    }
+
+    // Orders collection
+    match /orders/{orderId} {
+      allow read: if isAuthenticated() && 
+                  (request.auth.token.companyId == resource.data.companyId || 
+                   request.auth.token.role == 'Customer');
+      allow create: if isAuthenticated() && 
+                    (request.auth.token.role == 'Owner' || request.auth.token.role == 'Manager' || request.auth.token.role == 'Customer');
+      allow update: if isAuthenticated() && 
+                    (request.auth.token.companyId == resource.data.companyId);
+      allow delete: if false;
+    }
+  }
+}

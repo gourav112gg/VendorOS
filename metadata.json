@@ -1,0 +1,6 @@
+{
+  "name": "VendorOS",
+  "description": "B2B Operations Dashboard for Vendors, Managers, Workers, and Customers",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
