@@ -1,20 +1,207 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://ai.google.dev/static/site-assets/images/share-ais-513315318.png" />
-</div>
+# VendorOS
 
-# Run and deploy your AI Studio app
+> **An AI-powered Field Service Management (FSM) platform** for home-services companies — plumbing, electrical, HVAC, and beyond.
 
-This contains everything you need to run your app locally.
+VendorOS is a full-stack SaaS application that brings together order management, team coordination, inventory tracking, GST invoicing, and AI-driven operational insights under one roof — complete with a multi-role authentication system and a subscription-gated feature set.
 
-View your app in AI Studio: https://ai.studio/apps/b1e83d3b-8fb6-43ac-be53-3700a34768cd
+---
 
-## Run Locally
+## ✨ Key Features
 
-**Prerequisites:**  Node.js
+### 🧑‍💼 Role-Based Access Control
+Four distinct roles, each with a dedicated dashboard:
 
+| Role | Capabilities |
+|------|-------------|
+| **Owner** | Full admin control — manage team, view all analytics, configure subscriptions, set order thresholds |
+| **Manager** | Build & assign order stages, manage templates, dispatch workers, run AI risk analysis |
+| **Worker** | View assigned jobs, update stage checklists, track completion |
+| **Customer** | Submit service requests, track order progress, view their own history |
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+### 📋 Service Order Management
+- Multi-stage orders with per-stage checklists assigned to specific workers
+- Order stages flow: `Unscheduled → Scheduled → Dispatched → In Progress → Completed`
+- Minimum-order-value threshold enforcement with approval workflows
+- Manager-created reusable **Stage Templates** per service domain
+
+### 🤖 AI Operations Copilot *(Growth & Scale tiers only)*
+- Powered by **Google Gemini** (`gemini-3.5-flash`)
+- Analyzes service orders for operational risk: scheduling complexity, location delays, safety concerns, weather impact
+- Returns a structured **risk score (0–100)**, reason, and a recommended mitigation action
+- Server-side subscription gating prevents API credit abuse
+
+### 🎨 AI Natural Language Theme Generator
+- Describe a visual mood (e.g., "cyberpunk neon", "forest calm") and the app generates a full UI color palette
+- Falls back gracefully to deterministic HSL-based color generation when the API key is absent
+
+### 💰 GST Invoicing
+- Auto-calculates CGST (9%) + SGST (9%) / IGST (18%)
+- Invoice generation tied to completed service orders
+- Track paid/unpaid status per invoice
+
+### 📦 Inventory & Shipment Tracking
+- Item-level stock management with configurable low-stock alert thresholds
+- Shipment status tracking: `Pending → Shipped → Delivered → Cancelled`
+
+### 📊 Analytics & Trust Score
+- KPI overviews — order completion rates, revenue, team performance
+- **Trust Score** (0–100) derived from order completion rate, inventory health, and worker activity
+- **Spend Intelligence** — monthly category-level spend breakdowns with suggested cost actions
+
+### 💳 Subscription Tiers (Razorpay-integrated)
+| Tier | Features |
+|------|----------|
+| **Free** | Core order management, basic team features |
+| **Growth** | AI Copilot, advanced analytics, Trust Score |
+| **Scale** | All Growth features + Spend Intelligence, full multi-company support |
+
+### ⌨️ Keyboard Shortcuts
+Press `?` in-app to see all shortcuts (`Ctrl+D` → Dashboard, `Ctrl+S` → Settings, `Ctrl+C` → AI Copilot, etc.)
+
+---
+
+## 🏗️ Architecture
+
+```
+vendoros/
+├── server.ts                      # Express backend — API routes + Vite dev middleware
+├── frontend/
+│   └── src/
+│       ├── App.tsx                # Root layout, routing & keyboard shortcut orchestration
+│       ├── types.ts               # Shared TypeScript interfaces
+│       ├── pages/                 # Role-based dashboards + auth screens
+│       │   ├── OwnerDashboard.tsx
+│       │   ├── ManagerDashboard.tsx
+│       │   ├── WorkerDashboard.tsx
+│       │   ├── CustomerDashboard.tsx
+│       │   ├── PublicCompanyProfile.tsx
+│       │   ├── Login.tsx
+│       │   └── SignUp.tsx
+│       ├── components/            # Shared UI components
+│       │   ├── Navigation.tsx
+│       │   ├── SettingsPanel.tsx
+│       │   ├── ThemeManager.tsx
+│       │   ├── KpiOverview.tsx
+│       │   ├── AiCopilotTab.tsx
+│       │   ├── AnalyticsTab.tsx
+│       │   ├── InvoicesTab.tsx
+│       │   ├── TrustScoreTab.tsx
+│       │   ├── ActivityLog.tsx
+│       │   └── UpgradePrompt.tsx
+│       ├── context/               # React Auth context (AuthProvider)
+│       └── services/
+│           ├── store.ts           # Simulated localStorage-backed database
+│           └── subscriptionService.ts
+├── backend/
+│   ├── functions/
+│   │   ├── services/              # Firebase function service layer (planned)
+│   │   └── triggers/              # Firebase Firestore triggers (planned)
+│   └── ml-model/                  # ML model integration layer (planned)
+├── firestore.rules                # Firestore security rules (role & company-based)
+├── vite.config.ts
+└── tsconfig.json
+```
+
+### Backend API Routes
+
+| Method | Endpoint | Auth / Gate | Description |
+|--------|----------|-------------|-------------|
+| `GET` | `/api/health` | None | Server health check |
+| `POST` | `/api/copilot/risk` | Growth/Scale active subscription | Gemini AI risk analysis for service orders |
+| `POST` | `/api/generate-theme` | None | Natural language → UI color palette via Gemini |
+| `POST` | `/api/razorpay/webhook` | None | Simulated Razorpay subscription webhook processor |
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+- **Node.js** v18+
+
+### Installation
+
+```bash
+# 1. Clone the repo
+git clone <repo-url>
+cd vendoros
+
+# 2. Install dependencies
+npm install
+
+# 3. Configure environment variables
+cp .env.example .env
+# Edit .env and add your GEMINI_API_KEY (optional but recommended)
+
+# 4. Start the development server
+npm run dev
+```
+
+The app will be available at **http://localhost:3000**.
+
+### Build for Production
+
+```bash
+npm run build   # Builds frontend (Vite) + bundles server.ts
+npm start       # Runs the production server
+```
+
+---
+
+## 🔑 Environment Variables
+
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `GEMINI_API_KEY` | Optional | Google Gemini API key for AI Copilot and Theme Generator |
+
+> Without the key, the AI Copilot returns a simulated risk score and the Theme Generator falls back to deterministic HSL color generation — no crashes.
+
+---
+
+## 🔒 Firestore Security Model
+
+`firestore.rules` enforces role-based access using Firebase Auth custom claims (`role`, `companyId`):
+
+| Collection | Read | Write |
+|------------|------|-------|
+| `companies` | Same-company members | Owner only |
+| `users` | Self or same-company | Self or Owner |
+| `domains` | Authenticated members | Owner only |
+| `orders` | Same-company + Customers | Owner, Manager, Customer |
+
+---
+
+## 🛠️ Tech Stack
+
+| Layer | Technology |
+|-------|-----------|
+| Frontend | React 19 + TypeScript |
+| Build Tool | Vite 6 |
+| Styling | Tailwind CSS v4 |
+| Animations | Motion (Framer Motion) |
+| Charts | Recharts |
+| Icons | Lucide React |
+| Backend | Express.js (TypeScript via `tsx`) |
+| AI | Google Gemini (`@google/genai` v2) |
+| State / DB | Simulated localStorage store (`store.ts`) |
+| Database (planned) | Firebase Firestore |
+| Payments | Razorpay (webhook simulation) |
+
+---
+
+## 🧪 Demo Data
+
+The app ships with a pre-seeded in-memory store (`store.ts`) with three demo companies and users for every role:
+
+| Company | Subscription Tier |
+|---------|------------------|
+| Apex Plumbing & Co | Free |
+| VoltLine Electrical | Growth |
+| Rapid HVAC Solutions | Scale |
+
+Use **Sign Up** to create an account or **Login** with existing demo users across any company and role.
+
+---
+
+## 📄 License
+
+This project is private. All rights reserved.
