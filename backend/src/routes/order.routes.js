@@ -9,9 +9,15 @@ const {
   getOrders,
   getOrderById,
   updateOrder,
-  deleteOrder
+  deleteOrder,
+  assignWorker,
+  getMyOrders,
+  updateOrderStatus,
 } = require("../controllers/order.controller");
 
+// ===============================
+// Create Order
+// ===============================
 router.post(
   "/",
   protect,
@@ -19,6 +25,9 @@ router.post(
   createOrder
 );
 
+// ===============================
+// Get All Orders
+// ===============================
 router.get(
   "/",
   protect,
@@ -26,13 +35,20 @@ router.get(
   getOrders
 );
 
-router.put(
-  "/:id",
+// ===============================
+// Worker Dashboard - My Orders
+// IMPORTANT: Keep this ABOVE "/:id"
+// ===============================
+router.get(
+  "/my-orders",
   protect,
-  authorize("owner", "manager"),
-  updateOrder
+  authorize("worker"),
+  getMyOrders
 );
 
+// ===============================
+// Get Order By ID
+// ===============================
 router.get(
   "/:id",
   protect,
@@ -40,11 +56,41 @@ router.get(
   getOrderById
 );
 
+// ===============================
+// Update Order
+// ===============================
+router.put(
+  "/:id",
+  protect,
+  authorize("owner", "manager"),
+  updateOrder
+);
+
+// ===============================
+// Delete Order
+// ===============================
 router.delete(
   "/:id",
   protect,
   authorize("owner"),
   deleteOrder
+);
+
+// ===============================
+// Assign Worker
+// ===============================
+router.patch(
+  "/assign-worker",
+  protect,
+  authorize("owner", "manager"),
+  assignWorker
+);
+
+router.patch(
+  "/:id/status",
+  protect,
+  authorize("worker"),
+  updateOrderStatus
 );
 
 module.exports = router;
