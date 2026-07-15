@@ -1,31 +1,63 @@
 const Order = require("../models/Order");
+const Inventory = require("../models/Inventory");
 const User = require("../models/User");
 
-const getDashboard = async (req, res) => {
+const ownerDashboard = async (req, res) => {
   try {
     const company = req.user.company;
 
+    // Orders
     const totalOrders = await Order.countDocuments({ company });
-    const pendingOrders = await Order.countDocuments({ company, status: "Pending" });
-    const acceptedOrders = await Order.countDocuments({ company, status: "Accepted" });
-    const processingOrders = await Order.countDocuments({ company, status: "Processing" });
-    const completedOrders = await Order.countDocuments({ company, status: "Completed" });
 
+    const pendingOrders = await Order.countDocuments({
+      company,
+      status: "Pending",
+    });
+
+    const acceptedOrders = await Order.countDocuments({
+      company,
+      status: "Accepted",
+    });
+
+    const packedOrders = await Order.countDocuments({
+      company,
+      status: "Packed",
+    });
+
+    const deliveredOrders = await Order.countDocuments({
+      company,
+      status: "Delivered",
+    });
+
+    // Revenue
     const revenue = await Order.aggregate([
       {
         $match: {
-          company: req.user.company,
-          status: "Completed",
+          company,
+          status: "Delivered",
         },
       },
       {
         $group: {
           _id: null,
-          totalRevenue: { $sum: "$totalAmount" },
+          totalRevenue: {
+            $sum: "$totalAmount",
+          },
         },
       },
     ]);
 
+    // Inventory
+    const totalProducts = await Inventory.countDocuments({ company });
+
+    const lowStock = await Inventory.countDocuments({
+      company,
+      $expr: {
+        $lte: ["$quantity", "$minimumStock"],
+      },
+    });
+
+    // Employees
     const totalManagers = await User.countDocuments({
       company,
       role: "manager",
@@ -36,17 +68,30 @@ const getDashboard = async (req, res) => {
       role: "worker",
     });
 
+    const availableWorkers = await User.countDocuments({
+      company,
+      role: "worker",
+      isAvailable: true,
+    });
+
     res.status(200).json({
       success: true,
-      analytics: {
+      dashboard: {
         totalOrders,
         pendingOrders,
         acceptedOrders,
-        processingOrders,
-        completedOrders,
-        totalRevenue: revenue.length ? revenue[0].totalRevenue : 0,
+        packedOrders,
+        deliveredOrders,
+
+        totalRevenue:
+          revenue.length > 0 ? revenue[0].totalRevenue : 0,
+
+        totalProducts,
+        lowStock,
+
         totalManagers,
         totalWorkers,
+        availableWorkers,
       },
     });
   } catch (error) {
@@ -59,4 +104,6 @@ const getDashboard = async (req, res) => {
   }
 };
 
-module.exports = { getDashboard };
+module.exports = {
+  ownerDashboard,
+};

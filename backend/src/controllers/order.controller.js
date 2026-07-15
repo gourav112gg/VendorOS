@@ -1,6 +1,6 @@
 const Order = require("../models/Order");
 const Inventory = require("../models/Inventory");
-
+const User = require("../models/User");
 // ================= CREATE ORDER =================
 const createOrder = async (req, res) => {
   try {
@@ -342,11 +342,12 @@ const updateOrderStatus = async (req, res) => {
     const { status } = req.body;
 
     const allowedStatus = [
-      "Accepted",
-      "Processing",
-      "Completed",
-      "Cancelled",
-    ];
+  "Accepted",
+  "Packed",
+  "Out For Delivery",
+  "Delivered",
+  "Cancelled",
+];
 
     if (!allowedStatus.includes(status)) {
       return res.status(400).json({
