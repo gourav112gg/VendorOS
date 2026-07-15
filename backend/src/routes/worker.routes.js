@@ -7,6 +7,9 @@ const authorize = require("../middleware/role.middleware");
 const {
   createWorker,
   getWorkers,
+  updateWorker,
+  deleteWorker,
+  toggleAvailability,
 } = require("../controllers/worker.controller");
 
 router.post(
@@ -21,6 +24,27 @@ router.get(
   protect,
   authorize("owner", "manager"),
   getWorkers
+);
+
+router.put(
+  "/:id",
+  protect,
+  authorize("owner", "manager"),
+  updateWorker
+);
+
+router.delete(
+  "/:id",
+  protect,
+  authorize("owner", "manager"),
+  deleteWorker
+);
+
+router.patch(
+  "/:id/availability",
+  protect,
+  authorize("owner", "manager"),
+  toggleAvailability
 );
 
 module.exports = router;

@@ -37,9 +37,7 @@ const createWorker = async (req, res) => {
     });
 
     await Company.findByIdAndUpdate(req.user.company, {
-      $push: {
-        workers: worker._id,
-      },
+      $push: { workers: worker._id },
     });
 
     const workerResponse = worker.toObject();
@@ -50,10 +48,8 @@ const createWorker = async (req, res) => {
       message: "Worker created successfully",
       worker: workerResponse,
     });
-
   } catch (error) {
     console.error(error);
-
     return res.status(500).json({
       success: false,
       message: "Server Error",
@@ -76,6 +72,120 @@ const getWorkers = async (req, res) => {
     });
   } catch (error) {
     console.error(error);
+    return res.status(500).json({
+      success: false,
+      message: "Server Error",
+    });
+  }
+};
+
+// Update Worker
+const updateWorker = async (req, res) => {
+  try {
+    const worker = await User.findOne({
+      _id: req.params.id,
+      role: "worker",
+      company: req.user.company,
+    });
+
+    if (!worker) {
+      return res.status(404).json({
+        success: false,
+        message: "Worker not found",
+      });
+    }
+
+    const { name, email, phone } = req.body;
+
+    if (name) worker.name = name;
+    if (email) worker.email = email;
+    if (phone) worker.phone = phone;
+
+    await worker.save();
+
+    const workerResponse = worker.toObject();
+    delete workerResponse.password;
+
+    return res.status(200).json({
+      success: true,
+      message: "Worker updated successfully",
+      worker: workerResponse,
+    });
+
+  } catch (error) {
+    console.error(error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Server Error",
+    });
+  }
+};
+
+// Delete Worker
+const deleteWorker = async (req, res) => {
+  try {
+    const worker = await User.findOne({
+      _id: req.params.id,
+      role: "worker",
+      company: req.user.company,
+    });
+
+    if (!worker) {
+      return res.status(404).json({
+        success: false,
+        message: "Worker not found",
+      });
+    }
+
+    await Company.findByIdAndUpdate(req.user.company, {
+      $pull: { workers: worker._id },
+    });
+
+    await worker.deleteOne();
+
+    return res.status(200).json({
+      success: true,
+      message: "Worker deleted successfully",
+    });
+
+  } catch (error) {
+    console.error(error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Server Error",
+    });
+  }
+};
+
+// Toggle Availability
+const toggleAvailability = async (req, res) => {
+  try {
+    const worker = await User.findOne({
+      _id: req.params.id,
+      role: "worker",
+      company: req.user.company,
+    });
+
+    if (!worker) {
+      return res.status(404).json({
+        success: false,
+        message: "Worker not found",
+      });
+    }
+
+    worker.isAvailable = !worker.isAvailable;
+    await worker.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Availability updated",
+      isAvailable: worker.isAvailable,
+    });
+
+  } catch (error) {
+    console.error(error);
 
     return res.status(500).json({
       success: false,
@@ -87,4 +197,7 @@ const getWorkers = async (req, res) => {
 module.exports = {
   createWorker,
   getWorkers,
+  updateWorker,
+  deleteWorker,
+  toggleAvailability,
 };
