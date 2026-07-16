@@ -261,7 +261,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const credential = await createUserWithEmailAndPassword(firebaseAuth, email, password || Math.random().toString(36) + 'Aa1!');
       idToken = await getIdToken(credential.user);
     } catch (fbErr: any) {
-      // Don't distinguish whether email already exists in Firebase — generic message
+      console.error("[Firebase Auth Owner Signup Error]", fbErr);
       throw new Error('Something went wrong, please try again or contact support');
     }
 
@@ -290,6 +290,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       localStorage.setItem('vendoros_current_user_id', localRes.user.id);
       return localRes;
     } catch (err: any) {
+      console.error("[Backend Owner Signup Error]", err);
       throw new Error('Something went wrong, please try again or contact support');
     }
   };
@@ -330,6 +331,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const credential = await createUserWithEmailAndPassword(firebaseAuth, email, password || Math.random().toString(36) + 'Aa1!');
       idToken = await getIdToken(credential.user);
     } catch (fbErr: any) {
+      console.error("[Firebase Auth Customer Signup Error]", fbErr);
       throw new Error('Something went wrong, please try again or contact support');
     }
 
@@ -353,6 +355,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setCompany(null);
       return newUser;
     } catch (err: any) {
+      console.error("[Backend Customer Signup Error]", err);
       throw new Error('Something went wrong, please try again or contact support');
     }
   };
