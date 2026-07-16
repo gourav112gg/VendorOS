@@ -8,6 +8,7 @@ const managerRoutes = require("./routes/manager.routes");
 const workerRoutes = require("./routes/worker.routes");
 const inventoryRoutes = require("./routes/inventory.routes");
 const orderRoutes = require("./routes/order.routes");
+const voiceUpdateRoutes = require("./routes/voiceUpdate.routes");
 const dashboardRoutes = require("./routes/dashboard.routes");
 const managerDashboardRoutes = require("./routes/managerDashboard.routes");
 const customerRoutes = require("./routes/customer.routes");
@@ -70,6 +71,7 @@ app.use("/api/owner", ownerRoutes);
 app.use("/api/managers", managerRoutes);
 app.use("/api/workers", workerRoutes);
 app.use("/api/orders", orderRoutes);
+app.use("/api/orders", voiceUpdateRoutes);
 app.use("/api/inventory", inventoryRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/manager-dashboard", managerDashboardRoutes);
@@ -103,4 +105,4 @@ app.get("/", (req, res) => {
   });
 });
 
-module.exports = app;
+module.exports = app;

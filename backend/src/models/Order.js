@@ -61,18 +61,54 @@ const orderSchema = new mongoose.Schema(
       default: null,
     },
 
-status: {
-  type: String,
-  enum: [
-    "Pending",
-    "Accepted",
-    "Packed",
-    "Out For Delivery",
-    "Delivered",
-    "Cancelled",
-  ],
-  default: "Pending",
+    status: {
+      type: String,
+      enum: [
+        "Pending",
+        "Accepted",
+        "Packed",
+        "Out For Delivery",
+        "Delivered",
+        "Cancelled",
+      ],
+      default: "Pending",
     },
+
+    // 🆕 ADDED for voice-based task updates
+    checklist: [
+      {
+        label: {
+          type: String,
+          required: true,
+          trim: true,
+        },
+        status: {
+          type: String,
+          enum: ["Pending", "In Progress", "Completed"],
+          default: "Pending",
+        },
+        verifiedBy: {
+          type: String,
+          enum: ["manual", "voice"],
+          default: "manual",
+        },
+      },
+    ],
+
+    voiceUpdateLog: [
+      {
+        transcript: String,
+        matchedItemIds: [mongoose.Schema.Types.ObjectId],
+        method: {
+          type: String,
+          enum: ["fuzzy", "llm", "none"],
+        },
+        timestamp: {
+          type: Date,
+          default: Date.now,
+        },
+      },
+    ],
   },
   {
     timestamps: true,
