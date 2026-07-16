@@ -183,7 +183,7 @@ export const Login: React.FC<LoginProps> = ({ onNavigateToSignUp, onNavigateToPu
               <div className="flex bg-[#0A0A0A] p-1 border border-[#222222] rounded-sm mb-6 gap-1">
                 <button
                   type="button"
-                  onClick={() => { setRoleType('owner'); setError(''); }}
+                  onClick={() => { setRoleType('owner'); setEmail(''); setPassword(''); setError(''); }}
                   className={`flex-1 py-2 text-[9px] font-bold rounded-sm uppercase tracking-wider transition-all ${
                     roleType === 'owner'
                       ? 'bg-white text-black font-extrabold'
@@ -194,7 +194,7 @@ export const Login: React.FC<LoginProps> = ({ onNavigateToSignUp, onNavigateToPu
                 </button>
                 <button
                   type="button"
-                  onClick={() => { setRoleType('vendor'); setError(''); }}
+                  onClick={() => { setRoleType('vendor'); setEmail(''); setPassword(''); setError(''); }}
                   className={`flex-1 py-2 text-[9px] font-bold rounded-sm uppercase tracking-wider transition-all ${
                     roleType === 'vendor'
                       ? 'bg-white text-black font-extrabold'
@@ -205,7 +205,7 @@ export const Login: React.FC<LoginProps> = ({ onNavigateToSignUp, onNavigateToPu
                 </button>
                 <button
                   type="button"
-                  onClick={() => { setRoleType('customer'); setError(''); }}
+                  onClick={() => { setRoleType('customer'); setEmail(''); setPassword(''); setError(''); }}
                   className={`flex-1 py-2 text-[9px] font-bold rounded-sm uppercase tracking-wider transition-all ${
                     roleType === 'customer'
                       ? 'bg-white text-black font-extrabold'
