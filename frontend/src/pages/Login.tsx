@@ -32,7 +32,7 @@ export const Login: React.FC<LoginProps> = ({ onNavigateToSignUp, onNavigateToPu
   
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [roleType, setRoleType] = useState<'vendor' | 'customer'>('vendor');
+  const [roleType, setRoleType] = useState<'owner' | 'vendor' | 'customer'>('owner');
   
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -50,13 +50,13 @@ export const Login: React.FC<LoginProps> = ({ onNavigateToSignUp, onNavigateToPu
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email.trim()) return;
+    if (!email.trim() || !password.trim()) return;
 
     setError('');
     setLoading(true);
 
     try {
-      await login(email);
+      await login(email, password, roleType);
     } catch (err: any) {
       setError(sanitizeErrorMessage(err.message || 'Login failed.'));
       setLoading(false);
@@ -92,22 +92,33 @@ export const Login: React.FC<LoginProps> = ({ onNavigateToSignUp, onNavigateToPu
           className="bg-[#111111] py-8 px-4 border border-[#222222] rounded-sm sm:px-10"
         >
           {/* Tabs Selector */}
-          <div className="flex bg-[#0A0A0A] p-1 border border-[#222222] rounded-sm mb-6">
+          <div className="flex bg-[#0A0A0A] p-1 border border-[#222222] rounded-sm mb-6 gap-1">
+            <button
+              type="button"
+              onClick={() => { setRoleType('owner'); setError(''); }}
+              className={`flex-1 py-2 text-[9px] font-bold rounded-sm uppercase tracking-wider transition-all ${
+                roleType === 'owner'
+                  ? 'bg-white text-black font-extrabold'
+                  : 'text-[#666666] hover:text-white'
+              }`}
+            >
+              Start a Company
+            </button>
             <button
               type="button"
               onClick={() => { setRoleType('vendor'); setError(''); }}
-              className={`flex-1 py-2 text-[10px] font-bold rounded-sm uppercase tracking-wider transition-all ${
+              className={`flex-1 py-2 text-[9px] font-bold rounded-sm uppercase tracking-wider transition-all ${
                 roleType === 'vendor'
                   ? 'bg-white text-black font-extrabold'
                   : 'text-[#666666] hover:text-white'
               }`}
             >
-              Vendor Member
+              Join a Vendor
             </button>
             <button
               type="button"
               onClick={() => { setRoleType('customer'); setError(''); }}
-              className={`flex-1 py-2 text-[10px] font-bold rounded-sm uppercase tracking-wider transition-all ${
+              className={`flex-1 py-2 text-[9px] font-bold rounded-sm uppercase tracking-wider transition-all ${
                 roleType === 'customer'
                   ? 'bg-white text-black font-extrabold'
                   : 'text-[#666666] hover:text-white'

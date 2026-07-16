@@ -15,13 +15,16 @@ const createWorker = async (req, res) => {
     }
 
     const existingUser = await User.findOne({
-      $or: [{ email }, { phone }],
+      $or: [
+        { email, isCustomer: false },
+        { phone, isCustomer: false }
+      ]
     });
 
     if (existingUser) {
       return res.status(400).json({
         success: false,
-        message: "User already exists",
+        message: "User already exists with this email or phone",
       });
     }
 
@@ -33,6 +36,7 @@ const createWorker = async (req, res) => {
       phone,
       password: hashedPassword,
       role: "worker",
+      isCustomer: false,
       company: req.user.company,
     });
 

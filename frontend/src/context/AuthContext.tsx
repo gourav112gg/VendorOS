@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { UserProfile, Company } from '../types';
 import dbStore from '../services/store';
+import api from '../services/api';
 
 export interface UserPreferences {
   currency: 'INR' | 'USD';
@@ -34,7 +35,7 @@ interface AuthContextType {
   preferences: UserPreferences;
   updatePreference: <K extends keyof UserPreferences>(key: K, value: UserPreferences[K]) => void;
   updateProfile: (name: string, phone?: string) => Promise<void>;
-  login: (email: string) => Promise<UserProfile>;
+  login: (email: string, password?: string, category?: string) => Promise<UserProfile>;
   loginWithGoogle: () => Promise<UserProfile>;
   logout: () => void;
   registerOwner: (name: string, email: string, companyName: string) => Promise<{ user: UserProfile; company: Company }>;
@@ -127,9 +128,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return () => unsubscribe();
   }, [user]);
 
-  const login = async (email: string): Promise<UserProfile> => {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
+  const login = async (email: string, password?: string, category?: string): Promise<UserProfile> => {
+    // compatibility fallback if params are missing (local testing)
+    if (!password || !category) {
+      return new Promise((resolve, reject) => {
         const loggedUser = dbStore.login(email);
         if (loggedUser) {
           setUser(loggedUser);
@@ -143,10 +145,69 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           }
           resolve(loggedUser);
         } else {
-          reject(new Error('Invalid email or user does not exist.'));
+          reject(new Error('Incorrect email or password'));
         }
-      }, 500);
-    });
+      });
+    }
+
+    const { signInWithEmailAndPassword, signOut } = await import('firebase/auth');
+    const { auth: firebaseAuth } = await import('../services/firebase');
+
+    try {
+      // 1. Authenticate credentials at Firebase Auth layer
+      const userCredential = await signInWithEmailAndPassword(firebaseAuth, email, password);
+      
+      // 2. Validate selected category against actual identity in MongoDB
+      try {
+        const res = await api.auth.login({ email, password, category });
+
+        const loggedUser: UserProfile = {
+          id: res.user._id,
+          name: res.user.name,
+          email: res.user.email,
+          role: res.user.role.charAt(0).toUpperCase() + res.user.role.slice(1),
+          companyId: res.user.company ? res.user.company._id : undefined,
+          createdAt: res.user.createdAt,
+        };
+
+        setUser(loggedUser);
+        localStorage.setItem('vendoros_current_user_id', loggedUser.id);
+
+        if (res.user.company) {
+          const companyObj: Company = {
+            id: res.user.company._id,
+            name: res.user.company.companyName,
+            createdAt: res.user.company.createdAt,
+            minOrderValue: res.user.company.minimumOrderValue,
+            subscription: res.user.company.subscription,
+          };
+          setCompany(companyObj);
+        } else {
+          setCompany(null);
+        }
+
+        // Sync with simulated local db
+        dbStore.syncUserSession(loggedUser, res.user.company);
+
+        return loggedUser;
+      } catch (backendErr: any) {
+        // Sign out Firebase if category validation fails (zero leakage)
+        await signOut(firebaseAuth);
+        
+        // Report failure to backend
+        await api.auth.reportFailure({ email });
+        
+        throw new Error(backendErr.message || 'Incorrect email or password');
+      }
+    } catch (fbErr: any) {
+      if (fbErr.code === 'auth/user-disabled') {
+        throw new Error('Too many failed attempts. Try again in 15 minutes.');
+      }
+      
+      // Report failed credentials attempt to backend
+      await api.auth.reportFailure({ email });
+      throw new Error('Incorrect email or password');
+    }
   };
 
   const loginWithGoogle = async (): Promise<UserProfile> => {

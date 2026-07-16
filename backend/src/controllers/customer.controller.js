@@ -15,13 +15,16 @@ const customerSignup = async (req, res) => {
     }
 
     const existingUser = await User.findOne({
-      $or: [{ email }, { phone }],
+      $or: [
+        { email, isCustomer: true },
+        { phone, isCustomer: true }
+      ]
     });
 
     if (existingUser) {
       return res.status(400).json({
         success: false,
-        message: "User already exists with this email or phone",
+        message: "Customer profile already exists with this email or phone",
       });
     }
 
@@ -33,6 +36,7 @@ const customerSignup = async (req, res) => {
       phone,
       password: hashedPassword,
       role: "customer",
+      isCustomer: true,
     });
 
     const token = generateToken(customer._id, customer.role);

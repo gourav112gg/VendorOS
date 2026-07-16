@@ -35,11 +35,15 @@ router.put(
   updateManager
 );
 
+const rateLimiter = require("../middleware/rateLimiter");
+const deleteLimiter = rateLimiter({ windowMs: 60000, max: 3, message: "Too many delete operations. Please try again later." });
+
 // Delete Manager
 router.delete(
   "/:id",
   protect,
   authorize("owner"),
+  deleteLimiter,
   deleteManager
 );
 

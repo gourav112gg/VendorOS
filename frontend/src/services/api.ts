@@ -96,6 +96,17 @@ const auth = {
     return data;
   },
 
+  /** Unified login endpoint */
+  login: async (payload: { email: string; password: string; category: string }) => {
+    const data = await request<{ token: string; user: any }>('POST', '/api/auth/login', payload);
+    if (data.token) saveToken(data.token);
+    return data;
+  },
+
+  /** Report failed login attempt */
+  reportFailure: (payload: { email: string }) =>
+    request('POST', '/api/auth/report-failure', payload),
+
   /** Clear stored token (logout) */
   logout: () => clearToken(),
 };

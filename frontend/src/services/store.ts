@@ -1230,6 +1230,43 @@ class SimulatedStore {
     this.save();
     return newRecord;
   }
+
+  public syncUserSession(user: UserProfile, company?: Company | null): void {
+    // 1. Sync User Profile
+    const existingUserIndex = this.state.users.findIndex(u => u.id === user.id || u.email.toLowerCase() === user.email.toLowerCase());
+    const mappedUser: UserProfile = {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      companyId: user.companyId,
+      createdAt: user.createdAt,
+    };
+    if (existingUserIndex >= 0) {
+      this.state.users[existingUserIndex] = mappedUser;
+    } else {
+      this.state.users.push(mappedUser);
+    }
+
+    // 2. Sync Company Profile
+    if (company) {
+      const existingCompanyIndex = this.state.companies.findIndex(c => c.id === company.id);
+      const mappedCompany: Company = {
+        id: company.id,
+        name: company.name,
+        createdAt: company.createdAt,
+        minOrderValue: company.minOrderValue,
+        subscription: company.subscription,
+      };
+      if (existingCompanyIndex >= 0) {
+        this.state.companies[existingCompanyIndex] = mappedCompany;
+      } else {
+        this.state.companies.push(mappedCompany);
+      }
+    }
+
+    this.save();
+  }
 }
 
 export const dbStore = new SimulatedStore();

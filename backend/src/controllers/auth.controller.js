@@ -2,6 +2,8 @@ const bcrypt = require("bcryptjs");
 const User = require("../models/User");
 const Company = require("../models/Company");
 const generateToken = require("../utils/generateToken");
+const admin = require("../config/firebaseAdmin");
+const LoginAttempt = require("../models/LoginAttempt");
 
 // ================= OWNER SIGNUP =================
 const ownerSignup = async (req, res) => {
@@ -16,13 +18,16 @@ const ownerSignup = async (req, res) => {
     }
 
     const existingUser = await User.findOne({
-      $or: [{ email }, { phone }],
+      $or: [
+        { email, isCustomer: false },
+        { phone, isCustomer: false }
+      ]
     });
 
     if (existingUser) {
       return res.status(400).json({
         success: false,
-        message: "User already exists",
+        message: "User already exists with this email or phone",
       });
     }
 
@@ -43,6 +48,7 @@ const ownerSignup = async (req, res) => {
       phone,
       password: hashedPassword,
       role: "owner",
+      isCustomer: false,
     });
 
     const company = await Company.create({
@@ -239,9 +245,168 @@ const workerLogin = async (req, res) => {
   }
 };
 
+// ================= UNIFIED LOGIN (WITH SECURITY MODEL & LOCKOUT) =================
+const login = async (req, res) => {
+  try {
+    const { email, password, category } = req.body;
+
+    if (!email || !password || !category) {
+      return res.status(400).json({
+        success: false,
+        message: "Email, password, and category are required",
+      });
+    }
+
+    const normalizedEmail = email.toLowerCase().trim();
+
+    // 1. Check failed login attempts lockout (5 attempts in 15 minutes rolling window)
+    const failuresCount = await LoginAttempt.countDocuments({ email: normalizedEmail });
+
+    let isLockedOut = false;
+    let firebaseUser = null;
+
+    try {
+      firebaseUser = await admin.auth().getUserByEmail(normalizedEmail);
+      if (firebaseUser.disabled) {
+        isLockedOut = true;
+      }
+    } catch (fbErr) {
+      // Ignore: User may not exist in Firebase yet
+    }
+
+    if (failuresCount >= 5 || isLockedOut) {
+      const latestAttempt = await LoginAttempt.findOne({ email: normalizedEmail }).sort({ createdAt: -1 });
+      if (latestAttempt) {
+        const timeDiffMs = Date.now() - new Date(latestAttempt.createdAt).getTime();
+        const fifteenMinsMs = 15 * 60 * 1000;
+
+        if (timeDiffMs < fifteenMinsMs) {
+          // Still locked out
+          if (firebaseUser && !firebaseUser.disabled) {
+            await admin.auth().updateUser(firebaseUser.uid, { disabled: true });
+          }
+          return res.status(423).json({
+            success: false,
+            message: "Too many failed attempts. Try again in 15 minutes.",
+          });
+        } else {
+          // Lockout expired: re-enable and reset count
+          if (firebaseUser && firebaseUser.disabled) {
+            await admin.auth().updateUser(firebaseUser.uid, { disabled: false });
+          }
+          await LoginAttempt.deleteMany({ email: normalizedEmail });
+        }
+      }
+    }
+
+    // 2. Map category parameter to role queries
+    let roleQuery = {};
+    if (category === "owner") {
+      roleQuery = { role: "owner" };
+    } else if (category === "vendor") {
+      roleQuery = { role: { $in: ["manager", "worker"] } };
+    } else if (category === "customer") {
+      roleQuery = { role: "customer" };
+    } else {
+      return res.status(401).json({
+        success: false,
+        message: "Incorrect email or password",
+      });
+    }
+
+    // 3. Find user in MongoDB by email and mapped role
+    const user = await User.findOne({ email: normalizedEmail, ...roleQuery }).populate("company");
+
+    let isMatch = false;
+    if (user) {
+      isMatch = await bcrypt.compare(password, user.password);
+    } else {
+      // Dummy compare to avoid timing analysis attacks
+      await bcrypt.compare(password, "$2b$10$abcdefghijklmnopqrstuvwx");
+    }
+
+    if (!user || !isMatch) {
+      // Record failure attempt
+      await LoginAttempt.create({ email: normalizedEmail });
+      
+      const newFailuresCount = await LoginAttempt.countDocuments({ email: normalizedEmail });
+      if (newFailuresCount >= 5) {
+        if (firebaseUser) {
+          await admin.auth().updateUser(firebaseUser.uid, { disabled: true });
+        }
+        return res.status(423).json({
+          success: false,
+          message: "Too many failed attempts. Try again in 15 minutes.",
+        });
+      }
+
+      return res.status(401).json({
+        success: false,
+        message: "Incorrect email or password",
+      });
+    }
+
+    // Success: Reset failed attempts counter
+    await LoginAttempt.deleteMany({ email: normalizedEmail });
+
+    // Generate custom session JWT token
+    const token = generateToken(user._id, user.role);
+
+    const userResponse = user.toObject();
+    delete userResponse.password;
+
+    return res.status(200).json({
+      success: true,
+      message: "Login successful",
+      token,
+      user: userResponse,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      success: false,
+      message: "Server Error",
+    });
+  }
+};
+
+// ================= REPORT FAILURE ENDPOINT =================
+const reportFailure = async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email) {
+      return res.status(400).json({ success: false, message: "Email is required" });
+    }
+
+    const normalizedEmail = email.toLowerCase().trim();
+    await LoginAttempt.create({ email: normalizedEmail });
+
+    const failuresCount = await LoginAttempt.countDocuments({ email: normalizedEmail });
+    if (failuresCount >= 5) {
+      try {
+        const firebaseUser = await admin.auth().getUserByEmail(normalizedEmail);
+        await admin.auth().updateUser(firebaseUser.uid, { disabled: true });
+      } catch (fbErr) {
+        // Safe to ignore if user does not exist in Firebase
+      }
+      return res.status(423).json({
+        success: false,
+        message: "Too many failed attempts. Try again in 15 minutes.",
+      });
+    }
+
+    return res.status(200).json({ success: true, count: failuresCount });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ success: false, message: "Server Error" });
+  }
+};
+
 module.exports = {
   ownerSignup,
   ownerLogin,
   managerLogin,
   workerLogin,
+  login,
+  reportFailure,
 };
