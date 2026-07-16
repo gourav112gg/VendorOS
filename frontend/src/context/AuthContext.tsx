@@ -150,16 +150,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       });
     }
 
-    const { signInWithEmailAndPassword, signOut } = await import('firebase/auth');
+    const { signInWithEmailAndPassword, signOut, getIdToken } = await import('firebase/auth');
     const { auth: firebaseAuth } = await import('../services/firebase');
 
     try {
       // 1. Authenticate credentials at Firebase Auth layer
       const userCredential = await signInWithEmailAndPassword(firebaseAuth, email, password);
-      
-      // 2. Validate selected category against actual identity in MongoDB
+      // 2. Obtain Firebase ID token to send to backend (never send raw password)
+      const idToken = await getIdToken(userCredential.user);
+
+      // 3. Validate selected category against actual identity in MongoDB
       try {
-        const res = await api.auth.login({ email, password, category });
+        const res = await api.auth.login({ idToken, email, category });
 
         const loggedUser: UserProfile = {
           id: res.user._id,
@@ -193,19 +195,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       } catch (backendErr: any) {
         // Sign out Firebase if category validation fails (zero leakage)
         await signOut(firebaseAuth);
-        
-        // Report failure to backend
         await api.auth.reportFailure({ email });
-        
-        throw new Error(backendErr.message || 'Incorrect email or password');
+        throw new Error('Incorrect email or password');
       }
     } catch (fbErr: any) {
-      if (fbErr.code === 'auth/user-disabled') {
-        throw new Error('Too many failed attempts. Try again in 15 minutes.');
+      if (fbErr.code && fbErr.message !== 'Incorrect email or password') {
+        // Firebase auth failure — report and use generic message
+        try { await api.auth.reportFailure({ email }); } catch (_) {}
       }
-      
-      // Report failed credentials attempt to backend
-      await api.auth.reportFailure({ email });
       throw new Error('Incorrect email or password');
     }
   };
@@ -254,37 +251,59 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     localStorage.removeItem('vendoros_current_user_id');
   };
 
-  const registerOwner = async (name: string, email: string, companyName: string): Promise<{ user: UserProfile; company: Company }> => {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        const normalizedEmail = email.toLowerCase().trim();
-        const existingUser = dbStore.getUsers().find(u => u.email.toLowerCase() === normalizedEmail);
-        if (existingUser) {
-          reject(new Error('Email is already registered.'));
-          return;
-        }
+  const registerOwner = async (name: string, email: string, companyName: string, phone?: string, password?: string): Promise<{ user: UserProfile; company: Company }> => {
+    const { createUserWithEmailAndPassword, getIdToken } = await import('firebase/auth');
+    const { auth: firebaseAuth } = await import('../services/firebase');
 
-        if (!dbStore.isCompanyNameAvailable(companyName)) {
-          reject(new Error('Company name is already taken.'));
-          return;
-        }
+    // 1. Create account in Firebase Authentication
+    let idToken: string;
+    try {
+      const credential = await createUserWithEmailAndPassword(firebaseAuth, email, password || Math.random().toString(36) + 'Aa1!');
+      idToken = await getIdToken(credential.user);
+    } catch (fbErr: any) {
+      // Don't distinguish whether email already exists in Firebase — generic message
+      throw new Error('Something went wrong, please try again or contact support');
+    }
 
-        const res = dbStore.registerOwner(name, email, companyName);
-        setUser(res.user);
-        setCompany(res.company);
-        localStorage.setItem('vendoros_current_user_id', res.user.id);
-        resolve(res);
-      }, 600);
-    });
+    try {
+      // 2. Register profile in MongoDB via backend (sends idToken, not password)
+      const res = await api.auth.ownerSignup({ idToken, name, email, phone: phone || '', companyName });
+
+      // 3. Mirror session in local simulated store
+      if (!dbStore.isCompanyNameAvailable(companyName)) {
+        // Already in store — just find and set
+        const users = dbStore.getUsers();
+        const existing = users.find(u => u.email.toLowerCase() === email.toLowerCase());
+        if (existing) {
+          setUser(existing);
+          const comps = dbStore.getCompanies();
+          const comp = comps.find(c => c.id === existing.companyId);
+          setCompany(comp || null);
+          localStorage.setItem('vendoros_current_user_id', existing.id);
+          return { user: existing, company: comp as Company };
+        }
+      }
+
+      const localRes = dbStore.registerOwner(name, email, companyName);
+      setUser(localRes.user);
+      setCompany(localRes.company);
+      localStorage.setItem('vendoros_current_user_id', localRes.user.id);
+      return localRes;
+    } catch (err: any) {
+      throw new Error('Something went wrong, please try again or contact support');
+    }
   };
 
-  const registerManagerOrWorker = async (name: string, email: string, companyId: string, role: 'Manager' | 'Worker'): Promise<UserProfile> => {
+  const registerManagerOrWorker = async (name: string, email: string, companyId: string, role: 'Manager' | 'Worker', phone?: string): Promise<UserProfile> => {
+    // Manager/Worker accounts are created by the Owner via the Admin SDK server-side.
+    // On the frontend (self-registration flow), we simply record locally.
     return new Promise((resolve, reject) => {
       setTimeout(() => {
         const normalizedEmail = email.toLowerCase().trim();
-        const existingUser = dbStore.getUsers().find(u => u.email.toLowerCase() === normalizedEmail);
+        const existingUser = dbStore.getUsers().find(u => u.email.toLowerCase() === normalizedEmail && !u.companyId);
         if (existingUser) {
-          reject(new Error('Email is already registered.'));
+          // Already registered — generic message, no email leak confirmation
+          reject(new Error('Something went wrong, please try again or contact support'));
           return;
         }
 
@@ -301,23 +320,41 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     });
   };
 
-  const registerCustomer = async (name: string, email: string, phone?: string): Promise<UserProfile> => {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        const normalizedEmail = email.toLowerCase().trim();
-        const existingUser = dbStore.getUsers().find(u => u.email.toLowerCase() === normalizedEmail);
-        if (existingUser) {
-          reject(new Error('Email is already registered.'));
-          return;
-        }
+  const registerCustomer = async (name: string, email: string, phone?: string, password?: string): Promise<UserProfile> => {
+    const { createUserWithEmailAndPassword, getIdToken } = await import('firebase/auth');
+    const { auth: firebaseAuth } = await import('../services/firebase');
 
-        const newUser = dbStore.registerCustomer(name, email, phone);
-        setUser(newUser);
-        localStorage.setItem('vendoros_current_user_id', newUser.id);
+    // 1. Create account in Firebase Authentication
+    let idToken: string;
+    try {
+      const credential = await createUserWithEmailAndPassword(firebaseAuth, email, password || Math.random().toString(36) + 'Aa1!');
+      idToken = await getIdToken(credential.user);
+    } catch (fbErr: any) {
+      throw new Error('Something went wrong, please try again or contact support');
+    }
+
+    try {
+      // 2. Register customer profile in MongoDB via backend
+      await api.auth.customerSignup({ idToken, name, email, phone });
+
+      // 3. Mirror in local simulated store
+      const users = dbStore.getUsers();
+      const existing = users.find(u => u.email.toLowerCase() === email.toLowerCase());
+      if (existing) {
+        setUser(existing);
+        localStorage.setItem('vendoros_current_user_id', existing.id);
         setCompany(null);
-        resolve(newUser);
-      }, 600);
-    });
+        return existing;
+      }
+
+      const newUser = dbStore.registerCustomer(name, email, phone);
+      setUser(newUser);
+      localStorage.setItem('vendoros_current_user_id', newUser.id);
+      setCompany(null);
+      return newUser;
+    } catch (err: any) {
+      throw new Error('Something went wrong, please try again or contact support');
+    }
   };
 
   const updateProfile = async (name: string, phone?: string): Promise<void> => {

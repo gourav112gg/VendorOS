@@ -1,30 +1,32 @@
 const express = require("express");
 const router = express.Router();
-const validateAuthInput = require("../middleware/validateAuthInput");
+
+const {
+  validateSchema,
+  loginSchema,
+  ownerSignupSchema,
+  customerSignupSchema
+} = require("../middleware/validateSchema");
+const { createSignupRateLimiter } = require("../middleware/signupRateLimiter");
 
 const {
   ownerSignup,
-  ownerLogin,
-  managerLogin,
-  workerLogin,
   login,
   reportFailure,
 } = require("../controllers/auth.controller");
 
 const {
   customerSignup,
-  customerLogin,
 } = require("../controllers/customer.controller");
 
-router.post("/owner/signup", validateAuthInput, ownerSignup);
-router.post("/owner/login", validateAuthInput, ownerLogin);
-router.post("/manager/login", validateAuthInput, managerLogin);
-router.post("/worker/login", validateAuthInput, workerLogin);
-router.post("/customer/signup", validateAuthInput, customerSignup);
-router.post("/customer/login", validateAuthInput, customerLogin);
+const signupRateLimiter = createSignupRateLimiter(10, 60 * 60 * 1000); // 10/IP/hour
+
+// Owner & Customer Signup with rate limiting + schema validation
+router.post("/owner/signup", signupRateLimiter, validateSchema(ownerSignupSchema), ownerSignup);
+router.post("/customer/signup", signupRateLimiter, validateSchema(customerSignupSchema), customerSignup);
 
 // Unified login endpoints
-router.post("/login", validateAuthInput, login);
-router.post("/report-failure", validateAuthInput, reportFailure);
+router.post("/login", validateSchema(loginSchema), login);
+router.post("/report-failure", reportFailure);
 
-module.exports = router;
+module.exports = router;

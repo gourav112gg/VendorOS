@@ -1,4 +1,4 @@
-const bcrypt = require("bcryptjs");
+const admin = require("../config/firebaseAdmin");
 const User = require("../models/User");
 const Company = require("../models/Company");
 
@@ -6,17 +6,11 @@ const Company = require("../models/Company");
 const createWorker = async (req, res) => {
   try {
     const { name, email, phone, password } = req.body;
-
-    if (!name || !email || !phone || !password) {
-      return res.status(400).json({
-        success: false,
-        message: "All fields are required",
-      });
-    }
+    const normalizedEmail = email.toLowerCase().trim();
 
     const existingUser = await User.findOne({
       $or: [
-        { email, isCustomer: false },
+        { email: normalizedEmail, isCustomer: false },
         { phone, isCustomer: false }
       ]
     });
@@ -24,17 +18,31 @@ const createWorker = async (req, res) => {
     if (existingUser) {
       return res.status(400).json({
         success: false,
-        message: "User already exists with this email or phone",
+        message: "Something went wrong, please try again or contact support",
       });
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    // 1. Create User in Firebase Authentication
+    try {
+      await admin.auth().createUser({
+        email: normalizedEmail,
+        password,
+        displayName: name,
+        phoneNumber: phone || undefined
+      });
+    } catch (fbErr) {
+      console.error("[Firebase Worker Creation Error]", fbErr.message);
+      return res.status(400).json({
+        success: false,
+        message: "Something went wrong, please try again or contact support"
+      });
+    }
 
+    // 2. Create User record in MongoDB (no password saved)
     const worker = await User.create({
       name,
-      email,
+      email: normalizedEmail,
       phone,
-      password: hashedPassword,
       role: "worker",
       isCustomer: false,
       company: req.user.company,
@@ -44,19 +52,16 @@ const createWorker = async (req, res) => {
       $push: { workers: worker._id },
     });
 
-    const workerResponse = worker.toObject();
-    delete workerResponse.password;
-
     return res.status(201).json({
       success: true,
       message: "Worker created successfully",
-      worker: workerResponse,
+      worker,
     });
   } catch (error) {
     console.error(error);
     return res.status(500).json({
       success: false,
-      message: "Server Error",
+      message: "Something went wrong, please try again or contact support",
     });
   }
 };
@@ -67,7 +72,7 @@ const getWorkers = async (req, res) => {
     const workers = await User.find({
       role: "worker",
       company: req.user.company,
-    }).select("-password");
+    });
 
     return res.status(200).json({
       success: true,

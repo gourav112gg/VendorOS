@@ -3,6 +3,7 @@ import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 import { getAnalytics } from "firebase/analytics";
+import { initializeAppCheck, ReCaptchaEnterpriseProvider } from "firebase/app-check";
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "AIzaSyCnNMofdoCqVYzGdLiG1TlFCH9iKbVdMlA",
@@ -16,6 +17,20 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
+
+// Initialize App Check (protects Firebase services from unauthorized access)
+// Set VITE_RECAPTCHA_SITE_KEY in your environment variables from the Firebase Console → App Check
+if (typeof window !== "undefined") {
+  const recaptchaSiteKey = import.meta.env.VITE_RECAPTCHA_SITE_KEY;
+  if (recaptchaSiteKey) {
+    initializeAppCheck(app, {
+      provider: new ReCaptchaEnterpriseProvider(recaptchaSiteKey),
+      isTokenAutoRefreshEnabled: true,
+    });
+  } else {
+    console.warn("[App Check] VITE_RECAPTCHA_SITE_KEY is not set. App Check is disabled in this environment.");
+  }
+}
 
 // Initialize Firebase services
 export const auth = getAuth(app);

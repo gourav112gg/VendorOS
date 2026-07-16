@@ -1,6 +1,7 @@
 const admin = require("firebase-admin");
+const { getAuth } = require("firebase-admin/auth");
 
-if (!admin.apps.length) {
+if (!admin.getApps().length) {
   try {
     if (process.env.FIREBASE_SERVICE_ACCOUNT_JSON) {
       const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_JSON);
@@ -15,8 +16,11 @@ if (!admin.apps.length) {
     }
     console.log("[Firebase Admin] Initialized successfully");
   } catch (error) {
-    console.error("[Firebase Admin] Initialization failed:", error.message);
+    console.log("[Firebase Admin] Initialization failed: " + error.message);
   }
 }
+
+// Attach a compatible .auth() wrapper to match existing controller usage patterns
+admin.auth = () => getAuth();
 
 module.exports = admin;

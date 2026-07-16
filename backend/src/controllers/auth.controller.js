@@ -1,25 +1,62 @@
-const bcrypt = require("bcryptjs");
 const User = require("../models/User");
 const Company = require("../models/Company");
 const generateToken = require("../utils/generateToken");
 const admin = require("../config/firebaseAdmin");
 const LoginAttempt = require("../models/LoginAttempt");
+const RateLimit = require("../models/RateLimit");
+
+// Helper to record failed login attempts, handle progressive delay increment, and trigger lockout
+const recordFailureAttempt = async (email, emailFailKey) => {
+  await RateLimit.findOneAndUpdate(
+    { key: emailFailKey },
+    { $inc: { attempts: 1 }, $set: { lastAttempt: new Date() } },
+    { upsert: true }
+  );
+
+  await LoginAttempt.create({ email });
+  const failuresCount = await LoginAttempt.countDocuments({ email });
+
+  if (failuresCount >= 5) {
+    try {
+      const firebaseUser = await admin.auth().getUserByEmail(email);
+      await admin.auth().updateUser(firebaseUser.uid, { disabled: true });
+      
+      // Generate password reset link and simulate email dispatch
+      const resetLink = await admin.auth().generatePasswordResetLink(email);
+      console.log(`[LOCKOUT NOTIFICATION] Email sent to: ${email} | Reset Link: ${resetLink}`);
+    } catch (fbErr) {
+      console.warn("[Lockout Service] Could not disable Firebase auth user:", fbErr.message);
+    }
+  }
+};
 
 // ================= OWNER SIGNUP =================
 const ownerSignup = async (req, res) => {
   try {
-    const { name, email, phone, password, companyName } = req.body;
+    const { idToken, name, email, phone, companyName } = req.body;
+    const normalizedEmail = email.toLowerCase().trim();
 
-    if (!name || !email || !phone || !password || !companyName) {
+    // Verify Firebase ID Token
+    let decodedToken;
+    try {
+      decodedToken = await admin.auth().verifyIdToken(idToken);
+    } catch (verifyError) {
       return res.status(400).json({
         success: false,
-        message: "All fields are required",
+        message: "Something went wrong, please try again or contact support"
+      });
+    }
+
+    if (decodedToken.email.toLowerCase() !== normalizedEmail) {
+      return res.status(400).json({
+        success: false,
+        message: "Something went wrong, please try again or contact support"
       });
     }
 
     const existingUser = await User.findOne({
       $or: [
-        { email, isCustomer: false },
+        { email: normalizedEmail, isCustomer: false },
         { phone, isCustomer: false }
       ]
     });
@@ -27,26 +64,22 @@ const ownerSignup = async (req, res) => {
     if (existingUser) {
       return res.status(400).json({
         success: false,
-        message: "User already exists with this email or phone",
+        message: "Something went wrong, please try again or contact support"
       });
     }
 
     const existingCompany = await Company.findOne({ companyName });
-
     if (existingCompany) {
       return res.status(400).json({
         success: false,
-        message: "Company already exists",
+        message: "Something went wrong, please try again or contact support"
       });
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
-
     const owner = await User.create({
       name,
-      email,
+      email: normalizedEmail,
       phone,
-      password: hashedPassword,
       role: "owner",
       isCustomer: false,
     });
@@ -61,245 +94,106 @@ const ownerSignup = async (req, res) => {
 
     const token = generateToken(owner._id, owner.role);
 
-    const ownerResponse = owner.toObject();
-    delete ownerResponse.password;
-
     return res.status(201).json({
       success: true,
       message: "Owner registered successfully",
       token,
-      owner: ownerResponse,
+      owner,
       company,
     });
   } catch (error) {
-    console.error(error);
-
+    console.error("[Owner Signup Error]", error);
     return res.status(500).json({
       success: false,
-      message: "Server Error",
+      message: "Something went wrong, please try again or contact support"
     });
   }
 };
 
-// ================= OWNER LOGIN =================
-const ownerLogin = async (req, res) => {
-  try {
-    const { email, password } = req.body;
-
-    if (!email || !password) {
-      return res.status(400).json({
-        success: false,
-        message: "Email and password are required",
-      });
-    }
-
-    const owner = await User.findOne({
-      email,
-      role: "owner",
-    }).populate("company");
-
-    if (!owner) {
-      return res.status(404).json({
-        success: false,
-        message: "Owner not found",
-      });
-    }
-
-    const isMatch = await bcrypt.compare(password, owner.password);
-
-    if (!isMatch) {
-      return res.status(401).json({
-        success: false,
-        message: "Invalid email or password",
-      });
-    }
-
-    const token = generateToken(owner._id, owner.role);
-
-    const ownerResponse = owner.toObject();
-    delete ownerResponse.password;
-
-    return res.status(200).json({
-      success: true,
-      message: "Login successful",
-      token,
-      owner: ownerResponse,
-    });
-  } catch (error) {
-    console.error(error);
-
-    return res.status(500).json({
-      success: false,
-      message: "Server Error",
-    });
-  }
-};
-
-
-const managerLogin = async (req, res) => {
-  try {
-    const { email, password } = req.body;
-
-    if (!email || !password) {
-      return res.status(400).json({
-        success: false,
-        message: "Email and password are required",
-      });
-    }
-
-    const manager = await User.findOne({
-      email,
-      role: "manager",
-    }).populate("company");
-
-    if (!manager) {
-      return res.status(404).json({
-        success: false,
-        message: "Manager not found",
-      });
-    }
-
-    const isMatch = await bcrypt.compare(password, manager.password);
-
-    if (!isMatch) {
-      return res.status(401).json({
-        success: false,
-        message: "Invalid email or password",
-      });
-    }
-
-    const token = generateToken(manager._id, manager.role);
-
-    const managerResponse = manager.toObject();
-    delete managerResponse.password;
-
-    return res.status(200).json({
-      success: true,
-      message: "Manager login successful",
-      token,
-      manager: managerResponse,
-    });
-
-  } catch (error) {
-    console.error(error);
-
-    return res.status(500).json({
-      success: false,
-      message: "Server Error",
-    });
-  }
-};
-
-
-const workerLogin = async (req, res) => {
-  try {
-    const { email, password } = req.body;
-
-    if (!email || !password) {
-      return res.status(400).json({
-        success: false,
-        message: "Email and password are required",
-      });
-    }
-
-    const worker = await User.findOne({
-      email,
-      role: "worker",
-    }).populate("company");
-
-    if (!worker) {
-      return res.status(404).json({
-        success: false,
-        message: "Worker not found",
-      });
-    }
-
-    const isMatch = await bcrypt.compare(password, worker.password);
-
-    if (!isMatch) {
-      return res.status(401).json({
-        success: false,
-        message: "Invalid email or password",
-      });
-    }
-
-    const token = generateToken(worker._id, worker.role);
-
-    const workerResponse = worker.toObject();
-    delete workerResponse.password;
-
-    return res.status(200).json({
-      success: true,
-      message: "Worker login successful",
-      token,
-      worker: workerResponse,
-    });
-
-  } catch (error) {
-    console.error(error);
-
-    return res.status(500).json({
-      success: false,
-      message: "Server Error",
-    });
-  }
-};
-
-// ================= UNIFIED LOGIN (WITH SECURITY MODEL & LOCKOUT) =================
+// ================= UNIFIED LOGIN (WITH LOCKOUT & PROGRESSIVE DELAY) =================
 const login = async (req, res) => {
   try {
-    const { email, password, category } = req.body;
-
-    if (!email || !password || !category) {
-      return res.status(400).json({
-        success: false,
-        message: "Email, password, and category are required",
-      });
-    }
-
+    const { idToken, email, category } = req.body;
     const normalizedEmail = email.toLowerCase().trim();
 
-    // 1. Check failed login attempts lockout (5 attempts in 15 minutes rolling window)
-    const failuresCount = await LoginAttempt.countDocuments({ email: normalizedEmail });
+    // 1. IP-based Rate Limiting (max 10 requests per IP per minute)
+    const clientIp = req.ip || req.connection.remoteAddress || "unknown_ip";
+    const ipKey = `ip:${clientIp}`;
+    
+    const ipLimit = await RateLimit.findOneAndUpdate(
+      { key: ipKey },
+      { $inc: { attempts: 1 }, $set: { lastAttempt: new Date() } },
+      { new: true, upsert: true }
+    );
 
-    let isLockedOut = false;
-    let firebaseUser = null;
-
-    try {
-      firebaseUser = await admin.auth().getUserByEmail(normalizedEmail);
-      if (firebaseUser.disabled) {
-        isLockedOut = true;
+    if (ipLimit.attempts > 10) {
+      const oneMinuteAgo = Date.now() - 60000;
+      if (new Date(ipLimit.lastAttempt).getTime() > oneMinuteAgo) {
+        return res.status(429).json({
+          success: false,
+          message: "Incorrect email or password"
+        });
+      } else {
+        await RateLimit.deleteOne({ key: ipKey });
       }
-    } catch (fbErr) {
-      // Ignore: User may not exist in Firebase yet
     }
 
-    if (failuresCount >= 5 || isLockedOut) {
+    // 2. Lockout Expiry / Release check
+    const emailFailKey = `email_fail:${normalizedEmail}`;
+    const failuresCount = await LoginAttempt.countDocuments({ email: normalizedEmail });
+
+    if (failuresCount >= 5) {
       const latestAttempt = await LoginAttempt.findOne({ email: normalizedEmail }).sort({ createdAt: -1 });
       if (latestAttempt) {
         const timeDiffMs = Date.now() - new Date(latestAttempt.createdAt).getTime();
         const fifteenMinsMs = 15 * 60 * 1000;
 
         if (timeDiffMs < fifteenMinsMs) {
-          // Still locked out
-          if (firebaseUser && !firebaseUser.disabled) {
-            await admin.auth().updateUser(firebaseUser.uid, { disabled: true });
-          }
-          return res.status(423).json({
+          return res.status(401).json({
             success: false,
-            message: "Too many failed attempts. Try again in 15 minutes.",
+            message: "Incorrect email or password"
           });
         } else {
-          // Lockout expired: re-enable and reset count
-          if (firebaseUser && firebaseUser.disabled) {
+          // Re-enable and reset attempts
+          try {
+            const firebaseUser = await admin.auth().getUserByEmail(normalizedEmail);
             await admin.auth().updateUser(firebaseUser.uid, { disabled: false });
-          }
+          } catch (e) {}
           await LoginAttempt.deleteMany({ email: normalizedEmail });
+          await RateLimit.deleteOne({ key: emailFailKey });
         }
       }
     }
 
-    // 2. Map category parameter to role queries
+    // 3. Progressive Delays on failures
+    const failRecord = await RateLimit.findOne({ key: emailFailKey });
+    if (failRecord && failRecord.attempts > 0) {
+      const progress = Math.min(failRecord.attempts, 4);
+      const delayMs = Math.pow(2, progress - 1) * 1000;
+      await new Promise(resolve => setTimeout(resolve, delayMs));
+    }
+
+    // 4. Verify Firebase ID Token
+    let decodedToken;
+    try {
+      decodedToken = await admin.auth().verifyIdToken(idToken);
+    } catch (verifyError) {
+      await recordFailureAttempt(normalizedEmail, emailFailKey);
+      return res.status(401).json({
+        success: false,
+        message: "Incorrect email or password"
+      });
+    }
+
+    if (decodedToken.email.toLowerCase() !== normalizedEmail) {
+      await recordFailureAttempt(normalizedEmail, emailFailKey);
+      return res.status(401).json({
+        success: false,
+        message: "Incorrect email or password"
+      });
+    }
+
+    // 5. Category-Role Mapping Verification
     let roleQuery = {};
     if (category === "owner") {
       roleQuery = { role: "owner" };
@@ -308,64 +202,39 @@ const login = async (req, res) => {
     } else if (category === "customer") {
       roleQuery = { role: "customer" };
     } else {
+      await recordFailureAttempt(normalizedEmail, emailFailKey);
       return res.status(401).json({
         success: false,
-        message: "Incorrect email or password",
+        message: "Incorrect email or password"
       });
     }
 
-    // 3. Find user in MongoDB by email and mapped role
     const user = await User.findOne({ email: normalizedEmail, ...roleQuery }).populate("company");
-
-    let isMatch = false;
-    if (user) {
-      isMatch = await bcrypt.compare(password, user.password);
-    } else {
-      // Dummy compare to avoid timing analysis attacks
-      await bcrypt.compare(password, "$2b$10$abcdefghijklmnopqrstuvwx");
-    }
-
-    if (!user || !isMatch) {
-      // Record failure attempt
-      await LoginAttempt.create({ email: normalizedEmail });
-      
-      const newFailuresCount = await LoginAttempt.countDocuments({ email: normalizedEmail });
-      if (newFailuresCount >= 5) {
-        if (firebaseUser) {
-          await admin.auth().updateUser(firebaseUser.uid, { disabled: true });
-        }
-        return res.status(423).json({
-          success: false,
-          message: "Too many failed attempts. Try again in 15 minutes.",
-        });
-      }
-
+    if (!user) {
+      await recordFailureAttempt(normalizedEmail, emailFailKey);
       return res.status(401).json({
         success: false,
-        message: "Incorrect email or password",
+        message: "Incorrect email or password"
       });
     }
 
-    // Success: Reset failed attempts counter
+    // Successful login: Reset tracking schemas
     await LoginAttempt.deleteMany({ email: normalizedEmail });
+    await RateLimit.deleteOne({ key: emailFailKey });
 
-    // Generate custom session JWT token
     const token = generateToken(user._id, user.role);
-
-    const userResponse = user.toObject();
-    delete userResponse.password;
 
     return res.status(200).json({
       success: true,
       message: "Login successful",
       token,
-      user: userResponse,
+      user
     });
   } catch (error) {
-    console.error(error);
+    console.error("[Login Error]", error);
     return res.status(500).json({
       success: false,
-      message: "Server Error",
+      message: "Incorrect email or password"
     });
   }
 };
@@ -374,39 +243,26 @@ const login = async (req, res) => {
 const reportFailure = async (req, res) => {
   try {
     const { email } = req.body;
-    if (!email) {
-      return res.status(400).json({ success: false, message: "Email is required" });
-    }
-
     const normalizedEmail = email.toLowerCase().trim();
-    await LoginAttempt.create({ email: normalizedEmail });
+    const emailFailKey = `email_fail:${normalizedEmail}`;
 
-    const failuresCount = await LoginAttempt.countDocuments({ email: normalizedEmail });
-    if (failuresCount >= 5) {
-      try {
-        const firebaseUser = await admin.auth().getUserByEmail(normalizedEmail);
-        await admin.auth().updateUser(firebaseUser.uid, { disabled: true });
-      } catch (fbErr) {
-        // Safe to ignore if user does not exist in Firebase
-      }
-      return res.status(423).json({
-        success: false,
-        message: "Too many failed attempts. Try again in 15 minutes.",
-      });
-    }
+    await recordFailureAttempt(normalizedEmail, emailFailKey);
 
-    return res.status(200).json({ success: true, count: failuresCount });
+    return res.status(200).json({
+      success: true,
+      message: "Incorrect email or password"
+    });
   } catch (error) {
-    console.error(error);
-    return res.status(500).json({ success: false, message: "Server Error" });
+    console.error("[Report Failure Error]", error);
+    return res.status(200).json({
+      success: true,
+      message: "Incorrect email or password"
+    });
   }
 };
 
 module.exports = {
   ownerSignup,
-  ownerLogin,
-  managerLogin,
-  workerLogin,
   login,
   reportFailure,
 };

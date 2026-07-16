@@ -25,7 +25,26 @@ const app = express();
 const compression = require("compression");
 
 app.use(compression({ threshold: 1024 }));
-app.use(cors());
+
+// Restrict CORS to VendorOS production and local dev domains only — no wildcard
+const allowedOrigins = [
+  "https://vendoros-b2c1d.web.app",
+  "https://vendoros-b2c1d.firebaseapp.com",
+  "https://vendoros.vercel.app",
+  "http://localhost:5173",
+  "http://localhost:3000",
+];
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true,
+}));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan("dev"));

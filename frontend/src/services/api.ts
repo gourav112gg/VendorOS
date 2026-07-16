@@ -48,56 +48,26 @@ const getToken = (): string | null => localStorage.getItem('vendoros_token');
 const saveToken = (token: string) => localStorage.setItem('vendoros_token', token);
 const clearToken = () => localStorage.removeItem('vendoros_token');
 
-// ─── Auth API ─────────────────────────────────────────────────────────────────
-
 const auth = {
-  /** Register a new company Owner */
+  /** Register a new company Owner — sends Firebase ID token to backend */
   ownerSignup: (payload: {
+    idToken: string;
     name: string;
     email: string;
     phone: string;
-    password: string;
     companyName: string;
   }) => request('POST', '/api/auth/owner/signup', payload),
 
-  /** Owner login — returns JWT token */
-  ownerLogin: async (payload: { email: string; password: string }) => {
-    const data = await request<{ token: string }>('POST', '/api/auth/owner/login', payload);
-    if (data.token) saveToken(data.token);
-    return data;
-  },
-
-  /** Manager login */
-  managerLogin: async (payload: { email: string; password: string }) => {
-    const data = await request<{ token: string }>('POST', '/api/auth/manager/login', payload);
-    if (data.token) saveToken(data.token);
-    return data;
-  },
-
-  /** Worker login */
-  workerLogin: async (payload: { email: string; password: string }) => {
-    const data = await request<{ token: string }>('POST', '/api/auth/worker/login', payload);
-    if (data.token) saveToken(data.token);
-    return data;
-  },
-
-  /** Customer signup */
+  /** Register a new Customer — sends Firebase ID token to backend */
   customerSignup: (payload: {
+    idToken: string;
     name: string;
     email: string;
-    phone: string;
-    password: string;
+    phone?: string;
   }) => request('POST', '/api/auth/customer/signup', payload),
 
-  /** Customer login */
-  customerLogin: async (payload: { email: string; password: string }) => {
-    const data = await request<{ token: string }>('POST', '/api/auth/customer/login', payload);
-    if (data.token) saveToken(data.token);
-    return data;
-  },
-
-  /** Unified login endpoint */
-  login: async (payload: { email: string; password: string; category: string }) => {
+  /** Unified login endpoint — sends Firebase ID token + category to backend */
+  login: async (payload: { idToken: string; email: string; category: string }) => {
     const data = await request<{ token: string; user: any }>('POST', '/api/auth/login', payload);
     if (data.token) saveToken(data.token);
     return data;

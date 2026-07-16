@@ -1,22 +1,34 @@
-const bcrypt = require("bcryptjs");
+const admin = require("../config/firebaseAdmin");
 const User = require("../models/User");
 const generateToken = require("../utils/generateToken");
 
 // ================= CUSTOMER SIGNUP =================
 const customerSignup = async (req, res) => {
   try {
-    const { name, email, phone, password } = req.body;
+    const { idToken, name, email, phone } = req.body;
+    const normalizedEmail = email.toLowerCase().trim();
 
-    if (!name || !email || !phone || !password) {
+    // Verify Firebase ID Token
+    let decodedToken;
+    try {
+      decodedToken = await admin.auth().verifyIdToken(idToken);
+    } catch (verifyError) {
       return res.status(400).json({
         success: false,
-        message: "All fields are required",
+        message: "Something went wrong, please try again or contact support"
+      });
+    }
+
+    if (decodedToken.email.toLowerCase() !== normalizedEmail) {
+      return res.status(400).json({
+        success: false,
+        message: "Something went wrong, please try again or contact support"
       });
     }
 
     const existingUser = await User.findOne({
       $or: [
-        { email, isCustomer: true },
+        { email: normalizedEmail, isCustomer: true },
         { phone, isCustomer: true }
       ]
     });
@@ -24,87 +36,31 @@ const customerSignup = async (req, res) => {
     if (existingUser) {
       return res.status(400).json({
         success: false,
-        message: "Customer profile already exists with this email or phone",
+        message: "Something went wrong, please try again or contact support",
       });
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
-
     const customer = await User.create({
       name,
-      email,
+      email: normalizedEmail,
       phone,
-      password: hashedPassword,
       role: "customer",
       isCustomer: true,
     });
 
     const token = generateToken(customer._id, customer.role);
 
-    const customerResponse = customer.toObject();
-    delete customerResponse.password;
-
     return res.status(201).json({
       success: true,
       message: "Customer registered successfully",
       token,
-      customer: customerResponse,
+      customer,
     });
   } catch (error) {
     console.error(error);
     return res.status(500).json({
       success: false,
-      message: "Server Error",
-    });
-  }
-};
-
-// ================= CUSTOMER LOGIN =================
-const customerLogin = async (req, res) => {
-  try {
-    const { email, password } = req.body;
-
-    if (!email || !password) {
-      return res.status(400).json({
-        success: false,
-        message: "Email and password are required",
-      });
-    }
-
-    const customer = await User.findOne({ email, role: "customer" });
-
-    if (!customer) {
-      return res.status(404).json({
-        success: false,
-        message: "Customer not found",
-      });
-    }
-
-    const isMatch = await bcrypt.compare(password, customer.password);
-
-    if (!isMatch) {
-      return res.status(401).json({
-        success: false,
-        message: "Invalid email or password",
-      });
-    }
-
-    const token = generateToken(customer._id, customer.role);
-
-    const customerResponse = customer.toObject();
-    delete customerResponse.password;
-
-    return res.status(200).json({
-      success: true,
-      message: "Login successful",
-      token,
-      customer: customerResponse,
-    });
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({
-      success: false,
-      message: "Server Error",
+      message: "Something went wrong, please try again or contact support",
     });
   }
 };
@@ -158,7 +114,6 @@ const getCustomerProfile = async (req, res) => {
 
 module.exports = {
   customerSignup,
-  customerLogin,
   getCustomerOrders,
   getCustomerProfile,
 };

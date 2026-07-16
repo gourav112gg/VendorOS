@@ -58,8 +58,8 @@ function computeFallbackRiskScore(order: any) {
  * Server-side subscription gating — blocks Free/inactive subs.
  */
 app.post('/api/copilot/risk', async (req, res) => {
+  const { order, subscription } = req.body;
   try {
-    const { order, subscription } = req.body;
 
     if (!order) {
       return res.status(400).json({ error: 'Order details are required.' });
