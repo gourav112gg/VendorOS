@@ -151,7 +151,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       });
     }
 
-    const demoEmails = ["alice@apex.com", "bob@apex.com", "charlie@apex.com", "dave@gmail.com"];
+    const demoEmails = [
+      "alice@apex.com", "bob@apex.com", "charlie@apex.com", "dave@gmail.com",
+      "kaushal@gmail.com", "rahul@gmail.com", "amit@gmail.com"
+    ];
     const isDemoBypass = demoEmails.includes(email.toLowerCase().trim()) && password === "password123";
 
     if (isDemoBypass) {

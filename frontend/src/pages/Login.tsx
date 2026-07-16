@@ -325,25 +325,25 @@ export const Login: React.FC<LoginProps> = ({ onNavigateToSignUp, onNavigateToPu
             <div className="flex flex-wrap gap-2">
               {roleType === 'owner' && (
                 <button
-                  onClick={() => handlePrepopulate('alice@apex.com')}
+                  onClick={() => handlePrepopulate('kaushal@gmail.com')}
                   className="text-[10px] bg-[#0A0A0A] hover:bg-[#1A1A1A] text-[#888888] hover:text-white px-2.5 py-1.5 rounded-sm border border-[#222222] hover:border-[#444444] transition-all font-mono font-semibold"
                 >
-                  Alice (Owner)
+                  Kaushal (Owner)
                 </button>
               )}
               {roleType === 'vendor' && (
                 <>
                   <button
-                    onClick={() => handlePrepopulate('bob@apex.com')}
+                    onClick={() => handlePrepopulate('rahul@gmail.com')}
                     className="text-[10px] bg-[#0A0A0A] hover:bg-[#1A1A1A] text-[#888888] hover:text-white px-2.5 py-1.5 rounded-sm border border-[#222222] hover:border-[#444444] transition-all font-mono font-semibold"
                   >
-                    Bob (Manager)
+                    Rahul (Manager)
                   </button>
                   <button
-                    onClick={() => handlePrepopulate('charlie@apex.com')}
+                    onClick={() => handlePrepopulate('amit@gmail.com')}
                     className="text-[10px] bg-[#0A0A0A] hover:bg-[#1A1A1A] text-[#888888] hover:text-white px-2.5 py-1.5 rounded-sm border border-[#222222] hover:border-[#444444] transition-all font-mono font-semibold"
                   >
-                    Charlie (Worker)
+                    Amit (Worker)
                   </button>
                 </>
               )}

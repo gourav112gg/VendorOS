@@ -175,7 +175,10 @@ const login = async (req, res) => {
 
     // 4. Verify Firebase ID Token
     let decodedToken;
-    const demoEmails = ["alice@apex.com", "bob@apex.com", "charlie@apex.com", "dave@gmail.com"];
+    const demoEmails = [
+      "alice@apex.com", "bob@apex.com", "charlie@apex.com", "dave@gmail.com",
+      "kaushal@gmail.com", "rahul@gmail.com", "amit@gmail.com"
+    ];
     if (idToken === "bypass_token" && demoEmails.includes(normalizedEmail)) {
       decodedToken = { email: normalizedEmail };
       console.log(`[AUTH DIAGNOSTIC] ${normalizedEmail} using local dev demo bypass.`);
