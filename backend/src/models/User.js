@@ -10,14 +10,13 @@ const userSchema = new mongoose.Schema(
 
     email: {
       type: String,
-      unique: true,
-      sparse: true,
+      trim: true,
+      lowercase: true,
     },
 
     phone: {
       type: String,
-      required: true,
-      unique: true,
+      trim: true,
     },
 
     password: {
@@ -29,6 +28,11 @@ const userSchema = new mongoose.Schema(
       type: String,
       enum: ["owner", "manager", "worker", "customer"],
       required: true,
+    },
+
+    isCustomer: {
+      type: Boolean,
+      default: false,
     },
 
     company: {
@@ -53,5 +57,9 @@ const userSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
+
+// Compound uniqueness: allow one operator and one customer per email/phone
+userSchema.index({ email: 1, isCustomer: 1 }, { unique: true, sparse: true });
+userSchema.index({ phone: 1, isCustomer: 1 }, { unique: true, sparse: true });
 
 module.exports = mongoose.model("User", userSchema);
