@@ -39,6 +39,9 @@ app.use(cors({
     if (
       !origin || 
       allowedOrigins.includes(origin) || 
+      origin.endsWith(".vercel.app") ||
+      origin.endsWith(".firebaseapp.com") ||
+      origin.endsWith(".web.app") ||
       /^http:\/\/localhost(:\d+)?$/.test(origin) || 
       /^http:\/\/127\.0\.0\.1(:\d+)?$/.test(origin)
     ) {
