@@ -38,9 +38,10 @@ interface AuthContextType {
   login: (email: string, password?: string, category?: string) => Promise<UserProfile>;
   loginWithGoogle: () => Promise<UserProfile>;
   logout: () => void;
-  registerOwner: (name: string, email: string, companyName: string) => Promise<{ user: UserProfile; company: Company }>;
-  registerManagerOrWorker: (name: string, email: string, companyId: string, role: 'Manager' | 'Worker') => Promise<UserProfile>;
-  registerCustomer: (name: string, email: string, phone?: string) => Promise<UserProfile>;
+  registerOwner: (name: string, email: string, companyName: string, phone?: string, password?: string) => Promise<{ user: UserProfile; company: Company }>;
+  registerManagerOrWorker: (name: string, email: string, companyId: string, role: 'Manager' | 'Worker', phone?: string) => Promise<UserProfile>;
+  registerCustomer: (name: string, email: string, phone?: string, password?: string) => Promise<UserProfile>;
+  sendPasswordReset: (email: string) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -371,6 +372,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     });
   };
 
+  const sendPasswordReset = async (email: string): Promise<void> => {
+    const { sendPasswordResetEmail } = await import('firebase/auth');
+    const { auth: firebaseAuth } = await import('../services/firebase');
+
+    try {
+      await sendPasswordResetEmail(firebaseAuth, email);
+    } catch (fbErr: any) {
+      console.error("[Firebase Password Reset Error]", fbErr);
+      throw new Error('Something went wrong, please try again or contact support');
+    }
+  };
+
   return (
     <AuthContext.Provider value={{
       user,
@@ -384,7 +397,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       logout,
       registerOwner,
       registerManagerOrWorker,
-      registerCustomer
+      registerCustomer,
+      sendPasswordReset
     }}>
       {children}
     </AuthContext.Provider>

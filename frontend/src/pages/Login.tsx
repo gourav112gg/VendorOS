@@ -28,7 +28,7 @@ const sanitizeErrorMessage = (message: string): string => {
 };
 
 export const Login: React.FC<LoginProps> = ({ onNavigateToSignUp, onNavigateToPublic }) => {
-  const { login, loginWithGoogle } = useAuth();
+  const { login, loginWithGoogle, sendPasswordReset } = useAuth();
   
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -36,6 +36,8 @@ export const Login: React.FC<LoginProps> = ({ onNavigateToSignUp, onNavigateToPu
   
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
+  const [isForgotPasswordMode, setIsForgotPasswordMode] = useState(false);
 
   const handleGoogleSignIn = async () => {
     setError('');
@@ -59,6 +61,25 @@ export const Login: React.FC<LoginProps> = ({ onNavigateToSignUp, onNavigateToPu
       await login(email, password, roleType);
     } catch (err: any) {
       setError(sanitizeErrorMessage(err.message || 'Login failed.'));
+      setLoading(false);
+    }
+  };
+
+  const handleForgotPasswordSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email.trim()) return;
+
+    setError('');
+    setSuccessMessage('');
+    setLoading(true);
+
+    try {
+      await sendPasswordReset(email);
+      setSuccessMessage('If this email is registered, a password reset link has been sent to it. Please check your inbox.');
+      setLoading(false);
+    } catch (err: any) {
+      // Security: return identical success message to prevent account discovery
+      setSuccessMessage('If this email is registered, a password reset link has been sent to it. Please check your inbox.');
       setLoading(false);
     }
   };
@@ -91,113 +112,193 @@ export const Login: React.FC<LoginProps> = ({ onNavigateToSignUp, onNavigateToPu
           transition={{ duration: 0.3 }}
           className="bg-[#111111] py-8 px-4 border border-[#222222] rounded-sm sm:px-10"
         >
-          {/* Tabs Selector */}
-          <div className="flex bg-[#0A0A0A] p-1 border border-[#222222] rounded-sm mb-6 gap-1">
-            <button
-              type="button"
-              onClick={() => { setRoleType('owner'); setError(''); }}
-              className={`flex-1 py-2 text-[9px] font-bold rounded-sm uppercase tracking-wider transition-all ${
-                roleType === 'owner'
-                  ? 'bg-white text-black font-extrabold'
-                  : 'text-[#666666] hover:text-white'
-              }`}
-            >
-              Start a Company
-            </button>
-            <button
-              type="button"
-              onClick={() => { setRoleType('vendor'); setError(''); }}
-              className={`flex-1 py-2 text-[9px] font-bold rounded-sm uppercase tracking-wider transition-all ${
-                roleType === 'vendor'
-                  ? 'bg-white text-black font-extrabold'
-                  : 'text-[#666666] hover:text-white'
-              }`}
-            >
-              Join a Vendor
-            </button>
-            <button
-              type="button"
-              onClick={() => { setRoleType('customer'); setError(''); }}
-              className={`flex-1 py-2 text-[9px] font-bold rounded-sm uppercase tracking-wider transition-all ${
-                roleType === 'customer'
-                  ? 'bg-white text-black font-extrabold'
-                  : 'text-[#666666] hover:text-white'
-              }`}
-            >
-              Client / Customer
-            </button>
-          </div>
-
-          <form onSubmit={handleSubmit} className="space-y-5">
-            {error && (
-              <div className="p-3 bg-red-950/20 border border-red-900/50 rounded-sm text-xs font-semibold text-red-400 flex items-center font-mono">
-                <Shield className="w-4 h-4 mr-2 flex-shrink-0" />
-                <span>{error}</span>
-              </div>
-            )}
-
-            <div>
-              <label htmlFor="email" className="block text-[10px] font-mono font-medium text-[#666666] uppercase tracking-widest mb-1.5">
-                Email Address
-              </label>
-              <div className="relative rounded-sm shadow-xs">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-[#444444]">
-                  <Mail className="w-4 h-4" />
+          {isForgotPasswordMode ? (
+            <form onSubmit={handleForgotPasswordSubmit} className="space-y-5">
+              {successMessage && (
+                <div className="p-3 bg-emerald-950/20 border border-emerald-900/50 rounded-sm text-xs font-semibold text-emerald-400 flex items-center font-mono">
+                  <Info className="w-4 h-4 mr-2 flex-shrink-0" />
+                  <span>{successMessage}</span>
                 </div>
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="name@company.com"
-                  className="w-full pl-10 pr-4 py-2.5 rounded-sm border border-[#222222] bg-[#0D0D0D] text-white focus:outline-none focus:ring-1 focus:ring-white focus:border-white text-xs font-mono placeholder-[#333333]"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label htmlFor="password" className="block text-[10px] font-mono font-medium text-[#666666] uppercase tracking-widest mb-1.5">
-                Password
-              </label>
-              <div className="relative rounded-sm shadow-xs">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-[#444444]">
-                  <Key className="w-4 h-4" />
-                </div>
-                <input
-                  id="password"
-                  name="password"
-                  type="password"
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
-                  className="w-full pl-10 pr-4 py-2.5 rounded-sm border border-[#222222] bg-[#0D0D0D] text-white focus:outline-none focus:ring-1 focus:ring-white focus:border-white text-xs font-mono placeholder-[#333333]"
-                />
-              </div>
-            </div>
-
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full flex justify-center items-center py-3 px-4 bg-white hover:bg-[#E5E5E5] text-black text-[11px] font-bold uppercase tracking-widest rounded-sm transition-all duration-150 disabled:opacity-50 cursor-pointer"
-            >
-              {loading ? (
-                <span className="font-mono text-[10px] tracking-widest uppercase">Authenticating Claims...</span>
-              ) : (
-                <>
-                  <span className="tracking-widest">Sign In</span>
-                  <ChevronRight className="w-3.5 h-3.5 ml-1" />
-                </>
               )}
-            </button>
+              {error && (
+                <div className="p-3 bg-red-950/20 border border-red-900/50 rounded-sm text-xs font-semibold text-red-400 flex items-center font-mono">
+                  <Shield className="w-4 h-4 mr-2 flex-shrink-0" />
+                  <span>{error}</span>
+                </div>
+              )}
 
-            <div className="relative flex py-2 items-center">
-              <div className="flex-grow border-t border-[#222222]"></div>
-              <span className="flex-shrink mx-4 text-[9px] font-mono text-[#444444] uppercase tracking-widest">OR</span>
-              <div className="flex-grow border-t border-[#222222]"></div>
-            </div>
+              <div>
+                <label htmlFor="reset-email" className="block text-[10px] font-mono font-medium text-[#666666] uppercase tracking-widest mb-1.5">
+                  Email Address
+                </label>
+                <div className="relative rounded-sm shadow-xs">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-[#444444]">
+                    <Mail className="w-4 h-4" />
+                  </div>
+                  <input
+                    id="reset-email"
+                    name="email"
+                    type="email"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="name@company.com"
+                    className="w-full pl-10 pr-4 py-2.5 rounded-sm border border-[#222222] bg-[#0D0D0D] text-white focus:outline-none focus:ring-1 focus:ring-white focus:border-white text-xs font-mono placeholder-[#333333]"
+                  />
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full flex justify-center items-center py-3 px-4 bg-white hover:bg-[#E5E5E5] text-black text-[11px] font-bold uppercase tracking-widest rounded-sm transition-all duration-150 disabled:opacity-50 cursor-pointer"
+              >
+                {loading ? (
+                  <span className="font-mono text-[10px] tracking-widest uppercase">Requesting Reset...</span>
+                ) : (
+                  <>
+                    <span className="tracking-widest">Send Reset Link</span>
+                    <ChevronRight className="w-3.5 h-3.5 ml-1" />
+                  </>
+                )}
+              </button>
+
+              <div className="text-center mt-4">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsForgotPasswordMode(false);
+                    setError('');
+                    setSuccessMessage('');
+                  }}
+                  className="font-bold uppercase tracking-wider text-[10px] text-[#888888] hover:text-white underline focus:outline-none cursor-pointer"
+                >
+                  Back to Sign In
+                </button>
+              </div>
+            </form>
+          ) : (
+            <>
+              {/* Tabs Selector */}
+              <div className="flex bg-[#0A0A0A] p-1 border border-[#222222] rounded-sm mb-6 gap-1">
+                <button
+                  type="button"
+                  onClick={() => { setRoleType('owner'); setError(''); }}
+                  className={`flex-1 py-2 text-[9px] font-bold rounded-sm uppercase tracking-wider transition-all ${
+                    roleType === 'owner'
+                      ? 'bg-white text-black font-extrabold'
+                      : 'text-[#666666] hover:text-white'
+                  }`}
+                >
+                  Start a Company
+                </button>
+                <button
+                  type="button"
+                  onClick={() => { setRoleType('vendor'); setError(''); }}
+                  className={`flex-1 py-2 text-[9px] font-bold rounded-sm uppercase tracking-wider transition-all ${
+                    roleType === 'vendor'
+                      ? 'bg-white text-black font-extrabold'
+                      : 'text-[#666666] hover:text-white'
+                  }`}
+                >
+                  Join a Vendor
+                </button>
+                <button
+                  type="button"
+                  onClick={() => { setRoleType('customer'); setError(''); }}
+                  className={`flex-1 py-2 text-[9px] font-bold rounded-sm uppercase tracking-wider transition-all ${
+                    roleType === 'customer'
+                      ? 'bg-white text-black font-extrabold'
+                      : 'text-[#666666] hover:text-white'
+                  }`}
+                >
+                  Client / Customer
+                </button>
+              </div>
+
+              <form onSubmit={handleSubmit} className="space-y-5">
+                {error && (
+                  <div className="p-3 bg-red-950/20 border border-red-900/50 rounded-sm text-xs font-semibold text-red-400 flex items-center font-mono">
+                    <Shield className="w-4 h-4 mr-2 flex-shrink-0" />
+                    <span>{error}</span>
+                  </div>
+                )}
+
+                <div>
+                  <label htmlFor="email" className="block text-[10px] font-mono font-medium text-[#666666] uppercase tracking-widest mb-1.5">
+                    Email Address
+                  </label>
+                  <div className="relative rounded-sm shadow-xs">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-[#444444]">
+                      <Mail className="w-4 h-4" />
+                    </div>
+                    <input
+                      id="email"
+                      name="email"
+                      type="email"
+                      required
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="name@company.com"
+                      className="w-full pl-10 pr-4 py-2.5 rounded-sm border border-[#222222] bg-[#0D0D0D] text-white focus:outline-none focus:ring-1 focus:ring-white focus:border-white text-xs font-mono placeholder-[#333333]"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <div className="flex justify-between items-center mb-1.5">
+                    <label htmlFor="password" className="block text-[10px] font-mono font-medium text-[#666666] uppercase tracking-widest">
+                      Password
+                    </label>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsForgotPasswordMode(true);
+                        setError('');
+                        setSuccessMessage('');
+                      }}
+                      className="text-[9px] font-mono text-[#666666] hover:text-white uppercase tracking-wider transition-all underline"
+                    >
+                      Forgot?
+                    </button>
+                  </div>
+                  <div className="relative rounded-sm shadow-xs">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-[#444444]">
+                      <Key className="w-4 h-4" />
+                    </div>
+                    <input
+                      id="password"
+                      name="password"
+                      type="password"
+                      required
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="••••••••"
+                      className="w-full pl-10 pr-4 py-2.5 rounded-sm border border-[#222222] bg-[#0D0D0D] text-white focus:outline-none focus:ring-1 focus:ring-white focus:border-white text-xs font-mono placeholder-[#333333]"
+                    />
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full flex justify-center items-center py-3 px-4 bg-white hover:bg-[#E5E5E5] text-black text-[11px] font-bold uppercase tracking-widest rounded-sm transition-all duration-150 disabled:opacity-50 cursor-pointer"
+                >
+                  {loading ? (
+                    <span className="font-mono text-[10px] tracking-widest uppercase">Authenticating Claims...</span>
+                  ) : (
+                    <>
+                      <span className="tracking-widest">Sign In</span>
+                      <ChevronRight className="w-3.5 h-3.5 ml-1" />
+                    </>
+                  )}
+                </button>
+
+                <div className="relative flex py-2 items-center">
+                  <div className="flex-grow border-t border-[#222222]"></div>
+                  <span className="flex-shrink mx-4 text-[9px] font-mono text-[#444444] uppercase tracking-widest">OR</span>
+                  <div className="flex-grow border-t border-[#222222]"></div>
+                </div>
 
             <button
               type="button"
@@ -274,7 +375,9 @@ export const Login: React.FC<LoginProps> = ({ onNavigateToSignUp, onNavigateToPu
               </button>
             </div>
           </div>
-        </motion.div>
+        </>
+      )}
+    </motion.div>
       </div>
     </div>
   );
