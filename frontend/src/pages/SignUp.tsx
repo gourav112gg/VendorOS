@@ -12,7 +12,7 @@ interface SignUpProps {
 }
 
 export const SignUp: React.FC<SignUpProps> = ({ onNavigateToLogin }) => {
-  const { registerOwner, registerManagerOrWorker, registerCustomer } = useAuth();
+  const { registerOwner, registerManagerOrWorker, registerCustomer, loginWithGoogle } = useAuth();
 
   // Mode state: 'owner' | 'employee' | 'customer'
   const [signUpMode, setSignUpMode] = useState<'owner' | 'employee' | 'customer'>('owner');
@@ -24,6 +24,17 @@ export const SignUp: React.FC<SignUpProps> = ({ onNavigateToLogin }) => {
   const [phone, setPhone] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+
+  const handleGoogleSignUp = async () => {
+    setError('');
+    setLoading(true);
+    try {
+      await loginWithGoogle();
+    } catch (err: any) {
+      setError(err.message || 'Google Sign-Up failed.');
+      setLoading(false);
+    }
+  };
 
   // Owner specific state
   const [companyName, setCompanyName] = useState('');
@@ -373,6 +384,27 @@ export const SignUp: React.FC<SignUpProps> = ({ onNavigateToLogin }) => {
                   <ChevronRight className="w-3.5 h-3.5 ml-1" />
                 </>
               )}
+            </button>
+
+            <div className="relative flex py-2 items-center">
+              <div className="flex-grow border-t border-[#222222]"></div>
+              <span className="flex-shrink mx-4 text-[9px] font-mono text-[#444444] uppercase tracking-widest">OR</span>
+              <div className="flex-grow border-t border-[#222222]"></div>
+            </div>
+
+            <button
+              type="button"
+              onClick={handleGoogleSignUp}
+              disabled={loading}
+              className="w-full flex justify-center items-center py-3 px-4 bg-[#111111] hover:bg-[#1A1A1A] text-white text-[11px] font-bold uppercase tracking-widest rounded-sm border border-[#222222] hover:border-[#444444] transition-all duration-150 disabled:opacity-50 cursor-pointer"
+            >
+              <svg className="w-3.5 h-3.5 mr-2" viewBox="0 0 24 24" width="24" height="24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M21.35,11.1H12v2.7h5.38c-0.24,1.28 -0.96,2.37 -2.04,3.1v2.58h3.3c1.93,-1.78 3.04,-4.4 3.04,-7.38c0,-0.34 -0.03,-0.68 -0.09,-1H21.35z" fill="#4285F4" />
+                <path d="M12,20.6c2.32,0 4.27,-0.77 5.7,-2.09l-3.3,-2.58c-0.91,0.61 -2.08,0.97 -3.3,0.97c-2.54,0 -4.7,-1.72 -5.47,-4.04H2.17v2.66c1.5,2.98 4.6,4.92 8.16,4.92z" fill="#34A853" />
+                <path d="M6.53,12.92C6.46,12.5 6.42,12.06 6.42,11.6c0,-0.46 0.04,-0.9 0.11,-1.32V7.62H2.17c-0.45,0.9 -0.71,1.91 -0.71,2.98c0,1.07 0.26,2.08 0.71,2.98L6.53,12.92z" fill="#FBBC05" />
+                <path d="M12,5.2c1.26,0 2.39,0.44 3.28,1.29l2.46,-2.46c-1.48,-1.38 -3.43,-2.23 -5.74,-2.23c-3.56,0 -6.66,1.94 -8.16,4.92L6.53,9.38C7.3,7.06 9.46,5.2 12,5.2z" fill="#EA4335" />
+              </svg>
+              <span className="tracking-widest">Sign Up with Google</span>
             </button>
           </form>
 

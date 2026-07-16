@@ -35,6 +35,7 @@ interface AuthContextType {
   updatePreference: <K extends keyof UserPreferences>(key: K, value: UserPreferences[K]) => void;
   updateProfile: (name: string, phone?: string) => Promise<void>;
   login: (email: string) => Promise<UserProfile>;
+  loginWithGoogle: () => Promise<UserProfile>;
   logout: () => void;
   registerOwner: (name: string, email: string, companyName: string) => Promise<{ user: UserProfile; company: Company }>;
   registerManagerOrWorker: (name: string, email: string, companyId: string, role: 'Manager' | 'Worker') => Promise<UserProfile>;
@@ -148,6 +149,41 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     });
   };
 
+  const loginWithGoogle = async (): Promise<UserProfile> => {
+    const { GoogleAuthProvider, signInWithPopup } = await import('firebase/auth');
+    const { auth: firebaseAuth } = await import('../services/firebase');
+    
+    const provider = new GoogleAuthProvider();
+    const result = await signInWithPopup(firebaseAuth, provider);
+    const email = result.user.email;
+    if (!email) {
+      throw new Error('Google Sign-In did not return an email address.');
+    }
+
+    const allUsers = dbStore.getUsers();
+    let loggedUser = allUsers.find(u => u.email.toLowerCase() === email.toLowerCase());
+
+    if (!loggedUser) {
+      // Auto-register as Customer
+      const displayName = result.user.displayName || 'Google User';
+      const phone = result.user.phoneNumber || undefined;
+      loggedUser = dbStore.registerCustomer(displayName, email, phone);
+    }
+
+    setUser(loggedUser);
+    localStorage.setItem('vendoros_current_user_id', loggedUser.id);
+    if (loggedUser.companyId) {
+      const comps = dbStore.getCompanies();
+      const foundComp = comps.find(c => c.id === loggedUser.companyId);
+      setCompany(foundComp || null);
+    } else {
+      setCompany(null);
+    }
+    
+    return loggedUser;
+  };
+
+
   const logout = () => {
     if (user) {
       dbStore.logout(user.id);
@@ -243,6 +279,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       updatePreference,
       updateProfile,
       login,
+      loginWithGoogle,
       logout,
       registerOwner,
       registerManagerOrWorker,
