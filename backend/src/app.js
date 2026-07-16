@@ -22,11 +22,19 @@ const { getTrustScore } = require("./controllers/trust.controller");
 const { analyzeRisk } = require("./services/risk.service");
 
 const app = express();
+const compression = require("compression");
 
+app.use(compression({ threshold: 1024 }));
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan("dev"));
+
+// Default Cache-Control to prevent caching of sensitive dashboard data
+app.use((req, res, next) => {
+  res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
+  next();
+});
 
 // --- Core Routes ---
 app.use("/api/auth", authRoutes);

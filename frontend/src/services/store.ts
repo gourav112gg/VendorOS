@@ -1231,6 +1231,15 @@ class SimulatedStore {
     return newRecord;
   }
 
+  public updateInvoiceStatus(invoiceId: string, status: 'Paid' | 'Unpaid'): void {
+    if (!this.state.gstInvoices) return;
+    const invoice = this.state.gstInvoices.find(i => i.id === invoiceId);
+    if (invoice) {
+      invoice.status = status;
+      this.save();
+    }
+  }
+
   public syncUserSession(user: UserProfile, company?: Company | null): void {
     // 1. Sync User Profile
     const existingUserIndex = this.state.users.findIndex(u => u.id === user.id || u.email.toLowerCase() === user.email.toLowerCase());

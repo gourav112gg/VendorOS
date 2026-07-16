@@ -111,10 +111,8 @@ const auth = {
   logout: () => clearToken(),
 };
 
-// ─── Orders API ───────────────────────────────────────────────────────────────
-
 const orders = {
-  getAll: () => request('GET', '/api/orders', undefined, getToken() || undefined),
+  getAll: (page: number = 1, limit: number = 10) => request('GET', `/api/orders?page=${page}&limit=${limit}`, undefined, getToken() || undefined),
 
   getById: (id: string) =>
     request('GET', `/api/orders/${id}`, undefined, getToken() || undefined),

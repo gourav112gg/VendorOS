@@ -117,23 +117,8 @@ export const InvoicesTab: React.FC<InvoicesTabProps> = ({
 
   const handleMarkAsPaid = () => {
     if (!selectedInvoice) return;
-    
-    // We update invoice status in dbStore state directly
-    const storedState = localStorage.getItem('vendoros_simulated_db');
-    if (storedState) {
-      try {
-        const parsed = JSON.parse(storedState);
-        const idx = parsed.gstInvoices.findIndex((i: any) => i.id === selectedInvoice.id);
-        if (idx !== -1) {
-          parsed.gstInvoices[idx].status = 'Paid';
-          localStorage.setItem('vendoros_simulated_db', JSON.stringify(parsed));
-          dbStore.subscribe(() => {})(); // force notify listeners
-          setSelectedInvoice({ ...selectedInvoice, status: 'Paid' });
-        }
-      } catch (e) {
-        console.error(e);
-      }
-    }
+    dbStore.updateInvoiceStatus(selectedInvoice.id, 'Paid');
+    setSelectedInvoice({ ...selectedInvoice, status: 'Paid' });
   };
 
   return (

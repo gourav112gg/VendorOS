@@ -26,12 +26,17 @@ const createOrder = async (req, res) => {
 
     let totalAmount = 0;
 
-    // Validate Products
+    // Validate Products (Batch query using $in to avoid N+1 queries)
+    const productIds = products.map(item => item.product);
+    const dbProducts = await Inventory.find({
+      _id: { $in: productIds },
+      company: req.user.company,
+    });
+
+    const productMap = new Map(dbProducts.map(p => [p._id.toString(), p]));
+
     for (const item of products) {
-      const product = await Inventory.findOne({
-        _id: item.product,
-        company: req.user.company,
-      });
+      const product = productMap.get(item.product.toString());
 
       if (!product) {
         return res.status(404).json({
@@ -81,17 +86,28 @@ const createOrder = async (req, res) => {
 // ================= GET ALL ORDERS =================
 const getOrders = async (req, res) => {
   try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    const total = await Order.countDocuments({ company: req.user.company });
+
     const orders = await Order.find({
       company: req.user.company,
     })
       .populate("products.product")
       .populate("assignedManager", "name email")
       .populate("assignedWorker", "name email")
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
 
     return res.status(200).json({
       success: true,
       count: orders.length,
+      total,
+      page,
+      pages: Math.ceil(total / limit),
       orders,
     });
 

@@ -99,18 +99,45 @@ export const WorkerDashboard: React.FC = () => {
   };
 
   // Stage & Checklist custom helpers
-  const handleToggleChecklistItem = (orderId: string, stageId: string, itemId: string, completed: boolean) => {
+  const handleToggleChecklistItem = async (orderId: string, stageId: string, itemId: string, completed: boolean) => {
     if (!selectedOrder) return;
     const stage = selectedOrder.stages?.find(s => s.id === stageId);
     if (!stage) return;
 
+    // 1. Keep track of original state for rollback
+    const originalChecklist = [...stage.checklist];
+
+    // 2. Perform optimistic update locally
     const updatedChecklist = stage.checklist.map(item => 
       item.id === itemId ? { ...item, completed } : item
     );
 
+    // Update frontend state instantly
     dbStore.updateOrderStageDetails(orderId, stageId, {
       checklist: updatedChecklist
     });
+
+    try {
+      // 3. Simulate a network request (with 5% simulated network failure chance)
+      await new Promise((resolve, reject) => {
+        setTimeout(() => {
+          if (Math.random() < 0.05) {
+            reject(new Error("Network connection timeout. Failed to sync checklist."));
+          } else {
+            resolve(true);
+          }
+        }, 500);
+      });
+    } catch (err: any) {
+      // 4. Rollback and show warning toast
+      dbStore.updateOrderStageDetails(orderId, stageId, {
+        checklist: originalChecklist
+      });
+      
+      // Flash an optimistic rollback notification
+      setError("Failed to sync changes with server. Checklist status has been rolled back.");
+      setTimeout(() => setError(""), 4000);
+    }
   };
 
   const handleUpdateSubstageStatus = (orderId: string, stageId: string, status: 'Pending' | 'In Progress' | 'Completed') => {
