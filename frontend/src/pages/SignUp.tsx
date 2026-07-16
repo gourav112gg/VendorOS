@@ -111,7 +111,7 @@ export const SignUp: React.FC<SignUpProps> = ({ onNavigateToLogin }) => {
   };
 
   const filteredCompanies = allCompanies.filter(c => 
-    c.name.toLowerCase().includes(companySearchQuery.toLowerCase())
+    (c.name || '').toLowerCase().includes(companySearchQuery.toLowerCase())
   );
 
   return (

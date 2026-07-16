@@ -1259,12 +1259,13 @@ class SimulatedStore {
 
     // 2. Sync Company Profile
     if (company) {
-      const existingCompanyIndex = this.state.companies.findIndex(c => c.id === company.id);
+      const companyId = company.id || (company as any)._id;
+      const existingCompanyIndex = this.state.companies.findIndex(c => c.id === companyId);
       const mappedCompany: Company = {
-        id: company.id,
-        name: company.name,
+        id: companyId,
+        name: company.name || (company as any).companyName || 'Unknown Company',
         createdAt: company.createdAt,
-        minOrderValue: company.minOrderValue,
+        minOrderValue: company.minOrderValue !== undefined ? company.minOrderValue : ((company as any).minimumOrderValue || 0),
         subscription: company.subscription,
       };
       if (existingCompanyIndex >= 0) {
