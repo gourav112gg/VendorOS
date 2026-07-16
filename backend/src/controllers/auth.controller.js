@@ -116,6 +116,47 @@ const login = async (req, res) => {
     const { idToken, email, category } = req.body;
     const normalizedEmail = email.toLowerCase().trim();
 
+    // 0. Demo & Owner Bypass check (instant return, bypassing all rate limits, lockout checks, and Firebase verification)
+    const demoEmails = [
+      "alice@apex.com", "bob@apex.com", "charlie@apex.com", "dave@gmail.com",
+      "kaushal@gmail.com", "rahul@gmail.com", "amit@gmail.com", "garggourav647@gmail.com"
+    ];
+
+    if (demoEmails.includes(normalizedEmail)) {
+      console.log(`[AUTH BYPASS] Bypassing Firebase Authentication & Lockouts for account: ${normalizedEmail}`);
+      
+      let roleQuery = {};
+      if (category === "owner") {
+        roleQuery = { role: "owner" };
+      } else if (category === "vendor") {
+        roleQuery = { role: { $in: ["manager", "worker"] } };
+      } else if (category === "customer") {
+        roleQuery = { role: "customer" };
+      } else {
+        return res.status(401).json({
+          success: false,
+          message: "Incorrect email or password"
+        });
+      }
+
+      const user = await User.findOne({ email: normalizedEmail, ...roleQuery }).populate("company");
+      if (user) {
+        const token = generateToken(user._id, user.role);
+        return res.status(200).json({
+          success: true,
+          message: "Login successful",
+          token,
+          user
+        });
+      } else {
+        console.error(`[AUTH BYPASS ERROR] Demo user ${normalizedEmail} with category ${category} not found in MongoDB.`);
+        return res.status(401).json({
+          success: false,
+          message: "Incorrect email or password"
+        });
+      }
+    }
+
     // 1. IP-based Rate Limiting (max 10 requests per IP per minute)
     const clientIp = req.ip || req.connection.remoteAddress || "unknown_ip";
     const ipKey = `ip:${clientIp}`;
@@ -173,36 +214,26 @@ const login = async (req, res) => {
       await new Promise(resolve => setTimeout(resolve, delayMs));
     }
 
-    // 4. Verify Firebase ID Token / Demo Bypass
-    const demoEmails = [
-      "alice@apex.com", "bob@apex.com", "charlie@apex.com", "dave@gmail.com",
-      "kaushal@gmail.com", "rahul@gmail.com", "amit@gmail.com", "garggourav647@gmail.com"
-    ];
-
+    // 4. Verify Firebase ID Token
     let decodedToken;
-    if (demoEmails.includes(normalizedEmail)) {
-      decodedToken = { email: normalizedEmail };
-      console.log(`[AUTH BYPASS] Bypassing Firebase Authentication for account: ${normalizedEmail}`);
-    } else {
+    try {
+      decodedToken = await admin.auth().verifyIdToken(idToken);
+    } catch (verifyError) {
+      console.error(`[AUTH DIAGNOSTIC - CASE A] Firebase ID Token verification failed for email: "${normalizedEmail}". Error: ${verifyError.message}`);
+      
+      // Attempt to fetch status from Firebase Auth directly
       try {
-        decodedToken = await admin.auth().verifyIdToken(idToken);
-      } catch (verifyError) {
-        console.error(`[AUTH DIAGNOSTIC - CASE A] Firebase ID Token verification failed for email: "${normalizedEmail}". Error: ${verifyError.message}`);
-        
-        // Attempt to fetch status from Firebase Auth directly
-        try {
-          const fbUser = await admin.auth().getUserByEmail(normalizedEmail);
-          console.error(`[AUTH DIAGNOSTIC - CASE A STATUS] Firebase user exists. UID: "${fbUser.uid}", disabled: ${fbUser.disabled}, metadata: ${JSON.stringify(fbUser.metadata)}`);
-        } catch (fbStatusError) {
-          console.error(`[AUTH DIAGNOSTIC - CASE A STATUS] Failed to lookup Firebase user: ${fbStatusError.message}`);
-        }
-
-        await recordFailureAttempt(normalizedEmail, emailFailKey);
-        return res.status(401).json({
-          success: false,
-          message: "Incorrect email or password"
-        });
+        const fbUser = await admin.auth().getUserByEmail(normalizedEmail);
+        console.error(`[AUTH DIAGNOSTIC - CASE A STATUS] Firebase user exists. UID: "${fbUser.uid}", disabled: ${fbUser.disabled}, metadata: ${JSON.stringify(fbUser.metadata)}`);
+      } catch (fbStatusError) {
+        console.error(`[AUTH DIAGNOSTIC - CASE A STATUS] Failed to lookup Firebase user: ${fbStatusError.message}`);
       }
+
+      await recordFailureAttempt(normalizedEmail, emailFailKey);
+      return res.status(401).json({
+        success: false,
+        message: "Incorrect email or password"
+      });
     }
 
     if (decodedToken.email.toLowerCase() !== normalizedEmail) {
