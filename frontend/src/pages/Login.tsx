@@ -8,6 +8,25 @@ interface LoginProps {
   onNavigateToPublic?: () => void;
 }
 
+const sanitizeErrorMessage = (message: string): string => {
+  if (!message) return 'An unexpected error occurred.';
+  
+  // Replace absolute Windows/Unix paths and files
+  let clean = message
+    .replace(/[a-zA-Z]:\\[\\\w\-\.\s]+/g, '[System Path]')
+    .replace(/\/[\w\-\.\/]+\.(ts|tsx|js|jsx|json)/g, '[File]');
+  
+  // Handle specific Firebase domain/auth errors
+  if (clean.includes('auth/unauthorized-domain')) {
+    return 'This domain is not authorized to run Google Sign-In. Please add this domain to the Firebase Console Authorized Domains list.';
+  }
+  if (clean.includes('auth/popup-closed-by-user')) {
+    return 'Sign-In popup closed before completing the authentication.';
+  }
+  
+  return clean;
+};
+
 export const Login: React.FC<LoginProps> = ({ onNavigateToSignUp, onNavigateToPublic }) => {
   const { login, loginWithGoogle } = useAuth();
   
@@ -24,7 +43,7 @@ export const Login: React.FC<LoginProps> = ({ onNavigateToSignUp, onNavigateToPu
     try {
       await loginWithGoogle();
     } catch (err: any) {
-      setError(err.message || 'Google Sign-In failed.');
+      setError(sanitizeErrorMessage(err.message || 'Google Sign-In failed.'));
       setLoading(false);
     }
   };
@@ -39,7 +58,7 @@ export const Login: React.FC<LoginProps> = ({ onNavigateToSignUp, onNavigateToPu
     try {
       await login(email);
     } catch (err: any) {
-      setError(err.message || 'Login failed.');
+      setError(sanitizeErrorMessage(err.message || 'Login failed.'));
       setLoading(false);
     }
   };
