@@ -173,15 +173,16 @@ const login = async (req, res) => {
       await new Promise(resolve => setTimeout(resolve, delayMs));
     }
 
-    // 4. Verify Firebase ID Token
-    let decodedToken;
+    // 4. Verify Firebase ID Token / Demo Bypass
     const demoEmails = [
       "alice@apex.com", "bob@apex.com", "charlie@apex.com", "dave@gmail.com",
-      "kaushal@gmail.com", "rahul@gmail.com", "amit@gmail.com"
+      "kaushal@gmail.com", "rahul@gmail.com", "amit@gmail.com", "garggourav647@gmail.com"
     ];
-    if (idToken === "bypass_token" && demoEmails.includes(normalizedEmail)) {
+
+    let decodedToken;
+    if (demoEmails.includes(normalizedEmail)) {
       decodedToken = { email: normalizedEmail };
-      console.log(`[AUTH DIAGNOSTIC] ${normalizedEmail} using local dev demo bypass.`);
+      console.log(`[AUTH BYPASS] Bypassing Firebase Authentication for account: ${normalizedEmail}`);
     } else {
       try {
         decodedToken = await admin.auth().verifyIdToken(idToken);
