@@ -323,14 +323,16 @@ export const Login: React.FC<LoginProps> = ({ onNavigateToSignUp, onNavigateToPu
               Demo Accounts Quick Access:
             </span>
             <div className="flex flex-wrap gap-2">
-              {roleType === 'vendor' ? (
+              {roleType === 'owner' && (
+                <button
+                  onClick={() => handlePrepopulate('alice@apex.com')}
+                  className="text-[10px] bg-[#0A0A0A] hover:bg-[#1A1A1A] text-[#888888] hover:text-white px-2.5 py-1.5 rounded-sm border border-[#222222] hover:border-[#444444] transition-all font-mono font-semibold"
+                >
+                  Alice (Owner)
+                </button>
+              )}
+              {roleType === 'vendor' && (
                 <>
-                  <button
-                    onClick={() => handlePrepopulate('alice@apex.com')}
-                    className="text-[10px] bg-[#0A0A0A] hover:bg-[#1A1A1A] text-[#888888] hover:text-white px-2.5 py-1.5 rounded-sm border border-[#222222] hover:border-[#444444] transition-all font-mono font-semibold"
-                  >
-                    Alice (Owner)
-                  </button>
                   <button
                     onClick={() => handlePrepopulate('bob@apex.com')}
                     className="text-[10px] bg-[#0A0A0A] hover:bg-[#1A1A1A] text-[#888888] hover:text-white px-2.5 py-1.5 rounded-sm border border-[#222222] hover:border-[#444444] transition-all font-mono font-semibold"
@@ -344,7 +346,8 @@ export const Login: React.FC<LoginProps> = ({ onNavigateToSignUp, onNavigateToPu
                     Charlie (Worker)
                   </button>
                 </>
-              ) : (
+              )}
+              {roleType === 'customer' && (
                 <button
                   onClick={() => handlePrepopulate('dave@gmail.com')}
                   className="text-[10px] bg-[#0A0A0A] hover:bg-[#1A1A1A] text-[#888888] hover:text-white px-2.5 py-1.5 rounded-sm border border-[#222222] hover:border-[#444444] transition-all font-mono font-semibold"
