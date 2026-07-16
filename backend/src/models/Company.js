@@ -44,10 +44,31 @@ const companySchema = new mongoose.Schema(
       type: Number,
       default: 100,
     },
+
+    subscription: {
+      tier: {
+        type: String,
+        enum: ["free", "growth", "scale"],
+        default: "free",
+      },
+      status: {
+        type: String,
+        enum: ["active", "past_due", "canceled"],
+        default: "active",
+      },
+      currentPeriodEnd: {
+        type: Date,
+        default: () => new Date(Date.now() + 1000 * 3600 * 24 * 30), // 30 days from now
+      },
+      razorpaySubscriptionId: {
+        type: String,
+        default: "",
+      },
+    },
   },
   {
     timestamps: true,
   }
 );
 
-module.exports = mongoose.model("Company", companySchema);
+module.exports = mongoose.model("Company", companySchema);

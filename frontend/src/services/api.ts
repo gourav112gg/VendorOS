@@ -236,7 +236,7 @@ const domains = {
 const dashboard = {
   /** Owner dashboard stats */
   getOwnerStats: () =>
-    request('GET', '/api/dashboard', undefined, getToken() || undefined),
+    request('GET', '/api/dashboard/owner', undefined, getToken() || undefined),
 
   /** Manager dashboard stats */
   getManagerStats: () =>
