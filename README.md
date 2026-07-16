@@ -111,6 +111,12 @@ vendoros/
 | `POST` | `/api/generate-theme` | None | Natural language → UI color palette |
 | `POST` | `/api/razorpay/webhook` | None | Simulated Razorpay webhook |
 
+### Directory Architecture & Flows
+
+Detailed architectural specifications, folder maps, and functional flows are available here:
+- 💻 **Frontend Details**: [`files/frontend.md`](files/frontend.md)
+- ⚙️ **Backend Details**: [`files/backend.md`](files/backend.md)
+
 ### Backend REST API Routes (`backend/src/` — port 5000)
 
 See [`backend/README.md`](backend/README.md) for the full API reference. Key route groups:

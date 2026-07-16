@@ -101,6 +101,20 @@ npm start        # starts with node (no hot reload)
 
 ---
 
+## Security & Testing Access Controls
+
+To protect production instances while maintaining testability, the login API enforces several access policies:
+- **IP-Based Rate Limiting**: Limit of 10 login requests per client IP per minute.
+- **Progressive Authentication Delays**: Sequential failures trigger an exponential wait delay ($2^{\text{attempts}-1}$ seconds) to slow brute force attacks.
+- **Lockout Mechanism**: Accumulating 5 failed login attempts locks the user out in MongoDB for 15 minutes.
+- **Demo Account Bypasses**: The pre-seeded demo accounts bypass all lockouts, progressive delays, and Firebase verification.
+  - Owners: `kaushal@gmail.com`, `alice@apex.com`
+  - Managers: `bob@apex.com`, `rahul@gmail.com`
+  - Workers: `amit@gmail.com`, `charlie@apex.com`
+  - Customers: `dave@gmail.com`
+
+---
+
 ## API Reference
 
 All authenticated routes require a `Authorization: Bearer <token>` header.  
