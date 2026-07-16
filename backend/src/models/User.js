@@ -25,11 +25,11 @@ const userSchema = new mongoose.Schema(
       required: true,
     },
 
-    role: {
-      type: String,
-      enum: ["owner", "manager", "worker", "customer"],
-      required: true,
-    },
+   role: {
+  type: String,
+  enum: ["owner", "manager", "worker", "customer"],
+  default: "customer",
+},
 
     company: {
       type: mongoose.Schema.Types.ObjectId,

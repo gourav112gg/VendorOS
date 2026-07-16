@@ -239,9 +239,65 @@ const workerLogin = async (req, res) => {
   }
 };
 
+// ================= CUSTOMER LOGIN =================
+const customerLogin = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: "Email and password are required",
+      });
+    }
+
+    const customer = await User.findOne({
+      email,
+      role: "customer",
+    }).populate("company");
+
+    if (!customer) {
+      return res.status(404).json({
+        success: false,
+        message: "Customer not found",
+      });
+    }
+
+    const isMatch = await bcrypt.compare(password, customer.password);
+
+    if (!isMatch) {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid email or password",
+      });
+    }
+
+    const token = generateToken(customer._id, customer.role);
+
+    const customerResponse = customer.toObject();
+    delete customerResponse.password;
+
+    return res.status(200).json({
+      success: true,
+      message: "Customer login successful",
+      token,
+      customer: customerResponse,
+    });
+
+  } catch (error) {
+    console.error(error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Server Error",
+    });
+  }
+};
+
 module.exports = {
   ownerSignup,
   ownerLogin,
   managerLogin,
   workerLogin,
+  customerLogin,
 };

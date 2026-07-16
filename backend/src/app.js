@@ -13,6 +13,9 @@ const workerDashboardRoutes = require("./routes/workerDashboard.routes");
 const reportRoutes = require("./routes/report.routes");
 const notificationRoutes = require("./routes/notification.routes");
 const analyticsRoutes = require("./routes/analytics.routes");
+const customerRoutes = require("./routes/customer.routes");
+const customerDashboardRoutes = require("./routes/customerDashboard.routes");
+const customerOrderRoutes = require("./routes/customerOrder.routes");
 const app = express();
 
 app.use(cors());
@@ -33,6 +36,9 @@ app.use("/api/manager-dashboard", managerDashboardRoutes);
 app.use("/api/reports", reportRoutes);
 app.use("/api/notifications", notificationRoutes);
 app.use("/api/analytics", analyticsRoutes);
+app.use("/api/customer", customerRoutes);
+app.use("/api/customer/dashboard", customerDashboardRoutes);
+app.use("/api/customer/orders", customerOrderRoutes);
 app.get("/", (req, res) => {
   res.json({
     message: "VendorOS Backend Running",
