@@ -10,8 +10,14 @@ const sanitizeString = (val) => {
     .trim();
 };
 
-// Zod schemas with custom preprocessors to automatically sanitize strings
-const emailSchema = z.preprocess(sanitizeString, z.string().email().max(100));
+// Zod schemas with custom preprocessors to automatically sanitize and normalize strings
+const emailSchema = z.preprocess(
+  (val) => {
+    const sanitized = sanitizeString(val);
+    return typeof sanitized === "string" ? sanitized.toLowerCase().trim() : sanitized;
+  },
+  z.string().email().max(100)
+);
 const passwordSchema = z.preprocess(sanitizeString, z.string().min(6).max(50));
 const nameSchema = z.preprocess(sanitizeString, z.string().min(2).max(50));
 const phoneSchema = z.preprocess(sanitizeString, z.string().max(20).optional().or(z.literal("")));

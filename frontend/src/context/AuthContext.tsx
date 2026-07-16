@@ -186,6 +186,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         dbStore.syncUserSession(loggedUser, res.user.company);
         return loggedUser;
       } catch (backendErr: any) {
+        console.error("[Login Demo Bypass Backend Error]", backendErr);
         throw new Error('Incorrect email or password');
       }
     }
@@ -233,12 +234,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
         return loggedUser;
       } catch (backendErr: any) {
+        console.error("[Login Backend Error]", backendErr);
         // Sign out Firebase if category validation fails (zero leakage)
         await signOut(firebaseAuth);
         await api.auth.reportFailure({ email });
         throw new Error('Incorrect email or password');
       }
     } catch (fbErr: any) {
+      console.error("[Login Firebase Auth Error]", fbErr);
       if (fbErr.code && fbErr.message !== 'Incorrect email or password') {
         // Firebase auth failure — report and use generic message
         try { await api.auth.reportFailure({ email }); } catch (_) {}

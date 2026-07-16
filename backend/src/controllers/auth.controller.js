@@ -178,10 +178,21 @@ const login = async (req, res) => {
     const demoEmails = ["alice@apex.com", "bob@apex.com", "charlie@apex.com", "dave@gmail.com"];
     if (idToken === "bypass_token" && demoEmails.includes(normalizedEmail)) {
       decodedToken = { email: normalizedEmail };
+      console.log(`[AUTH DIAGNOSTIC] ${normalizedEmail} using local dev demo bypass.`);
     } else {
       try {
         decodedToken = await admin.auth().verifyIdToken(idToken);
       } catch (verifyError) {
+        console.error(`[AUTH DIAGNOSTIC - CASE A] Firebase ID Token verification failed for email: "${normalizedEmail}". Error: ${verifyError.message}`);
+        
+        // Attempt to fetch status from Firebase Auth directly
+        try {
+          const fbUser = await admin.auth().getUserByEmail(normalizedEmail);
+          console.error(`[AUTH DIAGNOSTIC - CASE A STATUS] Firebase user exists. UID: "${fbUser.uid}", disabled: ${fbUser.disabled}, metadata: ${JSON.stringify(fbUser.metadata)}`);
+        } catch (fbStatusError) {
+          console.error(`[AUTH DIAGNOSTIC - CASE A STATUS] Failed to lookup Firebase user: ${fbStatusError.message}`);
+        }
+
         await recordFailureAttempt(normalizedEmail, emailFailKey);
         return res.status(401).json({
           success: false,
@@ -191,6 +202,7 @@ const login = async (req, res) => {
     }
 
     if (decodedToken.email.toLowerCase() !== normalizedEmail) {
+      console.error(`[AUTH DIAGNOSTIC - MISMATCH] Decoded token email "${decodedToken.email.toLowerCase()}" does not match requested email "${normalizedEmail}"`);
       await recordFailureAttempt(normalizedEmail, emailFailKey);
       return res.status(401).json({
         success: false,
@@ -207,6 +219,18 @@ const login = async (req, res) => {
     } else if (category === "customer") {
       roleQuery = { role: "customer" };
     } else {
+      console.error(`[AUTH DIAGNOSTIC - INVALID CATEGORY] Invalid category requested: "${category}"`);
+      await recordFailureAttempt(normalizedEmail, emailFailKey);
+      return res.status(401).json({
+        success: false,
+        message: "Incorrect email or password"
+      });
+    }
+
+    // Find the user first without role query to diagnose role mismatch vs user missing
+    const userWithoutRoleQuery = await User.findOne({ email: normalizedEmail }).populate("company");
+    if (!userWithoutRoleQuery) {
+      console.error(`[AUTH DIAGNOSTIC - CASE B] Firebase authenticated successfully, but email "${normalizedEmail}" was not found in MongoDB.`);
       await recordFailureAttempt(normalizedEmail, emailFailKey);
       return res.status(401).json({
         success: false,
@@ -216,11 +240,16 @@ const login = async (req, res) => {
 
     const user = await User.findOne({ email: normalizedEmail, ...roleQuery }).populate("company");
     if (!user) {
+      console.error(`[AUTH DIAGNOSTIC - CASE C] MongoDB user found, but role/category mismatch. Email: "${normalizedEmail}". Requested Category: "${category}". MongoDB User Role: "${userWithoutRoleQuery.role}" (casing: "${userWithoutRoleQuery.role}").`);
       await recordFailureAttempt(normalizedEmail, emailFailKey);
       return res.status(401).json({
         success: false,
         message: "Incorrect email or password"
       });
+    }
+
+    if (user.role !== "customer" && !user.company) {
+      console.error(`[AUTH DIAGNOSTIC - CASE D] MongoDB user "${normalizedEmail}" found and matches role, but lacks a linked Company reference.`);
     }
 
     // Successful login: Reset tracking schemas
