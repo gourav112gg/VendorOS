@@ -102,14 +102,31 @@ vendoros/
 └── tsconfig.json
 ```
 
-### Backend API Routes
+### Frontend Dev Server Routes (`server.ts` / `api/index.ts`)
 
-| Method | Endpoint | Auth / Gate | Description |
-|--------|----------|-------------|-------------|
-| `GET` | `/api/health` | None | Server health check |
-| `POST` | `/api/copilot/risk` | Growth/Scale active subscription | Gemini AI risk analysis for service orders |
-| `POST` | `/api/generate-theme` | None | Natural language → UI color palette via Gemini |
-| `POST` | `/api/razorpay/webhook` | None | Simulated Razorpay subscription webhook processor |
+| Method | Endpoint | Auth | Description |
+|--------|----------|------|-------------|
+| `GET` | `/api/health` | None | Health check |
+| `POST` | `/api/copilot/risk` | Growth/Scale subscription | Gemini AI risk analysis |
+| `POST` | `/api/generate-theme` | None | Natural language → UI color palette |
+| `POST` | `/api/razorpay/webhook` | None | Simulated Razorpay webhook |
+
+### Backend REST API Routes (`backend/src/` — port 5000)
+
+See [`backend/README.md`](backend/README.md) for the full API reference. Key route groups:
+
+| Prefix | Roles | Description |
+|--------|-------|-------------|
+| `POST /api/auth/...` | None | Signup + login for all 4 roles |
+| `{any} /api/orders/...` | owner, manager, worker | Order lifecycle management |
+| `{any} /api/inventory/...` | owner, manager | Stock management |
+| `{any} /api/managers/...` | owner | Manager team management |
+| `{any} /api/workers/...` | owner, manager | Worker management |
+| `{any} /api/domains/...` | owner, manager | Service domain management |
+| `GET /api/customers/my-orders` | customer | Customer order history |
+| `GET /api/dashboard` | owner | KPI stats |
+| `GET /api/trust-score` | owner | Company trust score |
+| `POST /api/risk/analyze` | owner, manager | Order risk scoring (TRD §5) |
 
 ---
 

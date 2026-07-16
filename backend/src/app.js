@@ -7,8 +7,17 @@ const userRoutes = require("./routes/user.routes");
 const managerRoutes = require("./routes/manager.routes");
 const workerRoutes = require("./routes/worker.routes");
 const inventoryRoutes = require("./routes/inventory.routes");
-const orderRoutes = require("./routes/order.routes");const dashboardRoutes = require("./routes/dashboard.routes");
+const orderRoutes = require("./routes/order.routes");
+const dashboardRoutes = require("./routes/dashboard.routes");
 const managerDashboardRoutes = require("./routes/managerDashboard.routes");
+const customerRoutes = require("./routes/customer.routes");
+const domainRoutes = require("./routes/domain.routes");
+
+// Trust score controller (lightweight — no dedicated route file needed)
+const protect = require("./middleware/auth.middleware");
+const authorize = require("./middleware/role.middleware");
+const { getTrustScore } = require("./controllers/trust.controller");
+const { analyzeRisk } = require("./services/risk.service");
 
 const app = express();
 
@@ -17,6 +26,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan("dev"));
 
+// --- Core Routes ---
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/owner", ownerRoutes);
@@ -26,10 +36,32 @@ app.use("/api/orders", orderRoutes);
 app.use("/api/inventory", inventoryRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/manager-dashboard", managerDashboardRoutes);
+app.use("/api/customers", customerRoutes);
+app.use("/api/domains", domainRoutes);
+
+// --- Trust Score (owner only) ---
+app.get(
+  "/api/trust-score",
+  protect,
+  authorize("owner"),
+  getTrustScore
+);
+
+// --- Risk Engine (owner + manager) ---
+app.post(
+  "/api/risk/analyze",
+  protect,
+  authorize("owner", "manager"),
+  analyzeRisk
+);
+
+// --- Health Check ---
 app.get("/", (req, res) => {
   res.json({
     message: "VendorOS Backend Running",
+    version: "1.0.0",
+    status: "ok",
   });
 });
 
-module.exports = app;
+module.exports = app;

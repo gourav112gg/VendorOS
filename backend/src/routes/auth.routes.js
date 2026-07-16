@@ -8,8 +8,16 @@ const {
   workerLogin,
 } = require("../controllers/auth.controller");
 
+const {
+  customerSignup,
+  customerLogin,
+} = require("../controllers/customer.controller");
+
 router.post("/owner/signup", ownerSignup);
 router.post("/owner/login", ownerLogin);
 router.post("/manager/login", managerLogin);
 router.post("/worker/login", workerLogin);
-module.exports = router;
+router.post("/customer/signup", customerSignup);
+router.post("/customer/login", customerLogin);
+
+module.exports = router;
