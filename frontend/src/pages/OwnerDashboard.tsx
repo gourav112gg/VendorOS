@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import dbStore from '../services/store';
 import { Domain, UserProfile, ServiceOrder } from '../types';
+import api from '../services/api';
 import { 
   Building, Users, Layers, Activity, Plus, Edit2, Trash2, X, Check, AlertTriangle, 
-  UserMinus, Info, CheckCircle, Clock, MapPin, DollarSign, Calendar, Settings, Bot, FileText, BarChart2, ShieldAlert
+  UserMinus, Info, CheckCircle, Clock, MapPin, DollarSign, Calendar, Settings, Bot, FileText, BarChart2, ShieldAlert, ArrowUp
 } from 'lucide-react';
 import { motion } from 'motion/react';
 import { SettingsPanel } from '../components/SettingsPanel';
@@ -159,6 +160,21 @@ export const OwnerDashboard: React.FC = () => {
     setRemovingMember(null);
     setTypedConfirmationName('');
     setRemoveError('');
+  };
+
+  const handlePromoteWorker = async (worker: UserProfile) => {
+    if (!confirm(`Are you sure you want to promote ${worker.name} to Manager?`)) return;
+    try {
+      const res = await api.users.promote(worker.id);
+      if (res.success) {
+        setTeamMembers(prev => prev.map(m => m.id === worker.id ? { ...m, role: 'Manager' } : m));
+        dbStore.updateUserRoleAndCompany(worker.id, 'Manager');
+        alert(`${worker.name} has been promoted to Manager successfully.`);
+      }
+    } catch (err: any) {
+      console.error(err);
+      alert(err.message || "Failed to promote worker.");
+    }
   };
 
   // --- Orders Dispatch Actions ---
@@ -717,13 +733,22 @@ export const OwnerDashboard: React.FC = () => {
                         <span className="font-semibold text-white block text-sm">{member.name}</span>
                         <span className="text-xs font-mono text-[#666666] block">{member.email}</span>
                       </div>
-                      <button
-                        onClick={() => handleRemoveMemberClick(member)}
-                        className="flex items-center space-x-1 px-3 py-1.5 rounded-sm border border-red-950/40 text-red-400 hover:text-white hover:bg-red-950/20 text-xs font-semibold uppercase tracking-widest transition-all cursor-pointer"
-                      >
-                        <UserMinus className="w-3.5 h-3.5" />
-                        <span>Remove</span>
-                      </button>
+                      <div className="flex items-center space-x-2">
+                        <button
+                          onClick={() => handlePromoteWorker(member)}
+                          className="flex items-center space-x-1 px-3 py-1.5 rounded-sm border border-emerald-950/40 text-emerald-400 hover:text-white hover:bg-emerald-950/20 text-xs font-semibold uppercase tracking-widest transition-all cursor-pointer"
+                        >
+                          <ArrowUp className="w-3.5 h-3.5" />
+                          <span>Promote</span>
+                        </button>
+                        <button
+                          onClick={() => handleRemoveMemberClick(member)}
+                          className="flex items-center space-x-1 px-3 py-1.5 rounded-sm border border-red-950/40 text-red-400 hover:text-white hover:bg-red-950/20 text-xs font-semibold uppercase tracking-widest transition-all cursor-pointer"
+                        >
+                          <UserMinus className="w-3.5 h-3.5" />
+                          <span>Remove</span>
+                        </button>
+                      </div>
                     </li>
                   ))}
                 </ul>

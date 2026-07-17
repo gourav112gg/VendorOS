@@ -54,11 +54,13 @@ const ownerSignup = async (req, res) => {
       });
     }
 
+    const queryConditions = [{ email: normalizedEmail, isCustomer: false }];
+    if (phone && phone.trim()) {
+      queryConditions.push({ phone: phone.trim(), isCustomer: false });
+    }
+
     const existingUser = await User.findOne({
-      $or: [
-        { email: normalizedEmail, isCustomer: false },
-        { phone, isCustomer: false }
-      ]
+      $or: queryConditions
     });
 
     if (existingUser) {
@@ -79,7 +81,7 @@ const ownerSignup = async (req, res) => {
     const owner = await User.create({
       name,
       email: normalizedEmail,
-      phone,
+      phone: phone && phone.trim() ? phone.trim() : undefined,
       role: "owner",
       isCustomer: false,
     });
@@ -392,11 +394,13 @@ const vendorSignup = async (req, res) => {
       });
     }
 
+    const queryConditions = [{ email: normalizedEmail, isCustomer: false }];
+    if (phone && phone.trim()) {
+      queryConditions.push({ phone: phone.trim(), isCustomer: false });
+    }
+
     const existingUser = await User.findOne({
-      $or: [
-        { email: normalizedEmail, isCustomer: false },
-        { phone, isCustomer: false }
-      ]
+      $or: queryConditions
     });
 
     if (existingUser) {
@@ -417,7 +421,7 @@ const vendorSignup = async (req, res) => {
     const vendor = await User.create({
       name,
       email: normalizedEmail,
-      phone,
+      phone: phone && phone.trim() ? phone.trim() : undefined,
       role: normalizedRole,
       isCustomer: false,
       company: companyId

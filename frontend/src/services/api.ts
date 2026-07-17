@@ -254,8 +254,10 @@ const risk = {
 
 const users = {
   getProfile: () => request<{ success: boolean; user: any }>('GET', '/api/users/profile', undefined, getToken() || undefined),
-  updateProfile: (payload: { name: string; phone?: string }) =>
+  updateProfile: (payload: { name: string; phone?: string; role?: string; companyId?: string }) =>
     request<{ success: boolean; user: any }>('PUT', '/api/users/profile', payload, getToken() || undefined),
+  promote: (workerId: string) =>
+    request<{ success: boolean; user: any }>('PATCH', '/api/users/promote', { workerId }, getToken() || undefined),
 };
 
 const companies = {

@@ -10,7 +10,8 @@ import {
 import { motion, AnimatePresence } from 'motion/react';
 import dbStore from '../services/store';
 import { TIER_PRICING } from '../services/subscriptionService';
-import { Subscription } from '../types';
+import { Subscription, Company } from '../types';
+import api from '../services/api';
 
 interface SettingsPanelProps {
   initialTab?: 'profile' | 'preferences' | 'subscription';
@@ -34,6 +35,40 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ initialTab = 'prof
   const [phone, setPhone] = useState(user?.phone || '');
   const [isSavingProfile, setIsSavingProfile] = useState(false);
   const [profileSuccess, setProfileSuccess] = useState(false);
+
+  // Professional Role & Company select states (for Manager, Worker, and Customer upgrades)
+  const [selectedRole, setSelectedRole] = useState(user?.role || 'Worker');
+  const [selectedCompanyId, setSelectedCompanyId] = useState(user?.companyId || '');
+  const [availableCompanies, setAvailableCompanies] = useState<Company[]>([]);
+
+  useEffect(() => {
+    const fetchCompanies = async () => {
+      try {
+        const res = await api.companies.getAll();
+        if (res && res.companies) {
+          const mapped = res.companies.map((c: any) => ({
+            id: c._id,
+            name: c.companyName,
+            createdAt: c.createdAt,
+            minOrderValue: c.minimumOrderValue,
+            subscription: c.subscription
+          }));
+          setAvailableCompanies(mapped);
+        }
+      } catch (err) {
+        console.error("Failed to load companies:", err);
+      }
+    };
+    fetchCompanies();
+  }, []);
+
+  // Update selected states if user object changes
+  useEffect(() => {
+    if (user) {
+      setSelectedRole(user.role);
+      setSelectedCompanyId(user.companyId || '');
+    }
+  }, [user]);
 
   // Company settings state (for Owner role only)
   const [companyDescription, setCompanyDescription] = useState(company?.description || '');
@@ -147,7 +182,13 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ initialTab = 'prof
     setIsSavingProfile(true);
     setProfileSuccess(false);
     try {
-      await updateProfile(name, phone);
+      const isOwner = user?.role?.toLowerCase() === 'owner';
+      await updateProfile(
+        name,
+        phone,
+        isOwner ? undefined : selectedRole.toLowerCase(),
+        isOwner ? undefined : selectedCompanyId
+      );
       setProfileSuccess(true);
       setTimeout(() => setProfileSuccess(false), 3000);
     } catch (err) {
@@ -426,6 +467,43 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ initialTab = 'prof
                   />
                 </div>
               </div>
+
+              {user?.role?.toLowerCase() !== 'owner' && (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-1.5">
+                    <label htmlFor="profile-role" className="text-[10px] font-mono font-bold text-[#666666] uppercase tracking-widest">
+                      Professional Role
+                    </label>
+                    <select
+                      id="profile-role"
+                      value={selectedRole}
+                      onChange={(e) => setSelectedRole(e.target.value)}
+                      className="w-full bg-black text-xs text-white px-3 py-2.5 rounded-sm border border-[#222222] focus:outline-none focus:border-[#444444] transition-colors font-mono"
+                    >
+                      <option value="Worker">Worker (Technician)</option>
+                      <option value="Manager">Manager (Coordinator)</option>
+                      <option value="Customer">Customer (No Company)</option>
+                    </select>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label htmlFor="profile-company" className="text-[10px] font-mono font-bold text-[#666666] uppercase tracking-widest">
+                      Company Association
+                    </label>
+                    <select
+                      id="profile-company"
+                      value={selectedCompanyId}
+                      onChange={(e) => setSelectedCompanyId(e.target.value)}
+                      className="w-full bg-black text-xs text-white px-3 py-2.5 rounded-sm border border-[#222222] focus:outline-none focus:border-[#444444] transition-colors font-mono"
+                    >
+                      <option value="">-- No Company Associated --</option>
+                      {availableCompanies.map(c => (
+                        <option key={c.id} value={c.id}>{c.name}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+              )}
 
               <div className="pt-2">
                 <button

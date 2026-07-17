@@ -26,11 +26,13 @@ const customerSignup = async (req, res) => {
       });
     }
 
+    const queryConditions = [{ email: normalizedEmail, isCustomer: true }];
+    if (phone && phone.trim()) {
+      queryConditions.push({ phone: phone.trim(), isCustomer: true });
+    }
+
     const existingUser = await User.findOne({
-      $or: [
-        { email: normalizedEmail, isCustomer: true },
-        { phone, isCustomer: true }
-      ]
+      $or: queryConditions
     });
 
     if (existingUser) {
@@ -43,7 +45,7 @@ const customerSignup = async (req, res) => {
     const customer = await User.create({
       name,
       email: normalizedEmail,
-      phone,
+      phone: phone && phone.trim() ? phone.trim() : undefined,
       role: "customer",
       isCustomer: true,
     });

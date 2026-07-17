@@ -779,6 +779,19 @@ class SimulatedStore {
     }
   }
 
+  public updateUserRoleAndCompany(userId: string, role?: 'Owner' | 'Manager' | 'Worker' | 'Customer', companyId?: string): void {
+    const user = this.state.users.find(u => u.id === userId);
+    if (user) {
+      if (role) {
+        user.role = role;
+      }
+      if (companyId !== undefined) {
+        user.companyId = companyId || undefined;
+      }
+      this.save();
+    }
+  }
+
   public revokeOtherSessions(currentUserId: string): void {
     const user = this.state.users.find(u => u.id === currentUserId);
     if (user) {

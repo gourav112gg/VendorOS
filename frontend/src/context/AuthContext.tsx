@@ -34,7 +34,7 @@ interface AuthContextType {
   loading: boolean;
   preferences: UserPreferences;
   updatePreference: <K extends keyof UserPreferences>(key: K, value: UserPreferences[K]) => void;
-  updateProfile: (name: string, phone?: string) => Promise<void>;
+  updateProfile: (name: string, phone?: string, role?: string, companyId?: string) => Promise<void>;
   updateCompany: (companyDetails: { description?: string; address?: string; minimumOrderValue?: number }) => Promise<void>;
   login: (email: string, password?: string, category?: string) => Promise<UserProfile>;
   loginWithGoogle: () => Promise<UserProfile>;
@@ -447,9 +447,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const updateProfile = async (name: string, phone?: string): Promise<void> => {
+  const updateProfile = async (name: string, phone?: string, role?: string, companyId?: string): Promise<void> => {
     if (api.getToken() && user) {
-      const res = await api.users.updateProfile({ name, phone });
+      const res = await api.users.updateProfile({ name, phone, role, companyId });
       if (res.success && res.user) {
         const updatedUser: UserProfile = {
           id: res.user._id,
@@ -462,6 +462,26 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         };
         setUser(updatedUser);
         dbStore.updateUserProfile(user.id, name, phone);
+        
+        // Sync local database store role and company updates
+        dbStore.updateUserRoleAndCompany(
+          user.id, 
+          role ? (role.charAt(0).toUpperCase() + role.slice(1) as any) : undefined, 
+          companyId
+        );
+
+        if (res.user.company) {
+          const companyObj: Company = {
+            id: res.user.company._id,
+            name: res.user.company.companyName,
+            createdAt: res.user.company.createdAt,
+            minOrderValue: res.user.company.minimumOrderValue,
+            subscription: res.user.company.subscription,
+            description: res.user.company.description,
+            address: res.user.company.address,
+          };
+          setCompany(companyObj);
+        }
       }
     } else {
       return new Promise((resolve) => {
