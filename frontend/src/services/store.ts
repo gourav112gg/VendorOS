@@ -1231,15 +1231,6 @@ class SimulatedStore {
     return newRecord;
   }
 
-  public updateInvoiceStatus(invoiceId: string, status: 'Paid' | 'Unpaid'): void {
-    if (!this.state.gstInvoices) return;
-    const invoice = this.state.gstInvoices.find(i => i.id === invoiceId);
-    if (invoice) {
-      invoice.status = status;
-      this.save();
-    }
-  }
-
   public syncUserSession(user: UserProfile, company?: Company | null): void {
     // 1. Sync User Profile
     const existingUserIndex = this.state.users.findIndex(u => u.id === user.id || u.email.toLowerCase() === user.email.toLowerCase());
@@ -1259,13 +1250,12 @@ class SimulatedStore {
 
     // 2. Sync Company Profile
     if (company) {
-      const companyId = company.id || (company as any)._id;
-      const existingCompanyIndex = this.state.companies.findIndex(c => c.id === companyId);
+      const existingCompanyIndex = this.state.companies.findIndex(c => c.id === company.id);
       const mappedCompany: Company = {
-        id: companyId,
-        name: company.name || (company as any).companyName || 'Unknown Company',
+        id: company.id,
+        name: company.name,
         createdAt: company.createdAt,
-        minOrderValue: company.minOrderValue !== undefined ? company.minOrderValue : ((company as any).minimumOrderValue || 0),
+        minOrderValue: company.minOrderValue,
         subscription: company.subscription,
       };
       if (existingCompanyIndex >= 0) {

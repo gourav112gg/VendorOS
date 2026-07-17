@@ -48,26 +48,56 @@ const getToken = (): string | null => localStorage.getItem('vendoros_token');
 const saveToken = (token: string) => localStorage.setItem('vendoros_token', token);
 const clearToken = () => localStorage.removeItem('vendoros_token');
 
+// ─── Auth API ─────────────────────────────────────────────────────────────────
+
 const auth = {
-  /** Register a new company Owner — sends Firebase ID token to backend */
+  /** Register a new company Owner */
   ownerSignup: (payload: {
-    idToken: string;
     name: string;
     email: string;
     phone: string;
+    password: string;
     companyName: string;
   }) => request('POST', '/api/auth/owner/signup', payload),
 
-  /** Register a new Customer — sends Firebase ID token to backend */
+  /** Owner login — returns JWT token */
+  ownerLogin: async (payload: { email: string; password: string }) => {
+    const data = await request<{ token: string }>('POST', '/api/auth/owner/login', payload);
+    if (data.token) saveToken(data.token);
+    return data;
+  },
+
+  /** Manager login */
+  managerLogin: async (payload: { email: string; password: string }) => {
+    const data = await request<{ token: string }>('POST', '/api/auth/manager/login', payload);
+    if (data.token) saveToken(data.token);
+    return data;
+  },
+
+  /** Worker login */
+  workerLogin: async (payload: { email: string; password: string }) => {
+    const data = await request<{ token: string }>('POST', '/api/auth/worker/login', payload);
+    if (data.token) saveToken(data.token);
+    return data;
+  },
+
+  /** Customer signup */
   customerSignup: (payload: {
-    idToken: string;
     name: string;
     email: string;
-    phone?: string;
+    phone: string;
+    password: string;
   }) => request('POST', '/api/auth/customer/signup', payload),
 
-  /** Unified login endpoint — sends Firebase ID token + category to backend */
-  login: async (payload: { idToken: string; email: string; category: string }) => {
+  /** Customer login */
+  customerLogin: async (payload: { email: string; password: string }) => {
+    const data = await request<{ token: string }>('POST', '/api/auth/customer/login', payload);
+    if (data.token) saveToken(data.token);
+    return data;
+  },
+
+  /** Unified login endpoint */
+  login: async (payload: { email: string; password: string; category: string }) => {
     const data = await request<{ token: string; user: any }>('POST', '/api/auth/login', payload);
     if (data.token) saveToken(data.token);
     return data;
@@ -81,8 +111,10 @@ const auth = {
   logout: () => clearToken(),
 };
 
+// ─── Orders API ───────────────────────────────────────────────────────────────
+
 const orders = {
-  getAll: (page: number = 1, limit: number = 10) => request('GET', `/api/orders?page=${page}&limit=${limit}`, undefined, getToken() || undefined),
+  getAll: () => request('GET', '/api/orders', undefined, getToken() || undefined),
 
   getById: (id: string) =>
     request('GET', `/api/orders/${id}`, undefined, getToken() || undefined),

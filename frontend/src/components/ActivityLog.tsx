@@ -1,11 +1,22 @@
-import React, { useState, useEffect } from 'react';
-import dbStore from '../services/store';
-import { ActivityLog as ActivityLogType } from '../types';
-import { 
-  Search, LogIn, LogOut, User, Settings, Shield, Activity, 
-  Trash2, RefreshCw, SlidersHorizontal, AlertCircle, FileText
-} from 'lucide-react';
-import { motion } from 'motion/react';
+
+import React, { useState, useEffect } from "react";
+import dbStore from "../services/store";
+import { ActivityLog as ActivityLogType } from "../types";
+import {
+  Search,
+  LogIn,
+  LogOut,
+  User,
+  Settings,
+  Shield,
+  Activity,
+  Trash2,
+  RefreshCw,
+  SlidersHorizontal,
+  AlertCircle,
+  FileText,
+} from "lucide-react";
+import { motion } from "motion/react";
 
 interface ActivityLogProps {
   companyId?: string;
@@ -13,10 +24,10 @@ interface ActivityLogProps {
 
 export const ActivityLog: React.FC<ActivityLogProps> = ({ companyId }) => {
   const [logs, setLogs] = useState<ActivityLogType[]>([]);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedAction, setSelectedAction] = useState<string>('All');
-  const [selectedRole, setSelectedRole] = useState<string>('All');
-  const [sortOrder, setSortOrder] = useState<'desc' | 'asc'>('desc');
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedAction, setSelectedAction] = useState<string>("All");
+  const [selectedRole, setSelectedRole] = useState<string>("All");
+  const [sortOrder, setSortOrder] = useState<"desc" | "asc">("desc");
 
   // Load and subscribe to updates
   useEffect(() => {
@@ -31,123 +42,136 @@ export const ActivityLog: React.FC<ActivityLogProps> = ({ companyId }) => {
   }, [companyId]);
 
   // Unique actions for the filter dropdown
-  const actionTypes = ['All', ...Array.from(new Set(logs.map(l => l.action)))];
-  const roleTypes = ['All', 'Owner', 'Manager', 'Worker', 'Customer'];
+  const actionTypes = [
+    "All",
+    ...Array.from(new Set(logs.map((l) => l.action))),
+  ];
+  const roleTypes = ["All", "Owner", "Manager", "Worker", "Customer"];
 
   // Filter and sort logs
   const filteredLogs = logs
-    .filter(log => {
-      const matchesSearch = 
+    .filter((log) => {
+      const matchesSearch =
         log.userName.toLowerCase().includes(searchQuery.toLowerCase()) ||
         log.action.toLowerCase().includes(searchQuery.toLowerCase()) ||
         log.details.toLowerCase().includes(searchQuery.toLowerCase());
-      
-      const matchesAction = selectedAction === 'All' || log.action === selectedAction;
-      const matchesRole = selectedRole === 'All' || log.userRole === selectedRole;
+
+      const matchesAction =
+        selectedAction === "All" || log.action === selectedAction;
+      const matchesRole =
+        selectedRole === "All" || log.userRole === selectedRole;
 
       return matchesSearch && matchesAction && matchesRole;
     })
     .sort((a, b) => {
       const dateA = new Date(a.createdAt).getTime();
       const dateB = new Date(b.createdAt).getTime();
-      return sortOrder === 'desc' ? dateB - dateA : dateA - dateB;
+      return sortOrder === "desc" ? dateB - dateA : dateA - dateB;
     });
 
   // Action helper to get appropriate visual treatment
   const getActionStyles = (action: string) => {
     switch (action) {
-      case 'Login':
+      case "Login":
         return {
           icon: <LogIn className="w-3.5 h-3.5 text-emerald-400" />,
-          bgColor: 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400',
+          bgColor: "bg-emerald-500/10 border-emerald-500/20 text-emerald-400",
         };
-      case 'Logout':
+      case "Logout":
         return {
           icon: <LogOut className="w-3.5 h-3.5 text-slate-400" />,
-          bgColor: 'bg-slate-500/10 border-slate-500/20 text-slate-400',
+          bgColor: "bg-slate-500/10 border-slate-500/20 text-slate-400",
         };
-      case 'User Registered':
+      case "User Registered":
         return {
           icon: <User className="w-3.5 h-3.5 text-amber-400" />,
-          bgColor: 'bg-amber-500/10 border-amber-500/20 text-amber-400',
+          bgColor: "bg-amber-500/10 border-amber-500/20 text-amber-400",
         };
-      case 'Profile Update':
+      case "Profile Update":
         return {
           icon: <Settings className="w-3.5 h-3.5 text-blue-400" />,
-          bgColor: 'bg-blue-500/10 border-blue-500/20 text-blue-400',
+          bgColor: "bg-blue-500/10 border-blue-500/20 text-blue-400",
         };
-      case 'Security Update':
+      case "Security Update":
         return {
           icon: <Shield className="w-3.5 h-3.5 text-purple-400" />,
-          bgColor: 'bg-purple-500/10 border-purple-500/20 text-purple-400',
+          bgColor: "bg-purple-500/10 border-purple-500/20 text-purple-400",
         };
-      case 'Role Revoked':
+      case "Role Revoked":
         return {
           icon: <Trash2 className="w-3.5 h-3.5 text-red-400" />,
-          bgColor: 'bg-red-500/10 border-red-500/20 text-red-400',
+          bgColor: "bg-red-500/10 border-red-500/20 text-red-400",
         };
-      case 'Domain Action':
+      case "Domain Action":
         return {
           icon: <Activity className="w-3.5 h-3.5 text-cyan-400" />,
-          bgColor: 'bg-cyan-500/10 border-cyan-500/20 text-cyan-400',
+          bgColor: "bg-cyan-500/10 border-cyan-500/20 text-cyan-400",
         };
-      case 'Order Stage':
-      case 'Order Assignment':
+      case "Order Stage":
+      case "Order Assignment":
         return {
           icon: <FileText className="w-3.5 h-3.5 text-indigo-400" />,
-          bgColor: 'bg-indigo-500/10 border-indigo-500/20 text-indigo-400',
+          bgColor: "bg-indigo-500/10 border-indigo-500/20 text-indigo-400",
         };
       default:
         return {
           icon: <Activity className="w-3.5 h-3.5 text-[#888888]" />,
-          bgColor: 'bg-[#1A1A1A] border-[#222222] text-[#888888]',
+          bgColor: "bg-[#1A1A1A] border-[#222222] text-[#888888]",
         };
     }
   };
 
   const getRoleBadgeStyles = (role: string) => {
     switch (role) {
-      case 'Owner':
-        return 'border border-red-500/20 bg-red-950/10 text-red-400 text-[9px] uppercase tracking-wider px-2 py-0.5 rounded-sm font-mono';
-      case 'Manager':
-        return 'border border-blue-500/20 bg-blue-950/10 text-blue-400 text-[9px] uppercase tracking-wider px-2 py-0.5 rounded-sm font-mono';
-      case 'Worker':
-        return 'border border-amber-500/20 bg-amber-950/10 text-amber-400 text-[9px] uppercase tracking-wider px-2 py-0.5 rounded-sm font-mono';
-      case 'Customer':
-        return 'border border-emerald-500/20 bg-emerald-950/10 text-emerald-400 text-[9px] uppercase tracking-wider px-2 py-0.5 rounded-sm font-mono';
+      case "Owner":
+        return "border border-red-500/20 bg-red-950/10 text-red-400 text-[9px] uppercase tracking-wider px-2 py-0.5 rounded-sm font-mono";
+      case "Manager":
+        return "border border-blue-500/20 bg-blue-950/10 text-blue-400 text-[9px] uppercase tracking-wider px-2 py-0.5 rounded-sm font-mono";
+      case "Worker":
+        return "border border-amber-500/20 bg-amber-950/10 text-amber-400 text-[9px] uppercase tracking-wider px-2 py-0.5 rounded-sm font-mono";
+      case "Customer":
+        return "border border-emerald-500/20 bg-emerald-950/10 text-emerald-400 text-[9px] uppercase tracking-wider px-2 py-0.5 rounded-sm font-mono";
       default:
-        return 'border border-zinc-700 bg-zinc-800 text-zinc-400 text-[9px] uppercase tracking-wider px-2 py-0.5 rounded-sm font-mono';
+        return "border border-zinc-700 bg-zinc-800 text-zinc-400 text-[9px] uppercase tracking-wider px-2 py-0.5 rounded-sm font-mono";
     }
   };
 
   const handleClearFilters = () => {
-    setSearchQuery('');
-    setSelectedAction('All');
-    setSelectedRole('All');
-    setSortOrder('desc');
+    setSearchQuery("");
+    setSelectedAction("All");
+    setSelectedRole("All");
+    setSortOrder("desc");
   };
 
   return (
-    <div className="space-y-6">
+    <motion.div
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+      className="space-y-6"
+    >
       {/* Search and Filters Header */}
-      <div className="bg-[#111111] p-6 border border-[#222222] rounded-sm">
+      <div className="bg-[#111111] p-6 border border-[#222222] rounded-sm shadow-md">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
           <div>
             <h2 className="text-lg font-serif italic text-white font-light tracking-tight flex items-center">
               <Activity className="w-5 h-5 mr-2 text-[#888888]" />
               Audit Trail & Activity Log
             </h2>
-            <p className="text-xs text-[#666666] font-mono uppercase tracking-wider mt-0.5">
-              Secure operational logs monitoring critical claims and environment state changes
+            <p className="text-xs text-[#666666] font-mono uppercase tracking-wider mt-1">
+              Secure operational logs monitoring critical claims and environment
+              state changes
             </p>
           </div>
-          <button 
+          <motion.button
+            whileHover={{ y: -1 }}
+            whileTap={{ scale: 0.97 }}
             onClick={handleClearFilters}
-            className="self-start lg:self-auto text-[10px] uppercase tracking-widest font-bold text-slate-400 hover:text-white flex items-center py-2 px-3 bg-[#1A1A1A] border border-[#222222] rounded-sm transition-colors"
+            className="self-start lg:self-auto text-[10px] uppercase tracking-widest font-bold text-slate-400 hover:text-white flex items-center py-2 px-3 bg-[#1A1A1A] border border-[#222222] rounded-sm transition-colors cursor-pointer"
           >
             <RefreshCw className="w-3 h-3 mr-1.5" />
             Reset State Filter
-          </button>
+          </motion.button>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-6">
@@ -173,8 +197,10 @@ export const ActivityLog: React.FC<ActivityLogProps> = ({ companyId }) => {
               className="w-full bg-[#0A0A0A] border border-[#222222] text-xs text-white px-3 py-2.5 rounded-sm focus:outline-none focus:border-[#444444] transition-colors cursor-pointer"
             >
               <option disabled>Filter by Action</option>
-              {actionTypes.map(act => (
-                <option key={act} value={act}>{act === 'All' ? 'All Actions' : act}</option>
+              {actionTypes.map((act) => (
+                <option key={act} value={act}>
+                  {act === "All" ? "All Actions" : act}
+                </option>
               ))}
             </select>
           </div>
@@ -187,34 +213,41 @@ export const ActivityLog: React.FC<ActivityLogProps> = ({ companyId }) => {
               className="w-full bg-[#0A0A0A] border border-[#222222] text-xs text-white px-3 py-2.5 rounded-sm focus:outline-none focus:border-[#444444] transition-colors cursor-pointer"
             >
               <option disabled>Filter by Role</option>
-              {roleTypes.map(role => (
-                <option key={role} value={role}>{role === 'All' ? 'All Roles' : role}</option>
+              {roleTypes.map((role) => (
+                <option key={role} value={role}>
+                  {role === "All" ? "All Roles" : role}
+                </option>
               ))}
             </select>
           </div>
 
           {/* Sorting option */}
-          <div className="flex bg-[#0A0A0A] border border-[#222222] rounded-sm p-1">
-            <button
-              onClick={() => setSortOrder('desc')}
-              className={`flex-1 text-[10px] uppercase tracking-widest font-bold py-1.5 rounded-sm transition-all ${
-                sortOrder === 'desc' 
-                  ? 'bg-white text-black font-extrabold' 
-                  : 'text-[#666666] hover:text-[#888888]'
-              }`}
-            >
-              Newest
-            </button>
-            <button
-              onClick={() => setSortOrder('asc')}
-              className={`flex-1 text-[10px] uppercase tracking-widest font-bold py-1.5 rounded-sm transition-all ${
-                sortOrder === 'asc' 
-                  ? 'bg-white text-black font-extrabold' 
-                  : 'text-[#666666] hover:text-[#888888]'
-              }`}
-            >
-              Oldest
-            </button>
+          <div className="relative flex bg-[#0A0A0A] border border-[#222222] rounded-sm p-1">
+            {(
+              [
+                { id: "desc", label: "Newest" },
+                { id: "asc", label: "Oldest" },
+              ] as const
+            ).map((s) => (
+              <button
+                key={s.id}
+                onClick={() => setSortOrder(s.id)}
+                className={`relative flex-1 text-[10px] uppercase tracking-widest font-bold py-1.5 rounded-sm cursor-pointer ${
+                  sortOrder === s.id
+                    ? "text-black font-extrabold"
+                    : "text-[#666666] hover:text-[#AAAAAA]"
+                }`}
+              >
+                {sortOrder === s.id && (
+                  <motion.span
+                    layoutId="vos-activity-sort-pill"
+                    className="absolute inset-0 -z-10 bg-white rounded-sm"
+                    transition={{ type: "spring", stiffness: 420, damping: 34 }}
+                  />
+                )}
+                {s.label}
+              </button>
+            ))}
           </div>
         </div>
       </div>
@@ -224,13 +257,16 @@ export const ActivityLog: React.FC<ActivityLogProps> = ({ companyId }) => {
         {filteredLogs.length === 0 ? (
           <div className="bg-[#111111] border border-[#222222] rounded-sm p-12 text-center">
             <AlertCircle className="w-8 h-8 text-[#444444] mx-auto mb-3" />
-            <span className="font-mono text-[10px] text-[#666666] uppercase tracking-widest block">No Matching Audit Entries Found</span>
+            <span className="font-mono text-[10px] text-[#666666] uppercase tracking-widest block">
+              No Matching Audit Entries Found
+            </span>
             <p className="text-xs text-[#444444] mt-1 max-w-sm mx-auto">
-              Try updating the query filter parameters or recording new system operations to capture logs.
+              Try updating the query filter parameters or recording new system
+              operations to capture logs.
             </p>
           </div>
         ) : (
-          <div className="bg-[#111111] border border-[#222222] rounded-sm divide-y divide-[#222222] overflow-hidden">
+          <div className="bg-[#111111] border border-[#222222] rounded-sm divide-y divide-[#222222] overflow-hidden shadow-md">
             {filteredLogs.map((log, index) => {
               const styles = getActionStyles(log.action);
               return (
@@ -238,12 +274,17 @@ export const ActivityLog: React.FC<ActivityLogProps> = ({ companyId }) => {
                   key={log.id}
                   initial={{ opacity: 0, y: 5 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.2, delay: Math.min(index * 0.03, 0.3) }}
+                  transition={{
+                    duration: 0.2,
+                    delay: Math.min(index * 0.03, 0.3),
+                  }}
                   className="p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-[#151515] transition-colors"
                 >
                   <div className="flex items-start space-x-4">
                     {/* Action Icon Circle */}
-                    <div className={`p-2.5 rounded-sm border shrink-0 mt-0.5 ${styles.bgColor}`}>
+                    <div
+                      className={`p-2.5 rounded-sm border shrink-0 mt-0.5 ${styles.bgColor}`}
+                    >
                       {styles.icon}
                     </div>
 
@@ -289,6 +330,6 @@ export const ActivityLog: React.FC<ActivityLogProps> = ({ companyId }) => {
           </div>
         )}
       </div>
-    </div>
+    </motion.div>
   );
 };

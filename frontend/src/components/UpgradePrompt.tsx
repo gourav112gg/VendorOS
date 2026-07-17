@@ -1,7 +1,11 @@
-import React from 'react';
-import { ShieldAlert, ArrowUpRight, CheckCircle2 } from 'lucide-react';
-import { motion } from 'motion/react';
-import { getFeatureRequiredTier, TIER_PRICING } from '../services/subscriptionService';
+
+import React from "react";
+import { ShieldAlert, ArrowUpRight, CheckCircle2 } from "lucide-react";
+import { motion } from "motion/react";
+import {
+  getFeatureRequiredTier,
+  TIER_PRICING,
+} from "../services/subscriptionService";
 
 interface UpgradePromptProps {
   featureKey: string;
@@ -24,11 +28,11 @@ export const UpgradePrompt: React.FC<UpgradePromptProps> = ({
       initial={{ opacity: 0, y: 15 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
-      className="bg-[#111111] border border-amber-950/40 rounded-sm p-8 relative overflow-hidden max-w-2xl mx-auto my-8"
+      className="bg-[#111111] border border-amber-950/40 rounded-sm p-8 relative overflow-hidden max-w-2xl mx-auto my-8 shadow-2xl"
       id={`upgrade-prompt-${featureKey}`}
     >
-      <div className="absolute right-0 top-0 translate-x-1/4 -translate-y-1/4 opacity-[0.02]">
-        <ShieldAlert className="w-92 h-92 text-amber-500" />
+      <div className="absolute right-0 top-0 translate-x-1/4 -translate-y-1/4 opacity-[0.03]">
+        <ShieldAlert className="w-72 h-72 text-amber-500" />
       </div>
 
       <div className="relative z-10 flex flex-col md:flex-row md:items-start gap-6">
@@ -61,7 +65,7 @@ export const UpgradePrompt: React.FC<UpgradePromptProps> = ({
                 ₹{tierInfo.price}/{tierInfo.period}
               </span>
             </div>
-            
+
             <ul className="text-[11px] text-[#666666] space-y-1.5 pt-2 border-t border-[#1D1D1D]">
               {tierInfo.features.slice(1, 4).map((feat, idx) => (
                 <li key={idx} className="flex items-center gap-1.5">
@@ -73,13 +77,15 @@ export const UpgradePrompt: React.FC<UpgradePromptProps> = ({
           </div>
 
           <div className="flex flex-col sm:flex-row items-center gap-3 pt-2">
-            <button
+            <motion.button
+              whileHover={{ y: -1 }}
+              whileTap={{ scale: 0.97 }}
               onClick={onNavigateToBilling}
-              className="w-full sm:w-auto flex items-center justify-center space-x-1.5 px-5 py-2.5 bg-white hover:bg-[#E5E5E5] text-black rounded-sm text-[10px] font-bold uppercase tracking-widest transition-all cursor-pointer"
+              className="w-full sm:w-auto flex items-center justify-center space-x-1.5 px-5 py-2.5 bg-white hover:bg-[#F0EAD8] text-black rounded-sm text-[10px] font-bold uppercase tracking-widest shadow-md transition-colors cursor-pointer"
             >
               <span>Upgrade to {requiredTier}</span>
               <ArrowUpRight className="w-3.5 h-3.5" />
-            </button>
+            </motion.button>
             <span className="text-[10px] font-mono text-[#555555] uppercase tracking-widest">
               Cancel at any time • Pro-rated Instant Upgrades
             </span>
