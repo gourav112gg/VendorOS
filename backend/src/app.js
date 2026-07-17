@@ -13,6 +13,7 @@ const managerDashboardRoutes = require("./routes/managerDashboard.routes");
 const customerRoutes = require("./routes/customer.routes");
 const domainRoutes = require("./routes/domain.routes");
 const templateRoutes = require("./routes/template.routes");
+const copilotRoutes = require("./routes/copilot.routes");
 
 
 // Trust score controller (lightweight — no dedicated route file needed)
@@ -76,6 +77,7 @@ app.use("/api/manager-dashboard", managerDashboardRoutes);
 app.use("/api/customers", customerRoutes);
 app.use("/api/domains", domainRoutes);
 app.use("/api/templates", templateRoutes);
+app.use("/api", copilotRoutes);
 
 
 // --- Trust Score (owner only) ---

@@ -2,6 +2,9 @@
 
 > Node.js + Express REST API with MongoDB Atlas — the server-side backbone of VendorOS.
 
+> [!IMPORTANT]
+> **Production Deployment Note**: This backend is designed to deploy on Render's free tier. If the service is inactive for 15 minutes, Render spins down the server. To avoid cold-start delays during a demo, ping the server URL to wake the service up.
+
 ---
 
 ## Tech Stack

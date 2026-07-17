@@ -4,6 +4,9 @@
 
 VendorOS is a full-stack SaaS application that brings together order management, team coordination, inventory tracking, GST invoicing, and AI-driven operational insights under one roof — complete with a multi-role authentication system and a subscription-gated feature set.
 
+> [!IMPORTANT]
+> **Demo / Live Site Note**: The backend for VendorOS is hosted on Render's free tier. If the backend has been inactive for 15 minutes, Render will spin down the container. The next request will trigger a cold-start, taking 30–60 seconds to respond. Before running a live demo or testing logins, please open the backend URL in your browser once (or ping it) and wait a minute for the server to wake up.
+
 ---
 
 ## ✨ Key Features

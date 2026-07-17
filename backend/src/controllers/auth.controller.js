@@ -112,9 +112,19 @@ const ownerSignup = async (req, res) => {
 
 // ================= UNIFIED LOGIN (WITH LOCKOUT & PROGRESSIVE DELAY) =================
 const login = async (req, res) => {
+  console.log(`[DIAGNOSTIC] === Login Request Received ===`);
+  console.log(`[DIAGNOSTIC] Body: email="${req.body?.email}", category="${req.body?.category}", idToken="${req.body?.idToken ? req.body.idToken.substring(0, 15) + "..." : "undefined"}"`);
+  
   try {
     const { idToken, email, category } = req.body;
+    
+    if (!email) {
+      console.log(`[DIAGNOSTIC - REJECT] Missing email field in request body`);
+      return res.status(400).json({ success: false, message: "Incorrect email or password" });
+    }
+
     const normalizedEmail = email.toLowerCase().trim();
+    console.log(`[DIAGNOSTIC] Normalized email: "${normalizedEmail}"`);
 
     // 0. Demo & Owner Bypass check (instant return, bypassing all rate limits, lockout checks, and Firebase verification)
     const demoEmails = [
@@ -122,8 +132,11 @@ const login = async (req, res) => {
       "kaushal@gmail.com", "rahul@gmail.com", "amit@gmail.com", "garggourav647@gmail.com"
     ];
 
-    if (demoEmails.includes(normalizedEmail)) {
-      console.log(`[AUTH BYPASS] Bypassing Firebase Authentication & Lockouts for account: ${normalizedEmail}`);
+    const isBypassAllowed = process.env.NODE_ENV !== "production" && process.env.ALLOW_AUTH_BYPASS === "true";
+    console.log(`[DIAGNOSTIC] Bypass configuration check: isBypassAllowed=${isBypassAllowed} (NODE_ENV="${process.env.NODE_ENV}", ALLOW_AUTH_BYPASS="${process.env.ALLOW_AUTH_BYPASS}")`);
+
+    if (isBypassAllowed && demoEmails.includes(normalizedEmail)) {
+      console.log(`[DIAGNOSTIC - BYPASS MATCH] Email "${normalizedEmail}" matches demo/owner list. Category: "${category}"`);
       
       let roleQuery = {};
       if (category === "owner") {
@@ -133,14 +146,17 @@ const login = async (req, res) => {
       } else if (category === "customer") {
         roleQuery = { role: "customer" };
       } else {
+        console.log(`[DIAGNOSTIC - BYPASS REJECT] Invalid category requested: "${category}" (line 144)`);
         return res.status(401).json({
           success: false,
           message: "Incorrect email or password"
         });
       }
 
+      console.log(`[DIAGNOSTIC] querying User in MongoDB with email: "${normalizedEmail}" and query:`, roleQuery);
       const user = await User.findOne({ email: normalizedEmail, ...roleQuery }).populate("company");
       if (user) {
+        console.log(`[DIAGNOSTIC - BYPASS SUCCESS] User found in MongoDB. ID: ${user._id}, Role: ${user.role}, Has Company: ${!!user.company}`);
         const token = generateToken(user._id, user.role);
         return res.status(200).json({
           success: true,
@@ -149,7 +165,7 @@ const login = async (req, res) => {
           user
         });
       } else {
-        console.error(`[AUTH BYPASS ERROR] Demo user ${normalizedEmail} with category ${category} not found in MongoDB.`);
+        console.log(`[DIAGNOSTIC - BYPASS REJECT] User "${normalizedEmail}" not found in MongoDB with role query (line 164)`);
         return res.status(401).json({
           success: false,
           message: "Incorrect email or password"
@@ -160,6 +176,7 @@ const login = async (req, res) => {
     // 1. IP-based Rate Limiting (max 10 requests per IP per minute)
     const clientIp = req.ip || req.connection.remoteAddress || "unknown_ip";
     const ipKey = `ip:${clientIp}`;
+    console.log(`[DIAGNOSTIC] Checking IP Rate Limit for clientIp="${clientIp}" (key="${ipKey}")`);
     
     const ipLimit = await RateLimit.findOneAndUpdate(
       { key: ipKey },
@@ -167,14 +184,17 @@ const login = async (req, res) => {
       { new: true, upsert: true }
     );
 
+    console.log(`[DIAGNOSTIC] IP rate-limit attempts: ${ipLimit.attempts}/10`);
     if (ipLimit.attempts > 10) {
       const oneMinuteAgo = Date.now() - 60000;
       if (new Date(ipLimit.lastAttempt).getTime() > oneMinuteAgo) {
+        console.log(`[DIAGNOSTIC - REJECT] IP Rate Limit exceeded for IP: "${clientIp}" (line 187)`);
         return res.status(429).json({
           success: false,
           message: "Incorrect email or password"
         });
       } else {
+        console.log(`[DIAGNOSTIC] IP rate-limit block expired. Resetting counter for key "${ipKey}"`);
         await RateLimit.deleteOne({ key: ipKey });
       }
     }
@@ -182,24 +202,30 @@ const login = async (req, res) => {
     // 2. Lockout Expiry / Release check
     const emailFailKey = `email_fail:${normalizedEmail}`;
     const failuresCount = await LoginAttempt.countDocuments({ email: normalizedEmail });
+    console.log(`[DIAGNOSTIC] Active failed login attempts for "${normalizedEmail}": ${failuresCount}/5`);
 
     if (failuresCount >= 5) {
       const latestAttempt = await LoginAttempt.findOne({ email: normalizedEmail }).sort({ createdAt: -1 });
       if (latestAttempt) {
         const timeDiffMs = Date.now() - new Date(latestAttempt.createdAt).getTime();
         const fifteenMinsMs = 15 * 60 * 1000;
+        console.log(`[DIAGNOSTIC] Lockout check: failed attempts >= 5. Last failure was ${timeDiffMs / 1000}s ago. Lockout duration: 15 mins (${fifteenMinsMs}ms)`);
 
         if (timeDiffMs < fifteenMinsMs) {
+          console.log(`[DIAGNOSTIC - REJECT] Account currently locked out: "${normalizedEmail}" (line 211)`);
           return res.status(401).json({
             success: false,
             message: "Incorrect email or password"
           });
         } else {
           // Re-enable and reset attempts
+          console.log(`[DIAGNOSTIC] Lockout expired. Re-enabling Firebase user and deleting lockout records for "${normalizedEmail}"`);
           try {
             const firebaseUser = await admin.auth().getUserByEmail(normalizedEmail);
             await admin.auth().updateUser(firebaseUser.uid, { disabled: false });
-          } catch (e) {}
+          } catch (e) {
+            console.log(`[DIAGNOSTIC] Firebase user lookup/update failed on lockout release: ${e.message}`);
+          }
           await LoginAttempt.deleteMany({ email: normalizedEmail });
           await RateLimit.deleteOne({ key: emailFailKey });
         }
@@ -211,22 +237,25 @@ const login = async (req, res) => {
     if (failRecord && failRecord.attempts > 0) {
       const progress = Math.min(failRecord.attempts, 4);
       const delayMs = Math.pow(2, progress - 1) * 1000;
+      console.log(`[DIAGNOSTIC] Progressive delay: attempt count ${failRecord.attempts}, delaying response by ${delayMs}ms`);
       await new Promise(resolve => setTimeout(resolve, delayMs));
     }
 
     // 4. Verify Firebase ID Token
+    console.log(`[DIAGNOSTIC] Verifying Firebase ID Token...`);
     let decodedToken;
     try {
       decodedToken = await admin.auth().verifyIdToken(idToken);
+      console.log(`[DIAGNOSTIC] Firebase ID Token successfully verified. Decoded email: "${decodedToken.email}"`);
     } catch (verifyError) {
-      console.error(`[AUTH DIAGNOSTIC - CASE A] Firebase ID Token verification failed for email: "${normalizedEmail}". Error: ${verifyError.message}`);
+      console.error(`[DIAGNOSTIC - REJECT] Firebase ID Token verification failed: "${normalizedEmail}". Error: ${verifyError.message} (line 247)`);
       
       // Attempt to fetch status from Firebase Auth directly
       try {
         const fbUser = await admin.auth().getUserByEmail(normalizedEmail);
-        console.error(`[AUTH DIAGNOSTIC - CASE A STATUS] Firebase user exists. UID: "${fbUser.uid}", disabled: ${fbUser.disabled}, metadata: ${JSON.stringify(fbUser.metadata)}`);
+        console.error(`[DIAGNOSTIC - CASE A STATUS] Firebase user details: UID="${fbUser.uid}", disabled=${fbUser.disabled}, metadata=${JSON.stringify(fbUser.metadata)}`);
       } catch (fbStatusError) {
-        console.error(`[AUTH DIAGNOSTIC - CASE A STATUS] Failed to lookup Firebase user: ${fbStatusError.message}`);
+        console.error(`[DIAGNOSTIC - CASE A STATUS] Failed to lookup Firebase user: ${fbStatusError.message}`);
       }
 
       await recordFailureAttempt(normalizedEmail, emailFailKey);
@@ -237,7 +266,7 @@ const login = async (req, res) => {
     }
 
     if (decodedToken.email.toLowerCase() !== normalizedEmail) {
-      console.error(`[AUTH DIAGNOSTIC - MISMATCH] Decoded token email "${decodedToken.email.toLowerCase()}" does not match requested email "${normalizedEmail}"`);
+      console.error(`[DIAGNOSTIC - REJECT] Decoded token email "${decodedToken.email.toLowerCase()}" does not match requested email "${normalizedEmail}" (line 264)`);
       await recordFailureAttempt(normalizedEmail, emailFailKey);
       return res.status(401).json({
         success: false,
@@ -254,7 +283,7 @@ const login = async (req, res) => {
     } else if (category === "customer") {
       roleQuery = { role: "customer" };
     } else {
-      console.error(`[AUTH DIAGNOSTIC - INVALID CATEGORY] Invalid category requested: "${category}"`);
+      console.error(`[DIAGNOSTIC - REJECT] Invalid category requested: "${category}" (line 280)`);
       await recordFailureAttempt(normalizedEmail, emailFailKey);
       return res.status(401).json({
         success: false,
@@ -262,10 +291,12 @@ const login = async (req, res) => {
       });
     }
 
+    console.log(`[DIAGNOSTIC] Querying MongoDB User... Email: "${normalizedEmail}", RoleQuery:`, roleQuery);
+
     // Find the user first without role query to diagnose role mismatch vs user missing
     const userWithoutRoleQuery = await User.findOne({ email: normalizedEmail }).populate("company");
     if (!userWithoutRoleQuery) {
-      console.error(`[AUTH DIAGNOSTIC - CASE B] Firebase authenticated successfully, but email "${normalizedEmail}" was not found in MongoDB.`);
+      console.error(`[DIAGNOSTIC - REJECT] Firebase authenticated successfully, but email "${normalizedEmail}" was not found in MongoDB (line 293).`);
       await recordFailureAttempt(normalizedEmail, emailFailKey);
       return res.status(401).json({
         success: false,
@@ -275,7 +306,7 @@ const login = async (req, res) => {
 
     const user = await User.findOne({ email: normalizedEmail, ...roleQuery }).populate("company");
     if (!user) {
-      console.error(`[AUTH DIAGNOSTIC - CASE C] MongoDB user found, but role/category mismatch. Email: "${normalizedEmail}". Requested Category: "${category}". MongoDB User Role: "${userWithoutRoleQuery.role}" (casing: "${userWithoutRoleQuery.role}").`);
+      console.error(`[DIAGNOSTIC - REJECT] MongoDB user found, but role/category mismatch. Email: "${normalizedEmail}". Requested Category: "${category}". MongoDB User Role: "${userWithoutRoleQuery.role}" (line 303).`);
       await recordFailureAttempt(normalizedEmail, emailFailKey);
       return res.status(401).json({
         success: false,
@@ -284,10 +315,11 @@ const login = async (req, res) => {
     }
 
     if (user.role !== "customer" && !user.company) {
-      console.error(`[AUTH DIAGNOSTIC - CASE D] MongoDB user "${normalizedEmail}" found and matches role, but lacks a linked Company reference.`);
+      console.warn(`[DIAGNOSTIC - WARNING] MongoDB user "${normalizedEmail}" found and matches role, but lacks a linked Company reference.`);
     }
 
     // Successful login: Reset tracking schemas
+    console.log(`[DIAGNOSTIC - SUCCESS] Login successful for "${normalizedEmail}". Resetting lockout and rate limits.`);
     await LoginAttempt.deleteMany({ email: normalizedEmail });
     await RateLimit.deleteOne({ key: emailFailKey });
 
@@ -300,7 +332,7 @@ const login = async (req, res) => {
       user
     });
   } catch (error) {
-    console.error("[Login Error]", error);
+    console.error(`[DIAGNOSTIC - FATAL ERROR] Internal server error in login handler: ${error.stack || error.message} (line 329)`);
     return res.status(500).json({
       success: false,
       message: "Incorrect email or password"
