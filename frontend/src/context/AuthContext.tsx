@@ -155,7 +155,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       "alice@apex.com", "bob@apex.com", "charlie@apex.com", "dave@gmail.com",
       "kaushal@gmail.com", "rahul@gmail.com", "amit@gmail.com", "garggourav647@gmail.com"
     ];
-    const isDemoBypass = demoEmails.includes(email.toLowerCase().trim());
+    const isDemoBypass = (import.meta.env.DEV || import.meta.env.VITE_ALLOW_AUTH_BYPASS === 'true') && demoEmails.includes(email.toLowerCase().trim());
 
     if (isDemoBypass) {
       try {
