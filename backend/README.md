@@ -34,20 +34,26 @@ backend/
 │   │   ├── Company.js         # Company profile + trust score
 │   │   ├── Order.js           # Service orders with status lifecycle
 │   │   ├── Inventory.js       # Product/item stock with low-stock alerts
-│   │   └── Domain.js          # Service domains (Plumbing, Electrical, etc.)
+│   │   ├── Domain.js          # Service domains (Plumbing, Electrical, etc.)
+│   │   ├── Notification.js    # Real-time alert notifications collection
+│   │   └── JoinRequest.js     # Pending manager/worker company join requests
 │   ├── controllers/
 │   │   ├── auth.controller.js          # Owner/Manager/Worker signup+login
+│   │   ├── user.controller.js          # Update name, phone, role, email (Firebase sync)
 │   │   ├── customer.controller.js      # Customer signup, login, order history
 │   │   ├── manager.controller.js       # Manager CRUD (owner only)
 │   │   ├── worker.controller.js        # Worker CRUD + availability toggle
-│   │   ├── order.controller.js         # Order CRUD + assign manager/worker
+│   │   ├── order.controller.js         # Order CRUD + assign manager/worker + notifications trigger
 │   │   ├── inventory.controller.js     # Inventory CRUD + stock update
 │   │   ├── domain.controller.js        # Domain CRUD (owner only)
 │   │   ├── dashboard.controller.js     # Owner dashboard KPI stats
 │   │   ├── managerDashboard.controller.js  # Manager dashboard stats
-│   │   └── trust.controller.js         # Trust score computation
+│   │   ├── trust.controller.js         # Trust score computation
+│   │   ├── notification.controller.js  # Retrieve and read user notifications
+│   │   └── joinRequest.controller.js   # Submit, fetch, and approve/reject company requests
 │   ├── routes/
 │   │   ├── auth.routes.js
+│   │   ├── user.routes.js
 │   │   ├── customer.routes.js
 │   │   ├── manager.routes.js
 │   │   ├── worker.routes.js
@@ -55,37 +61,13 @@ backend/
 │   │   ├── inventory.routes.js
 │   │   ├── domain.routes.js
 │   │   ├── dashboard.routes.js
-│   │   └── managerDashboard.routes.js
+│   │   ├── managerDashboard.routes.js
+│   │   ├── notification.routes.js
+│   │   └── joinRequest.routes.js
 │   ├── middleware/
 │   │   ├── auth.middleware.js   # JWT Bearer token verification
-│   │   ├── role.middleware.js   # Role-based access control
-│   │   └── error.middleware.js  # Global error handler (stub)
-│   ├── services/
-│   │   ├── risk.service.js      # Rules-based risk engine (TRD §5)
-│   │   ├── whatsapp.service.js  # WhatsApp Business Cloud API (stub)
-│   │   └── payment.service.js  # Razorpay integration (stub)
-│   └── utils/
-│       └── generateToken.js     # JWT token generator (7-day expiry)
-├── ml-model/
-│   └── README.md               # Placeholder for future ML risk model
-├── .env.example                # Environment variable template
-├── .gitignore
-└── package.json
+│   │   └── role.middleware.js   # Role-based access control
 ```
-
----
-
-## Environment Variables
-
-Copy `.env.example` to `.env` and fill in your values:
-
-```env
-PORT=5000
-MONGO_URI=mongodb+srv://<user>:<pass>@cluster.mongodb.net/vendoros
-JWT_SECRET=your_long_random_secret
-```
-
-> ⚠️ **Never commit `.env`** — it is in `.gitignore`.
 
 ---
 
@@ -109,9 +91,9 @@ npm start        # starts with node (no hot reload)
 To protect production instances while maintaining testability, the login API enforces several access policies:
 - **IP-Based Rate Limiting**: Limit of 10 login requests per client IP per minute.
 - **Progressive Authentication Delays**: Sequential failures trigger an exponential wait delay ($2^{\text{attempts}-1}$ seconds) to slow brute force attacks.
-- **Lockout Mechanism**: Accumulating 5 failed login attempts locks the user out in MongoDB for 15 minutes.
+- **Account Lockout**: Accumulating 5 failed login attempts locks the user out in MongoDB for 15 minutes.
 - **Demo Account Bypasses**: The pre-seeded demo accounts bypass all lockouts, progressive delays, and Firebase verification.
-  - Owners: `kaushal@gmail.com`, `alice@apex.com`
+  - Owners: `kaushal@gmail.com`, `garggourav647@gmail.com`, `alice@apex.com`
   - Managers: `bob@apex.com`, `rahul@gmail.com`
   - Workers: `amit@gmail.com`, `charlie@apex.com`
   - Customers: `dave@gmail.com`
@@ -129,10 +111,42 @@ Tokens are returned from login/signup endpoints and expire in **7 days**.
 |--------|----------|------|-------------|
 | POST | `/api/auth/owner/signup` | None | Register owner + create company |
 | POST | `/api/auth/owner/login` | None | Owner login → JWT |
+| POST | `/api/auth/vendor/signup` | None | Register manager/worker + pending request |
 | POST | `/api/auth/manager/login` | None | Manager login → JWT |
 | POST | `/api/auth/worker/login` | None | Worker login → JWT |
 | POST | `/api/auth/customer/signup` | None | Customer registration |
 | POST | `/api/auth/customer/login` | None | Customer login → JWT |
+
+---
+
+### User Profile & Teams  `{method} /api/users/...`
+
+| Method | Endpoint | Roles | Description |
+|--------|----------|-------|-------------|
+| GET | `/api/users/profile` | All | Fetch logged-in user profile |
+| PUT | `/api/users/profile` | All | Update profile details (Name, Phone, Email with Firebase sync) |
+| PATCH | `/api/users/promote` | Owner | Promote worker to manager (Body: `{ workerId }`) |
+
+---
+
+### Join Requests  `{method} /api/join-requests/...`
+
+| Method | Endpoint | Roles | Description |
+|--------|----------|-------|-------------|
+| POST | `/api/join-requests` | manager, worker | Submit pending request to join a company |
+| GET | `/api/join-requests/pending` | owner | Fetch pending join requests for owner's company |
+| PATCH | `/api/join-requests/:id` | owner | Approve or reject a join request (Body: `{ action: 'approve' \| 'reject' }`) |
+| GET | `/api/join-requests/my-pending` | manager, worker | Fetch current user's active pending request |
+
+---
+
+### Notifications  `{method} /api/notifications/...`
+
+| Method | Endpoint | Roles | Description |
+|--------|----------|-------|-------------|
+| GET | `/api/notifications` | All | Fetch active unread notifications |
+| PATCH | `/api/notifications/:id/read` | All | Mark single notification as read |
+| PATCH | `/api/notifications/read-all` | All | Mark all notifications as read |
 
 ---
 
@@ -146,9 +160,9 @@ Tokens are returned from login/signup endpoints and expire in **7 days**.
 | PUT | `/api/orders/:id` | owner, manager | Update order |
 | DELETE | `/api/orders/:id` | owner | Delete order |
 | PATCH | `/api/orders/assign-manager` | owner | Assign manager to order |
-| PATCH | `/api/orders/assign-worker` | owner, manager | Assign worker to order |
+| PATCH | `/api/orders/assign-worker` | owner, manager | Assign worker to order (triggers notification) |
 | GET | `/api/orders/worker/my-orders` | worker | Worker's assigned orders |
-| PATCH | `/api/orders/worker/:id/status` | worker | Update order status |
+| PATCH | `/api/orders/worker/:id/status` | worker | Update order status (triggers notification to managers/owners) |
 
 ---
 
@@ -162,132 +176,3 @@ Tokens are returned from login/signup endpoints and expire in **7 days**.
 | PUT | `/api/inventory/:id` | owner, manager | Update product |
 | DELETE | `/api/inventory/:id` | owner | Delete product |
 | PATCH | `/api/inventory/:id/stock` | owner, manager | Update stock quantity |
-
----
-
-### Managers  `{method} /api/managers/...`
-
-| Method | Endpoint | Roles | Description |
-|--------|----------|-------|-------------|
-| GET | `/api/managers` | owner | List all managers |
-| POST | `/api/managers/create` | owner | Create manager account |
-| PUT | `/api/managers/:id` | owner | Update manager |
-| DELETE | `/api/managers/:id` | owner | Delete manager |
-
----
-
-### Workers  `{method} /api/workers/...`
-
-| Method | Endpoint | Roles | Description |
-|--------|----------|-------|-------------|
-| GET | `/api/workers` | owner, manager | List all workers |
-| POST | `/api/workers/create` | owner, manager | Create worker account |
-| PUT | `/api/workers/:id` | owner, manager | Update worker |
-| DELETE | `/api/workers/:id` | owner, manager | Delete worker |
-| PATCH | `/api/workers/:id/availability` | owner, manager | Toggle availability |
-
----
-
-### Customers  `{method} /api/customers/...`
-
-| Method | Endpoint | Roles | Description |
-|--------|----------|-------|-------------|
-| GET | `/api/customers/my-orders` | customer | Customer's own orders |
-| GET | `/api/customers/profile` | customer | Customer profile |
-
----
-
-### Domains  `{method} /api/domains/...`
-
-| Method | Endpoint | Roles | Description |
-|--------|----------|-------|-------------|
-| GET | `/api/domains` | owner, manager | List all service domains |
-| GET | `/api/domains/:id` | owner, manager | Get single domain |
-| POST | `/api/domains` | owner | Create domain |
-| PUT | `/api/domains/:id` | owner | Update domain |
-| DELETE | `/api/domains/:id` | owner | Delete domain |
-
----
-
-### Dashboard  `GET /api/dashboard/...`
-
-| Method | Endpoint | Roles | Description |
-|--------|----------|-------|-------------|
-| GET | `/api/dashboard` | owner | Owner KPI stats (orders, revenue, inventory, team) |
-| GET | `/api/manager-dashboard` | manager | Manager stats (orders, workers) |
-
----
-
-### Trust Score  
-
-| Method | Endpoint | Roles | Description |
-|--------|----------|-------|-------------|
-| GET | `/api/trust-score` | owner | Computed 0–100 trust score + factor breakdown |
-
----
-
-### Risk Engine  
-
-| Method | Endpoint | Roles | Description |
-|--------|----------|-------|-------------|
-| POST | `/api/risk/analyze` | owner, manager | Analyze order risk score per TRD §5 |
-
-**Request body:**
-```json
-{
-  "orderId": "optional_mongo_id",
-  "deliveryDate": "2026-07-20T00:00:00Z",
-  "stagesRemaining": 3,
-  "totalStages": 5,
-  "assignedWorker": {
-    "id": "worker_mongo_id",
-    "activeTaskCount": 2,
-    "activeTaskLoadScore": 40
-  }
-}
-```
-
-**Response:**
-```json
-{
-  "success": true,
-  "riskPercentage": 62,
-  "reason": "Moderate risk: 4 day(s) until delivery with 3 stages outstanding.",
-  "suggestedAction": "Check in with the assigned worker and confirm realistic completion date."
-}
-```
-
----
-
-## Order Status Lifecycle
-
-```
-Pending → Accepted → Packed → Out For Delivery → Delivered
-                                                → Cancelled (any stage)
-```
-
----
-
-## Trust Score Formula
-
-```
-score = (orderCompletionRate × 0.50) + (inventoryLevelRating × 0.30) + (workerActivityScore × 0.20)
-```
-
-| Factor | Definition |
-|--------|-----------|
-| orderCompletionRate | % orders with status "Delivered" |
-| inventoryLevelRating | % items with quantity > minimumStock |
-| workerActivityScore | % workers with isAvailable = true |
-
----
-
-## Frontend Connection
-
-The frontend connects via [`frontend/src/services/api.ts`](../frontend/src/services/api.ts).
-
-Configure the API URL in the **frontend** `.env`:
-```env
-VITE_API_URL=http://localhost:5000   # local development
-VITE_API_URL=https://your-backend.railway.app  # production
-```
