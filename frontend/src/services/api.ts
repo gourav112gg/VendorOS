@@ -264,12 +264,19 @@ const companies = {
     request<{ success: boolean; company: any }>('PATCH', '/api/companies/me', payload, getToken() || undefined),
 };
 
+const notifications = {
+  getAll: () => request<{ success: boolean; notifications: any[] }>('GET', '/api/notifications', undefined, getToken() || undefined),
+  markRead: (id: string) => request<{ success: boolean }>('PATCH', `/api/notifications/${id}/read`, undefined, getToken() || undefined),
+  markAllRead: () => request<{ success: boolean }>('PATCH', '/api/notifications/read-all', undefined, getToken() || undefined),
+};
+
 // ─── Named export ─────────────────────────────────────────────────────────────
 
 const api = {
   auth,
   users,
   companies,
+  notifications,
   orders,
   inventory,
   managers,

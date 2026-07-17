@@ -15,6 +15,7 @@ const domainRoutes = require("./routes/domain.routes");
 const templateRoutes = require("./routes/template.routes");
 const copilotRoutes = require("./routes/copilot.routes");
 const companyRoutes = require("./routes/company.routes");
+const notificationRoutes = require("./routes/notification.routes");
 
 
 // Trust score controller (lightweight — no dedicated route file needed)
@@ -79,6 +80,7 @@ app.use("/api/customers", customerRoutes);
 app.use("/api/domains", domainRoutes);
 app.use("/api/templates", templateRoutes);
 app.use("/api/companies", companyRoutes);
+app.use("/api/notifications", notificationRoutes);
 app.use("/api", copilotRoutes);
 
 

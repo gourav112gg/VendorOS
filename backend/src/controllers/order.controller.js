@@ -1,6 +1,7 @@
 const Order = require("../models/Order");
 const Inventory = require("../models/Inventory");
 const User = require("../models/User");
+const Notification = require("../models/Notification");
 // ================= CREATE ORDER =================
 const createOrder = async (req, res) => {
   try {
@@ -310,6 +311,17 @@ const assignWorker = async (req, res) => {
 
     await order.save();
 
+    try {
+      await Notification.create({
+        recipient: worker._id,
+        title: "New Task Assigned",
+        message: `You have been assigned to order #${order._id.toString().substring(18)} for ${order.customerName}.`,
+        order: order._id
+      });
+    } catch (notifError) {
+      console.error("[Notification Error] Failed to create task assignment notification:", notifError);
+    }
+
     return res.status(200).json({
       success: true,
       message: "Worker assigned successfully",
@@ -387,6 +399,29 @@ const updateOrderStatus = async (req, res) => {
     order.status = status;
 
     await order.save();
+
+    try {
+      const recipients = [];
+      if (order.assignedManager) {
+        recipients.push(order.assignedManager);
+      }
+      const companyOwner = await User.findOne({ company: order.company, role: "owner" });
+      if (companyOwner) {
+        recipients.push(companyOwner._id);
+      }
+      const uniqueRecipients = [...new Set(recipients.map(id => id.toString()))];
+
+      for (const recipientId of uniqueRecipients) {
+        await Notification.create({
+          recipient: recipientId,
+          title: "Order Status Update",
+          message: `Order #${order._id.toString().substring(18)} status has been updated to "${status}" by worker ${req.user.name}.`,
+          order: order._id
+        });
+      }
+    } catch (notifError) {
+      console.error("[Notification Error] Failed to create status update notification:", notifError);
+    }
 
     res.status(200).json({
       success: true,

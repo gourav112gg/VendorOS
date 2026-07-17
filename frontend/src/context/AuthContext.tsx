@@ -198,6 +198,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             createdAt: res.user.company.createdAt,
             minOrderValue: res.user.company.minimumOrderValue,
             subscription: res.user.company.subscription,
+            description: res.user.company.description,
+            address: res.user.company.address,
           };
           setCompany(companyObj);
         } else {
@@ -245,6 +247,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             createdAt: res.user.company.createdAt,
             minOrderValue: res.user.company.minimumOrderValue,
             subscription: res.user.company.subscription,
+            description: res.user.company.description,
+            address: res.user.company.address,
           };
           setCompany(companyObj);
         } else {
@@ -481,6 +485,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           createdAt: res.company.createdAt,
           minOrderValue: res.company.minimumOrderValue,
           subscription: res.company.subscription,
+          description: res.company.description,
+          address: res.company.address,
         };
         setCompany(companyObj);
       }

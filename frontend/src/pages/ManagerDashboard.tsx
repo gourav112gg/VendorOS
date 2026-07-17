@@ -11,6 +11,7 @@ import { SettingsPanel } from '../components/SettingsPanel';
 import { ActivityLog } from '../components/ActivityLog';
 import { KpiOverview } from '../components/KpiOverview';
 import { ShortcutBadge } from '../components/ShortcutBadge';
+import { NotificationCenter } from '../components/NotificationCenter';
 
 // Subscription Gated Tabs
 import { AiCopilotTab } from '../components/AiCopilotTab';
@@ -238,14 +239,17 @@ export const ManagerDashboard: React.FC = () => {
         {/* Sidebar Navigation Menu (only shown in sidebar mode) */}
         {preferences.navStyle === 'sidebar' && (
           <div className="lg:col-span-3 space-y-4">
-            <div>
-              <h1 className="text-2xl font-serif italic font-light text-white tracking-tight flex items-center">
-                <ShieldCheck className="w-6 h-6 mr-2 text-[#666666]" />
-                {company.name}
-              </h1>
-              <p className="text-[#666666] mt-0.5 text-[10px] font-mono uppercase tracking-widest">
-                Manager Dashboard
-              </p>
+            <div className="flex justify-between items-start">
+              <div>
+                <h1 className="text-2xl font-serif italic font-light text-white tracking-tight flex items-center">
+                  <ShieldCheck className="w-6 h-6 mr-2 text-[#666666]" />
+                  {company.name}
+                </h1>
+                <p className="text-[#666666] mt-0.5 text-[10px] font-mono uppercase tracking-widest">
+                  Manager Dashboard
+                </p>
+              </div>
+              <NotificationCenter />
             </div>
 
             <div className="flex flex-col bg-[#111111] p-1 border border-[#222222] rounded-sm space-y-1">
@@ -277,33 +281,43 @@ export const ManagerDashboard: React.FC = () => {
             <div className={`flex flex-col md:flex-row mb-8 pb-4 border-b border-[#222222] ${
               preferences.navAlignment === 'left' ? 'md:items-start md:flex-col space-y-4' : 'md:items-center md:justify-between'
             }`}>
-              <div>
-                <h1 className="text-3xl font-serif italic font-light text-white tracking-tight flex items-center">
-                  <ShieldCheck className="w-8 h-8 mr-3 text-[#666666]" />
-                  {company.name} Management Portal
-                </h1>
-                <p className="text-[#666666] mt-1 text-xs font-mono uppercase tracking-widest">
-                  Operations Manager Portal • Oversight & dispatch coordination panels.
-                </p>
+              <div className="flex justify-between items-start w-full md:w-auto">
+                <div>
+                  <h1 className="text-3xl font-serif italic font-light text-white tracking-tight flex items-center">
+                    <ShieldCheck className="w-8 h-8 mr-3 text-[#666666]" />
+                    {company.name} Management Portal
+                  </h1>
+                  <p className="text-[#666666] mt-1 text-xs font-mono uppercase tracking-widest">
+                    Operations Manager Portal • Oversight & dispatch coordination panels.
+                  </p>
+                </div>
+                <div className="md:hidden">
+                  <NotificationCenter />
+                </div>
               </div>
 
-              <div className="flex bg-[#111111] p-1 border border-[#222222] rounded-sm mt-4 md:mt-0 space-x-1 flex-wrap gap-y-1">
-                {(['overview', 'orders', 'domains', 'team', 'copilot', 'invoices', 'trust-score', 'analytics', 'billing', 'activity', 'settings'] as const).map((tab) => (
-                  <button
-                    key={tab}
-                    onClick={() => setActiveSubTab(tab)}
-                    className={`px-3 py-1.5 text-[10px] font-bold rounded-sm uppercase tracking-widest transition-all duration-150 cursor-pointer flex items-center gap-1.5 group ${
-                      activeSubTab === tab
-                        ? 'bg-white text-black font-extrabold'
-                        : 'text-[#666666] hover:text-[#888888] hover:bg-[#1A1A1A]/50'
-                    }`}
-                  >
-                    <span>
-                      {tab === 'orders' ? 'dispatch' : tab === 'activity' ? 'activity log' : tab === 'copilot' ? 'ai copilot' : tab === 'trust-score' ? 'trust score' : tab === 'billing' ? 'billing' : tab}
-                    </span>
-                    <ShortcutBadge tab={tab} className="opacity-0 group-hover:opacity-100 transition-opacity ml-1" />
-                  </button>
-                ))}
+              <div className="flex items-center space-x-4 mt-4 md:mt-0">
+                <div className="hidden md:block">
+                  <NotificationCenter />
+                </div>
+                <div className="flex bg-[#111111] p-1 border border-[#222222] rounded-sm space-x-1 flex-wrap gap-y-1">
+                  {(['overview', 'orders', 'domains', 'team', 'copilot', 'invoices', 'trust-score', 'analytics', 'billing', 'activity', 'settings'] as const).map((tab) => (
+                    <button
+                      key={tab}
+                      onClick={() => setActiveSubTab(tab)}
+                      className={`px-3 py-1.5 text-[10px] font-bold rounded-sm uppercase tracking-widest transition-all duration-150 cursor-pointer flex items-center gap-1.5 group ${
+                        activeSubTab === tab
+                          ? 'bg-white text-black font-extrabold'
+                          : 'text-[#666666] hover:text-[#888888] hover:bg-[#1A1A1A]/50'
+                      }`}
+                    >
+                      <span>
+                        {tab === 'orders' ? 'dispatch' : tab === 'activity' ? 'activity log' : tab === 'copilot' ? 'ai copilot' : tab === 'trust-score' ? 'trust score' : tab === 'billing' ? 'billing' : tab}
+                      </span>
+                      <ShortcutBadge tab={tab} className="opacity-0 group-hover:opacity-100 transition-opacity ml-1" />
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
           )}

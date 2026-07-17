@@ -14,6 +14,8 @@ export interface Company {
   createdAt: string;
   subscription?: Subscription;
   minOrderValue?: number; // Owner-configured threshold (e.g. ₹5,000 or $500)
+  description?: string;
+  address?: string;
 }
 
 export interface UserProfile {

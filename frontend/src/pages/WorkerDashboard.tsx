@@ -10,6 +10,7 @@ import {
 import { motion } from 'motion/react';
 import { SettingsPanel } from '../components/SettingsPanel';
 import { ShortcutBadge } from '../components/ShortcutBadge';
+import { NotificationCenter } from '../components/NotificationCenter';
 
 export const WorkerDashboard: React.FC = () => {
   const { user, company, preferences } = useAuth();
@@ -352,18 +353,26 @@ export const WorkerDashboard: React.FC = () => {
       )}
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8 pb-4 border-b border-[#222222]">
-        <div>
-          <h1 className="text-3xl font-serif italic font-light text-white tracking-tight flex items-center">
-            <Briefcase className="w-8 h-8 mr-3 text-[#666666]" />
-            Technician Service Hub
-          </h1>
-          <p className="text-[#666666] mt-1 text-xs font-mono uppercase tracking-widest">
-            Worker Dashboard • View assigned dispatches, update service stages, and log job details.
-          </p>
+        <div className="flex justify-between items-start w-full md:w-auto">
+          <div>
+            <h1 className="text-3xl font-serif italic font-light text-white tracking-tight flex items-center">
+              <Briefcase className="w-8 h-8 mr-3 text-[#666666]" />
+              Technician Service Hub
+            </h1>
+            <p className="text-[#666666] mt-1 text-xs font-mono uppercase tracking-widest">
+              Worker Dashboard • View assigned dispatches, update service stages, and log job details.
+            </p>
+          </div>
+          <div className="md:hidden mt-1 mr-2">
+            <NotificationCenter />
+          </div>
         </div>
 
         {/* Refresh toggle + Sub navigation tabs */}
         <div className="flex flex-col sm:flex-row sm:items-center space-y-3 sm:space-y-0 sm:space-x-4 mt-4 md:mt-0">
+          <div className="hidden md:block">
+            <NotificationCenter />
+          </div>
           {/* User-controlled Auto Refresh Toggle Switch */}
           <div className="flex items-center space-x-3 bg-[#111111] px-3 py-2 border border-[#222222] rounded-sm select-none">
             <div className="flex items-center space-x-2">
