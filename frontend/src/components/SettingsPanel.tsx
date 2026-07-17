@@ -18,7 +18,7 @@ interface SettingsPanelProps {
 }
 
 export const SettingsPanel: React.FC<SettingsPanelProps> = ({ initialTab = 'profile' }) => {
-  const { user, company, preferences, updatePreference, updateProfile, updateCompany } = useAuth();
+  const { user, company, preferences, updatePreference, updateProfile, updateCompany, setPendingRequest } = useAuth();
   
   // Tab states
   const [activeSubTab, setActiveSubTab] = useState<'profile' | 'preferences' | 'subscription'>('profile');
@@ -33,6 +33,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ initialTab = 'prof
   // Profile settings state
   const [name, setName] = useState(user?.name || '');
   const [phone, setPhone] = useState(user?.phone || '');
+  const [email, setEmail] = useState(user?.email || '');
   const [isSavingProfile, setIsSavingProfile] = useState(false);
   const [profileSuccess, setProfileSuccess] = useState(false);
 
@@ -65,6 +66,9 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ initialTab = 'prof
   // Update selected states if user object changes
   useEffect(() => {
     if (user) {
+      setName(user.name);
+      setPhone(user.phone || '');
+      setEmail(user.email);
       setSelectedRole(user.role);
       setSelectedCompanyId(user.companyId || '');
     }
@@ -183,16 +187,42 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ initialTab = 'prof
     setProfileSuccess(false);
     try {
       const isOwner = user?.role?.toLowerCase() === 'owner';
+      const isCustomer = user?.role?.toLowerCase() === 'customer';
+
+      let companyToSave = isOwner || isCustomer ? undefined : user?.companyId;
+      let shouldRedirect = false;
+
+      if (!isOwner && !isCustomer && selectedCompanyId !== user?.companyId) {
+        if (selectedCompanyId) {
+          const joinRes = await api.joinRequests.create({
+            companyId: selectedCompanyId,
+            role: selectedRole.toLowerCase()
+          });
+          if (joinRes.success && joinRes.request) {
+            setPendingRequest(joinRes.request);
+            shouldRedirect = true;
+          }
+          alert("A request has been sent to the company owner. You will join the company once approved!");
+        }
+      }
+
       await updateProfile(
         name,
         phone,
-        isOwner ? undefined : selectedRole.toLowerCase(),
-        isOwner ? undefined : selectedCompanyId
+        isOwner || isCustomer ? undefined : selectedRole.toLowerCase(),
+        companyToSave,
+        email.trim()
       );
+
+      if (shouldRedirect) {
+        window.location.reload();
+      }
+
       setProfileSuccess(true);
       setTimeout(() => setProfileSuccess(false), 3000);
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
+      alert(err.message || "Failed to update profile.");
     } finally {
       setIsSavingProfile(false);
     }
@@ -468,7 +498,22 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ initialTab = 'prof
                 </div>
               </div>
 
-              {user?.role?.toLowerCase() !== 'owner' && (
+              <div className="space-y-1.5">
+                <label htmlFor="profile-email" className="text-[10px] font-mono font-bold text-[#666666] uppercase tracking-widest">
+                  Email Address
+                </label>
+                <input
+                  id="profile-email"
+                  type="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full bg-black text-xs text-white placeholder-[#444444] px-3 py-2.5 rounded-sm border border-[#222222] focus:outline-none focus:border-[#444444] transition-colors"
+                  placeholder="Email address"
+                />
+              </div>
+
+              {user?.role?.toLowerCase() !== 'owner' && user?.role?.toLowerCase() !== 'customer' && (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-1.5">
                     <label htmlFor="profile-role" className="text-[10px] font-mono font-bold text-[#666666] uppercase tracking-widest">
@@ -482,7 +527,6 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ initialTab = 'prof
                     >
                       <option value="Worker">Worker (Technician)</option>
                       <option value="Manager">Manager (Coordinator)</option>
-                      <option value="Customer">Customer (No Company)</option>
                     </select>
                   </div>
 

@@ -13,7 +13,7 @@ import { ShortcutBadge } from '../components/ShortcutBadge';
 import { NotificationCenter } from '../components/NotificationCenter';
 
 export const WorkerDashboard: React.FC = () => {
-  const { user, company, preferences } = useAuth();
+  const { user, company, preferences, pendingRequest, logout } = useAuth();
   
   const [activeTab, setActiveTab] = useState<'jobs' | 'settings'>('jobs');
   const [assignedOrders, setAssignedOrders] = useState<ServiceOrder[]>([]);
@@ -342,6 +342,39 @@ export const WorkerDashboard: React.FC = () => {
   );
   const completedTodayCount = completedTodayOrders.length;
   const completedTodayValue = completedTodayOrders.reduce((sum, o) => sum + o.value, 0);
+
+  if (pendingRequest && user && !user.companyId && activeTab !== 'settings') {
+    return (
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 flex flex-col items-center justify-center min-h-[60vh] text-center space-y-6">
+        <div className="p-4 bg-[#111111] border border-[#222222] rounded-full text-amber-500 animate-pulse">
+          <Clock className="w-12 h-12" />
+        </div>
+        <div className="space-y-2">
+          <h2 className="text-2xl font-serif italic text-white font-light">Join Request Pending</h2>
+          <p className="text-xs text-[#888888] uppercase tracking-wider font-mono">
+            Waiting for approval from the owner of <span className="text-white font-bold">{pendingRequest.company?.companyName || 'the company'}</span>.
+          </p>
+          <p className="text-sm text-[#666666] max-w-md mx-auto leading-relaxed">
+            Your worker account was successfully registered. Once the company owner approves your request, you will gain access to your dispatches and schedule.
+          </p>
+        </div>
+        <div className="flex space-x-4 pt-4">
+          <button
+            onClick={() => setActiveTab('settings')}
+            className="px-5 py-2.5 bg-[#111111] hover:bg-[#1A1A1A] text-white border border-[#222222] rounded-sm text-xs font-mono font-bold uppercase tracking-widest cursor-pointer transition-colors"
+          >
+            Go to Settings
+          </button>
+          <button
+            onClick={() => logout()}
+            className="px-5 py-2.5 bg-red-950/20 hover:bg-red-950/40 text-red-400 border border-red-900/50 rounded-sm text-xs font-mono font-bold uppercase tracking-widest cursor-pointer transition-colors"
+          >
+            Logout
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">

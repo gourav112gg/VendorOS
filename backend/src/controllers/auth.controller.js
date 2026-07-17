@@ -424,7 +424,15 @@ const vendorSignup = async (req, res) => {
       phone: phone && phone.trim() ? phone.trim() : undefined,
       role: normalizedRole,
       isCustomer: false,
-      company: companyId
+      company: null
+    });
+
+    const JoinRequest = require("../models/JoinRequest");
+    await JoinRequest.create({
+      user: vendor._id,
+      company: companyId,
+      role: normalizedRole,
+      status: "pending"
     });
 
     const token = generateToken(vendor._id, vendor.role);

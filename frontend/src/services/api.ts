@@ -254,10 +254,21 @@ const risk = {
 
 const users = {
   getProfile: () => request<{ success: boolean; user: any }>('GET', '/api/users/profile', undefined, getToken() || undefined),
-  updateProfile: (payload: { name: string; phone?: string; role?: string; companyId?: string }) =>
+  updateProfile: (payload: { name: string; phone?: string; role?: string; companyId?: string; email?: string }) =>
     request<{ success: boolean; user: any }>('PUT', '/api/users/profile', payload, getToken() || undefined),
   promote: (workerId: string) =>
     request<{ success: boolean; user: any }>('PATCH', '/api/users/promote', { workerId }, getToken() || undefined),
+};
+
+const joinRequests = {
+  create: (payload: { companyId: string; role: string }) =>
+    request<{ success: boolean; request: any }>('POST', '/api/join-requests', payload, getToken() || undefined),
+  getPending: () =>
+    request<{ success: boolean; requests: any[] }>('GET', '/api/join-requests/pending', undefined, getToken() || undefined),
+  handle: (requestId: string, payload: { action: 'approve' | 'reject' }) =>
+    request<{ success: boolean; request: any }>('PATCH', `/api/join-requests/${requestId}`, payload, getToken() || undefined),
+  getMyPending: () =>
+    request<{ success: boolean; request: any }>('GET', '/api/join-requests/my-pending', undefined, getToken() || undefined),
 };
 
 const companies = {
@@ -277,6 +288,7 @@ const notifications = {
 const api = {
   auth,
   users,
+  joinRequests,
   companies,
   notifications,
   orders,

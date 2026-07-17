@@ -19,7 +19,7 @@ const getProfile = async (req, res) => {
 
 const updateProfile = async (req, res) => {
   try {
-    const { name, phone, role, companyId } = req.body;
+    const { name, phone, role, companyId, email } = req.body;
     
     if (!name || !name.trim()) {
       return res.status(400).json({
@@ -32,6 +32,27 @@ const updateProfile = async (req, res) => {
       name: name.trim(),
       phone: phone && phone.trim() ? phone.trim() : undefined,
     };
+
+    if (email && email.trim() && email.toLowerCase() !== req.user.email.toLowerCase()) {
+      const targetEmail = email.toLowerCase().trim();
+      const emailExists = await User.findOne({ email: targetEmail, isCustomer: req.user.isCustomer });
+      if (emailExists) {
+        return res.status(400).json({
+          success: false,
+          message: "Email is already in use",
+        });
+      }
+
+      const admin = require("../config/firebaseAdmin");
+      try {
+        const fbUser = await admin.auth().getUserByEmail(req.user.email);
+        await admin.auth().updateUser(fbUser.uid, { email: targetEmail });
+      } catch (fbErr) {
+        console.error("Firebase update user error:", fbErr);
+      }
+
+      updateFields.email = targetEmail;
+    }
 
     if (role && (role === "manager" || role === "worker") && req.user.role !== "owner") {
       updateFields.role = role;

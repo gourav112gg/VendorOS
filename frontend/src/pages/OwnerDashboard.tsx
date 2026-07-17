@@ -39,6 +39,23 @@ export const OwnerDashboard: React.FC = () => {
   const [removingMember, setRemovingMember] = useState<UserProfile | null>(null);
   const [typedConfirmationName, setTypedConfirmationName] = useState('');
   const [removeError, setRemoveError] = useState('');
+  const [joinRequests, setJoinRequests] = useState<any[]>([]);
+
+  useEffect(() => {
+    const fetchRequests = async () => {
+      if (activeSubTab === 'team' && user) {
+        try {
+          const res = await api.joinRequests.getPending();
+          if (res.success && res.requests) {
+            setJoinRequests(res.requests);
+          }
+        } catch (err) {
+          console.error("Failed to load join requests:", err);
+        }
+      }
+    };
+    fetchRequests();
+  }, [activeSubTab, user]);
 
   // Orders state
   const [orders, setOrders] = useState<ServiceOrder[]>([]);
@@ -174,6 +191,30 @@ export const OwnerDashboard: React.FC = () => {
     } catch (err: any) {
       console.error(err);
       alert(err.message || "Failed to promote worker.");
+    }
+  };
+
+  const handleRequestAction = async (requestId: string, action: 'approve' | 'reject') => {
+    if (!confirm(`Are you sure you want to ${action} this join request?`)) return;
+    try {
+      const res = await api.joinRequests.handle(requestId, { action });
+      if (res.success) {
+        alert(`Request ${action}ed successfully.`);
+        const reqObj = joinRequests.find(r => r._id === requestId);
+        setJoinRequests(prev => prev.filter(r => r._id !== requestId));
+        if (action === 'approve' && reqObj) {
+          const compId = user.companyId!;
+          dbStore.updateUserRoleAndCompany(
+            reqObj.user._id, 
+            reqObj.role.charAt(0).toUpperCase() + reqObj.role.slice(1) as any, 
+            compId
+          );
+          setTeamMembers(dbStore.getUsers().filter(u => u.companyId === compId && u.id !== user.id));
+        }
+      }
+    } catch (err: any) {
+      console.error(err);
+      alert(err.message || "Failed to process request.");
     }
   };
 
@@ -678,6 +719,51 @@ export const OwnerDashboard: React.FC = () => {
               </p>
             </div>
           </div>
+
+          {/* Pending Join Requests */}
+          {joinRequests.length > 0 && (
+            <div className="bg-[#111111] rounded-sm border border-[#222222] overflow-hidden">
+              <div className="p-5 border-b border-[#222222] bg-[#0A0A0A] flex justify-between items-center">
+                <div>
+                  <h3 className="text-sm font-semibold uppercase tracking-widest text-amber-400 flex items-center">
+                    <span className="w-2 h-2 bg-amber-500 rounded-full mr-2 inline-block animate-pulse"></span>
+                    Pending Join Requests ({joinRequests.length})
+                  </h3>
+                  <p className="text-[10px] text-[#666666] uppercase tracking-wider mt-0.5">
+                    Workers or Managers requesting to join your company.
+                  </p>
+                </div>
+              </div>
+              <ul className="divide-y divide-[#1A1A1A]">
+                {joinRequests.map((req) => (
+                  <li key={req._id} className="p-5 flex items-center justify-between hover:bg-[#0D0D0D] transition-colors">
+                    <div>
+                      <span className="font-semibold text-white block text-sm">
+                        {req.user?.name || 'Unknown User'}
+                      </span>
+                      <span className="text-xs font-mono text-[#666666] block">
+                        {req.user?.email} • Requested Role: <strong className="text-white capitalize">{req.role}</strong>
+                      </span>
+                    </div>
+                    <div className="flex space-x-2">
+                      <button
+                        onClick={() => handleRequestAction(req._id, 'approve')}
+                        className="px-3 py-1.5 rounded-sm border border-emerald-950/40 text-emerald-400 hover:text-white hover:bg-emerald-950/20 text-xs font-semibold uppercase tracking-widest transition-all cursor-pointer"
+                      >
+                        Approve
+                      </button>
+                      <button
+                        onClick={() => handleRequestAction(req._id, 'reject')}
+                        className="px-3 py-1.5 rounded-sm border border-red-950/40 text-red-400 hover:text-white hover:bg-red-950/20 text-xs font-semibold uppercase tracking-widest transition-all cursor-pointer"
+                      >
+                        Reject
+                      </button>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* Managers List */}

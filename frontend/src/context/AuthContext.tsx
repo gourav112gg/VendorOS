@@ -33,8 +33,10 @@ interface AuthContextType {
   company: Company | null;
   loading: boolean;
   preferences: UserPreferences;
+  pendingRequest: any | null;
+  setPendingRequest: React.Dispatch<React.SetStateAction<any | null>>;
   updatePreference: <K extends keyof UserPreferences>(key: K, value: UserPreferences[K]) => void;
-  updateProfile: (name: string, phone?: string, role?: string, companyId?: string) => Promise<void>;
+  updateProfile: (name: string, phone?: string, role?: string, companyId?: string, email?: string) => Promise<void>;
   updateCompany: (companyDetails: { description?: string; address?: string; minimumOrderValue?: number }) => Promise<void>;
   login: (email: string, password?: string, category?: string) => Promise<UserProfile>;
   loginWithGoogle: () => Promise<UserProfile>;
@@ -51,6 +53,33 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<UserProfile | null>(null);
   const [company, setCompany] = useState<Company | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
+  const [pendingRequest, setPendingRequest] = useState<any | null>(null);
+
+  useEffect(() => {
+    const checkPendingRequest = async () => {
+      if (!user) {
+        setPendingRequest(null);
+        return;
+      }
+      if (api.getToken() && (user.role === 'Worker' || user.role === 'Manager') && !user.companyId) {
+        try {
+          const res = await api.joinRequests.getMyPending();
+          if (res.success && res.request) {
+            setPendingRequest(res.request);
+          } else {
+            setPendingRequest(null);
+          }
+        } catch (err) {
+          console.error("Error fetching my pending request:", err);
+          setPendingRequest(null);
+        }
+      } else {
+        setPendingRequest(null);
+      }
+    };
+    checkPendingRequest();
+  }, [user]);
+
   const [preferences, setPreferences] = useState<UserPreferences>({
     currency: 'INR',
     navAlignment: 'left',
@@ -447,9 +476,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const updateProfile = async (name: string, phone?: string, role?: string, companyId?: string): Promise<void> => {
+  const updateProfile = async (name: string, phone?: string, role?: string, companyId?: string, email?: string): Promise<void> => {
     if (api.getToken() && user) {
-      const res = await api.users.updateProfile({ name, phone, role, companyId });
+      const res = await api.users.updateProfile({ name, phone, role, companyId, email });
       if (res.success && res.user) {
         const updatedUser: UserProfile = {
           id: res.user._id,
@@ -463,7 +492,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setUser(updatedUser);
         dbStore.updateUserProfile(user.id, name, phone);
         
-        // Sync local database store role and company updates
+        // Sync local database store email, role and company updates
+        const localU = dbStore.getUsers().find(u => u.id === user.id);
+        if (localU && email) {
+          localU.email = email;
+        }
         dbStore.updateUserRoleAndCompany(
           user.id, 
           role ? (role.charAt(0).toUpperCase() + role.slice(1) as any) : undefined, 
@@ -531,6 +564,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       company,
       loading,
       preferences,
+      pendingRequest,
+      setPendingRequest,
       updatePreference,
       updateProfile,
       updateCompany,
