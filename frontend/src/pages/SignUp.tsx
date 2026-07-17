@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import dbStore from '../services/store';
 import { Company } from '../types';
+import api from '../services/api';
 import { 
   Layers, ChevronRight, User, Mail, Key, Shield, Building, Search, CheckCircle, XCircle 
 } from 'lucide-react';
@@ -67,9 +68,31 @@ export const SignUp: React.FC<SignUpProps> = ({ onNavigateToLogin }) => {
 
   // Fetch companies for dropdown list
   useEffect(() => {
-    setAllCompanies(dbStore.getCompanies());
+    const fetchCompanies = async () => {
+      try {
+        const res = await api.companies.getAll();
+        if (res && res.companies) {
+          const mapped = res.companies.map((c: any) => ({
+            id: c._id,
+            name: c.companyName,
+            createdAt: c.createdAt,
+            minOrderValue: c.minimumOrderValue,
+            subscription: c.subscription
+          }));
+          setAllCompanies(mapped);
+        } else {
+          setAllCompanies(dbStore.getCompanies());
+        }
+      } catch (err) {
+        console.error("Failed to fetch companies from backend, falling back to local store:", err);
+        setAllCompanies(dbStore.getCompanies());
+      }
+    };
+    
+    fetchCompanies();
+    
     const unsubscribe = dbStore.subscribe(() => {
-      setAllCompanies(dbStore.getCompanies());
+      fetchCompanies();
     });
     return () => unsubscribe();
   }, []);
@@ -100,7 +123,7 @@ export const SignUp: React.FC<SignUpProps> = ({ onNavigateToLogin }) => {
         if (!selectedCompanyId) {
           throw new Error('Please select a valid company to join.');
         }
-        await registerManagerOrWorker(name, email, selectedCompanyId, role, phone);
+        await registerManagerOrWorker(name, email, selectedCompanyId, role, phone, password);
       } else {
         await registerCustomer(name, email, phone, password);
       }

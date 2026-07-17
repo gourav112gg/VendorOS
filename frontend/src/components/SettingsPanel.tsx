@@ -17,7 +17,7 @@ interface SettingsPanelProps {
 }
 
 export const SettingsPanel: React.FC<SettingsPanelProps> = ({ initialTab = 'profile' }) => {
-  const { user, company, preferences, updatePreference, updateProfile } = useAuth();
+  const { user, company, preferences, updatePreference, updateProfile, updateCompany } = useAuth();
   
   // Tab states
   const [activeSubTab, setActiveSubTab] = useState<'profile' | 'preferences' | 'subscription'>('profile');
@@ -34,6 +34,21 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ initialTab = 'prof
   const [phone, setPhone] = useState(user?.phone || '');
   const [isSavingProfile, setIsSavingProfile] = useState(false);
   const [profileSuccess, setProfileSuccess] = useState(false);
+
+  // Company settings state (for Owner role only)
+  const [companyDescription, setCompanyDescription] = useState(company?.description || '');
+  const [companyAddress, setCompanyAddress] = useState(company?.address || '');
+  const [companyMinOrder, setCompanyMinOrder] = useState(company?.minOrderValue || 0);
+  const [isSavingCompany, setIsSavingCompany] = useState(false);
+  const [companySuccess, setCompanySuccess] = useState(false);
+
+  useEffect(() => {
+    if (company) {
+      setCompanyDescription(company.description || '');
+      setCompanyAddress(company.address || '');
+      setCompanyMinOrder(company.minOrderValue || 0);
+    }
+  }, [company]);
 
   // Security Toggles & State
   const [mfaEnabled, setMfaEnabled] = useState(localStorage.getItem('vendoros_security_mfa') === 'true');
@@ -139,6 +154,25 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ initialTab = 'prof
       console.error(err);
     } finally {
       setIsSavingProfile(false);
+    }
+  };
+
+  const handleSaveCompany = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSavingCompany(true);
+    setCompanySuccess(false);
+    try {
+      await updateCompany({
+        description: companyDescription,
+        address: companyAddress,
+        minimumOrderValue: Number(companyMinOrder)
+      });
+      setCompanySuccess(true);
+      setTimeout(() => setCompanySuccess(false), 3000);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsSavingCompany(false);
     }
   };
 
@@ -404,6 +438,96 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ initialTab = 'prof
               </div>
             </form>
           </div>
+
+          {user?.role?.toLowerCase() === 'owner' && company && (
+            <div className="bg-[#111111] border border-[#222222] p-6 rounded-sm">
+              <div className="flex items-center space-x-3 mb-6 pb-4 border-b border-[#222222]">
+                <div className="p-2 bg-[#1A1A1A] border border-[#222222] text-[#888888] rounded-sm">
+                  <Layers className="w-4 h-4 text-white" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-mono font-bold text-white uppercase tracking-wider">Company Profile</h3>
+                  <p className="text-xs text-[#666666] mt-0.5">Manage your company's public information and business rules.</p>
+                </div>
+              </div>
+
+              {companySuccess && (
+                <div className="mb-4 p-3 bg-emerald-950/20 border border-emerald-900/50 rounded-sm text-xs font-semibold text-emerald-400 flex items-center font-mono">
+                  <CheckCircle className="w-4 h-4 mr-2 flex-shrink-0" />
+                  <span>Company details updated successfully!</span>
+                </div>
+              )}
+
+              <form onSubmit={handleSaveCompany} className="space-y-4 max-w-xl">
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-mono font-bold text-[#666666] uppercase tracking-widest">
+                    Company Name
+                  </label>
+                  <input
+                    type="text"
+                    disabled
+                    value={company.name}
+                    className="w-full bg-[#161616] text-xs text-[#888888] px-3 py-2.5 rounded-sm border border-[#222222] cursor-not-allowed"
+                  />
+                  <p className="text-[10px] text-[#444444]">Company name is unique and cannot be changed.</p>
+                </div>
+
+                <div className="space-y-1.5">
+                  <label htmlFor="company-description" className="text-[10px] font-mono font-bold text-[#666666] uppercase tracking-widest">
+                    Description / Bio
+                  </label>
+                  <textarea
+                    id="company-description"
+                    rows={3}
+                    value={companyDescription}
+                    onChange={(e) => setCompanyDescription(e.target.value)}
+                    className="w-full bg-black text-xs text-white placeholder-[#444444] px-3 py-2.5 rounded-sm border border-[#222222] focus:outline-none focus:border-[#444444] transition-colors resize-none"
+                    placeholder="Short description of your services..."
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-1.5">
+                    <label htmlFor="company-address" className="text-[10px] font-mono font-bold text-[#666666] uppercase tracking-widest">
+                      Office Address
+                    </label>
+                    <input
+                      id="company-address"
+                      type="text"
+                      value={companyAddress}
+                      onChange={(e) => setCompanyAddress(e.target.value)}
+                      className="w-full bg-black text-xs text-white placeholder-[#444444] px-3 py-2.5 rounded-sm border border-[#222222] focus:outline-none focus:border-[#444444] transition-colors"
+                      placeholder="Company address"
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label htmlFor="company-min-order" className="text-[10px] font-mono font-bold text-[#666666] uppercase tracking-widest">
+                      Min Order Value (₹)
+                    </label>
+                    <input
+                      id="company-min-order"
+                      type="number"
+                      value={companyMinOrder}
+                      onChange={(e) => setCompanyMinOrder(Number(e.target.value))}
+                      className="w-full bg-black text-xs text-white placeholder-[#444444] px-3 py-2.5 rounded-sm border border-[#222222] focus:outline-none focus:border-[#444444] transition-colors"
+                      placeholder="e.g. 5000"
+                    />
+                  </div>
+                </div>
+
+                <div className="pt-2">
+                  <button
+                    type="submit"
+                    disabled={isSavingCompany}
+                    className="px-5 py-2.5 bg-white text-black text-[10px] font-mono font-bold uppercase tracking-widest hover:bg-[#E5E5E5] rounded-sm transition-all duration-150 cursor-pointer disabled:opacity-50"
+                  >
+                    {isSavingCompany ? 'Saving...' : 'Save Company Details'}
+                  </button>
+                </div>
+              </form>
+            </div>
+          )}
 
           {/* NOTIFICATION CHANNELS CARD */}
           <div className="bg-[#111111] border border-[#222222] p-6 rounded-sm">

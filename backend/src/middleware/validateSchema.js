@@ -54,6 +54,15 @@ const managerWorkerCreateSchema = z.object({
   role: z.preprocess(sanitizeString, z.enum(["manager", "worker"]))
 });
 
+const vendorSignupSchema = z.object({
+  idToken: tokenSchema,
+  name: nameSchema,
+  email: emailSchema,
+  phone: phoneSchema,
+  companyId: z.preprocess(sanitizeString, z.string().min(1)),
+  role: z.preprocess(sanitizeString, z.enum(["Manager", "Worker"]))
+});
+
 // Middleware factory generator
 const validateSchema = (schema) => {
   return (req, res, next) => {
@@ -85,5 +94,6 @@ module.exports = {
   loginSchema,
   ownerSignupSchema,
   customerSignupSchema,
+  vendorSignupSchema,
   managerWorkerCreateSchema
 };

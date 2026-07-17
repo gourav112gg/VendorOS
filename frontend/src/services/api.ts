@@ -66,6 +66,16 @@ const auth = {
     phone?: string;
   }) => request('POST', '/api/auth/customer/signup', payload),
 
+  /** Register a new Vendor (Manager/Worker) — sends Firebase ID token to backend */
+  vendorSignup: (payload: {
+    idToken: string;
+    name: string;
+    email: string;
+    phone?: string;
+    companyId: string;
+    role: 'Manager' | 'Worker';
+  }) => request<{ token: string; user: any }>('POST', '/api/auth/vendor/signup', payload),
+
   /** Unified login endpoint — sends Firebase ID token + category to backend */
   login: async (payload: { idToken: string; email: string; category: string }) => {
     const data = await request<{ token: string; user: any }>('POST', '/api/auth/login', payload);
@@ -242,10 +252,24 @@ const risk = {
   }) => request('POST', '/api/risk/analyze', payload, getToken() || undefined),
 };
 
+const users = {
+  getProfile: () => request<{ success: boolean; user: any }>('GET', '/api/users/profile', undefined, getToken() || undefined),
+  updateProfile: (payload: { name: string; phone?: string }) =>
+    request<{ success: boolean; user: any }>('PUT', '/api/users/profile', payload, getToken() || undefined),
+};
+
+const companies = {
+  getAll: () => request<{ success: boolean; companies: any[] }>('GET', '/api/companies'),
+  updateMe: (payload: { description?: string; address?: string; minimumOrderValue?: number }) =>
+    request<{ success: boolean; company: any }>('PATCH', '/api/companies/me', payload, getToken() || undefined),
+};
+
 // ─── Named export ─────────────────────────────────────────────────────────────
 
 const api = {
   auth,
+  users,
+  companies,
   orders,
   inventory,
   managers,

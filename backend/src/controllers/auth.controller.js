@@ -362,8 +362,87 @@ const reportFailure = async (req, res) => {
   }
 };
 
+const vendorSignup = async (req, res) => {
+  try {
+    const { idToken, name, email, companyId, role, phone } = req.body;
+    const normalizedEmail = email.toLowerCase().trim();
+    const normalizedRole = role.toLowerCase().trim();
+
+    if (normalizedRole !== "manager" && normalizedRole !== "worker") {
+      return res.status(400).json({
+        success: false,
+        message: "Something went wrong, please try again or contact support"
+      });
+    }
+
+    let decodedToken;
+    try {
+      decodedToken = await admin.auth().verifyIdToken(idToken);
+    } catch (verifyError) {
+      return res.status(400).json({
+        success: false,
+        message: "Something went wrong, please try again or contact support"
+      });
+    }
+
+    if (decodedToken.email.toLowerCase() !== normalizedEmail) {
+      return res.status(400).json({
+        success: false,
+        message: "Something went wrong, please try again or contact support"
+      });
+    }
+
+    const existingUser = await User.findOne({
+      $or: [
+        { email: normalizedEmail, isCustomer: false },
+        { phone, isCustomer: false }
+      ]
+    });
+
+    if (existingUser) {
+      return res.status(400).json({
+        success: false,
+        message: "Something went wrong, please try again or contact support"
+      });
+    }
+
+    const company = await Company.findById(companyId);
+    if (!company) {
+      return res.status(400).json({
+        success: false,
+        message: "Something went wrong, please try again or contact support"
+      });
+    }
+
+    const vendor = await User.create({
+      name,
+      email: normalizedEmail,
+      phone,
+      role: normalizedRole,
+      isCustomer: false,
+      company: companyId
+    });
+
+    const token = generateToken(vendor._id, vendor.role);
+
+    return res.status(201).json({
+      success: true,
+      message: "Vendor registered successfully",
+      token,
+      user: vendor
+    });
+  } catch (error) {
+    console.error("[Vendor Signup Error]", error);
+    return res.status(500).json({
+      success: false,
+      message: "Something went wrong, please try again or contact support"
+    });
+  }
+};
+
 module.exports = {
   ownerSignup,
+  vendorSignup,
   login,
   reportFailure,
 };

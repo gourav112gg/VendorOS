@@ -5,12 +5,14 @@ const {
   validateSchema,
   loginSchema,
   ownerSignupSchema,
-  customerSignupSchema
+  customerSignupSchema,
+  vendorSignupSchema
 } = require("../middleware/validateSchema");
 const { createSignupRateLimiter } = require("../middleware/signupRateLimiter");
 
 const {
   ownerSignup,
+  vendorSignup,
   login,
   reportFailure,
 } = require("../controllers/auth.controller");
@@ -21,8 +23,9 @@ const {
 
 const signupRateLimiter = createSignupRateLimiter(10, 60 * 60 * 1000); // 10/IP/hour
 
-// Owner & Customer Signup with rate limiting + schema validation
+// Owner, Vendor, & Customer Signup with rate limiting + schema validation
 router.post("/owner/signup", signupRateLimiter, validateSchema(ownerSignupSchema), ownerSignup);
+router.post("/vendor/signup", signupRateLimiter, validateSchema(vendorSignupSchema), vendorSignup);
 router.post("/customer/signup", signupRateLimiter, validateSchema(customerSignupSchema), customerSignup);
 
 // Unified login endpoints

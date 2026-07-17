@@ -35,6 +35,7 @@ interface AuthContextType {
   preferences: UserPreferences;
   updatePreference: <K extends keyof UserPreferences>(key: K, value: UserPreferences[K]) => void;
   updateProfile: (name: string, phone?: string) => Promise<void>;
+  updateCompany: (companyDetails: { description?: string; address?: string; minimumOrderValue?: number }) => Promise<void>;
   login: (email: string, password?: string, category?: string) => Promise<UserProfile>;
   loginWithGoogle: () => Promise<UserProfile>;
   logout: () => void;
@@ -106,6 +107,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (!user) return;
 
     const unsubscribe = dbStore.subscribe(() => {
+      if (api.getToken()) {
+        const allUsers = dbStore.getUsers();
+        const stillExists = allUsers.find(u => u.id === user.id);
+        if (stillExists) {
+          setUser(prev => {
+            if (!prev) return null;
+            return {
+              ...prev,
+              name: stillExists.name,
+              phone: stillExists.phone
+            };
+          });
+        }
+        return;
+      }
+
       const allUsers = dbStore.getUsers();
       const stillExists = allUsers.find(u => u.id === user.id);
       const isSessionActive = dbStore.isSessionActive(user.id);
@@ -165,7 +182,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           id: res.user._id,
           name: res.user.name,
           email: res.user.email,
-          role: res.user.role.charAt(0).toUpperCase() + res.user.role.slice(1),
+          phone: res.user.phone,
+          role: res.user.role.charAt(0).toUpperCase() + res.user.role.slice(1) as any,
           companyId: res.user.company ? res.user.company._id : undefined,
           createdAt: res.user.createdAt,
         };
@@ -211,7 +229,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           id: res.user._id,
           name: res.user.name,
           email: res.user.email,
-          role: res.user.role.charAt(0).toUpperCase() + res.user.role.slice(1),
+          phone: res.user.phone,
+          role: res.user.role.charAt(0).toUpperCase() + res.user.role.slice(1) as any,
           companyId: res.user.company ? res.user.company._id : undefined,
           createdAt: res.user.createdAt,
         };
@@ -341,30 +360,48 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const registerManagerOrWorker = async (name: string, email: string, companyId: string, role: 'Manager' | 'Worker', phone?: string): Promise<UserProfile> => {
-    // Manager/Worker accounts are created by the Owner via the Admin SDK server-side.
-    // On the frontend (self-registration flow), we simply record locally.
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        const normalizedEmail = email.toLowerCase().trim();
-        const existingUser = dbStore.getUsers().find(u => u.email.toLowerCase() === normalizedEmail && !u.companyId);
-        if (existingUser) {
-          // Already registered — generic message, no email leak confirmation
-          reject(new Error('Something went wrong, please try again or contact support'));
-          return;
-        }
+  const registerManagerOrWorker = async (name: string, email: string, companyId: string, role: 'Manager' | 'Worker', phone?: string, password?: string): Promise<UserProfile> => {
+    const { createUserWithEmailAndPassword, getIdToken } = await import('firebase/auth');
+    const { auth: firebaseAuth } = await import('../services/firebase');
 
-        const newUser = dbStore.registerManagerOrWorker(name, email, companyId, role);
-        setUser(newUser);
-        localStorage.setItem('vendoros_current_user_id', newUser.id);
-        
+    // 1. Create account in Firebase Authentication
+    let idToken: string;
+    try {
+      const credential = await createUserWithEmailAndPassword(firebaseAuth, email, password || Math.random().toString(36) + 'Aa1!');
+      idToken = await getIdToken(credential.user);
+    } catch (fbErr: any) {
+      console.error("[Firebase Auth Vendor Signup Error]", fbErr);
+      throw new Error('Something went wrong, please try again or contact support');
+    }
+
+    try {
+      // 2. Register profile in MongoDB via backend
+      const res = await api.auth.vendorSignup({ idToken, name, email, phone, companyId, role });
+
+      // 3. Mirror in local simulated store
+      const users = dbStore.getUsers();
+      const existing = users.find(u => u.email.toLowerCase() === email.toLowerCase());
+      if (existing) {
+        setUser(existing);
+        localStorage.setItem('vendoros_current_user_id', existing.id);
         const comps = dbStore.getCompanies();
         const foundComp = comps.find(c => c.id === companyId);
         setCompany(foundComp || null);
+        return existing;
+      }
 
-        resolve(newUser);
-      }, 600);
-    });
+      const newUser = dbStore.registerManagerOrWorker(name, email, companyId, role);
+      setUser(newUser);
+      localStorage.setItem('vendoros_current_user_id', newUser.id);
+      const comps = dbStore.getCompanies();
+      const foundComp = comps.find(c => c.id === companyId);
+      setCompany(foundComp || null);
+
+      return newUser;
+    } catch (err: any) {
+      console.error("[Backend Vendor Signup Error]", err);
+      throw new Error('Something went wrong, please try again or contact support');
+    }
   };
 
   const registerCustomer = async (name: string, email: string, phone?: string, password?: string): Promise<UserProfile> => {
@@ -407,14 +444,47 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const updateProfile = async (name: string, phone?: string): Promise<void> => {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        if (user) {
-          dbStore.updateUserProfile(user.id, name, phone);
-        }
-        resolve();
-      }, 500);
-    });
+    if (api.getToken() && user) {
+      const res = await api.users.updateProfile({ name, phone });
+      if (res.success && res.user) {
+        const updatedUser: UserProfile = {
+          id: res.user._id,
+          name: res.user.name,
+          email: res.user.email,
+          phone: res.user.phone,
+          role: res.user.role.charAt(0).toUpperCase() + res.user.role.slice(1) as any,
+          companyId: res.user.company ? (res.user.company._id || res.user.company) : undefined,
+          createdAt: res.user.createdAt,
+        };
+        setUser(updatedUser);
+        dbStore.updateUserProfile(user.id, name, phone);
+      }
+    } else {
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          if (user) {
+            dbStore.updateUserProfile(user.id, name, phone);
+          }
+          resolve();
+        }, 500);
+      });
+    }
+  };
+
+  const updateCompany = async (companyDetails: { description?: string; address?: string; minimumOrderValue?: number }): Promise<void> => {
+    if (api.getToken() && company) {
+      const res = await api.companies.updateMe(companyDetails);
+      if (res.success && res.company) {
+        const companyObj: Company = {
+          id: res.company._id,
+          name: res.company.companyName,
+          createdAt: res.company.createdAt,
+          minOrderValue: res.company.minimumOrderValue,
+          subscription: res.company.subscription,
+        };
+        setCompany(companyObj);
+      }
+    }
   };
 
   const sendPasswordReset = async (email: string): Promise<void> => {
@@ -437,6 +507,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       preferences,
       updatePreference,
       updateProfile,
+      updateCompany,
       login,
       loginWithGoogle,
       logout,
