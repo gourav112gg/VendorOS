@@ -14,7 +14,7 @@ if (!admin.getApps().length) {
       
       const serviceAccount = JSON.parse(rawJson);
       admin.initializeApp({
-        credential: admin.credential.cert(serviceAccount),
+        credential: admin.cert(serviceAccount),
       });
     } else {
       // Fallback to initialization using the Project ID
