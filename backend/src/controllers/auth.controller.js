@@ -5,8 +5,17 @@ const admin = require("../config/firebaseAdmin");
 const LoginAttempt = require("../models/LoginAttempt");
 const RateLimit = require("../models/RateLimit");
 
+const demoEmails = [
+  "alice@apex.com", "bob@apex.com", "charlie@apex.com", "dave@gmail.com",
+  "kaushal@gmail.com", "rahul@gmail.com", "amit@gmail.com"
+];
+
 // Helper to record failed login attempts, handle progressive delay increment, and trigger lockout
 const recordFailureAttempt = async (email, emailFailKey) => {
+  if (demoEmails.includes(email.toLowerCase().trim())) {
+    console.log(`[DIAGNOSTIC] Skipping failed attempt logging for demo account: ${email}`);
+    return;
+  }
   await RateLimit.findOneAndUpdate(
     { key: emailFailKey },
     { $inc: { attempts: 1 }, $set: { lastAttempt: new Date() } },
@@ -128,11 +137,7 @@ const login = async (req, res) => {
     const normalizedEmail = email.toLowerCase().trim();
     console.log(`[DIAGNOSTIC] Normalized email: "${normalizedEmail}"`);
 
-    // 0. Demo & Owner Bypass check (instant return, bypassing all rate limits, lockout checks, and Firebase verification)
-    const demoEmails = [
-      "alice@apex.com", "bob@apex.com", "charlie@apex.com", "dave@gmail.com",
-      "kaushal@gmail.com", "rahul@gmail.com", "amit@gmail.com"
-    ];
+
 
     const isBypassAllowed = process.env.NODE_ENV !== "production" && process.env.ALLOW_AUTH_BYPASS === "true";
     console.log(`[DIAGNOSTIC] Bypass configuration check: isBypassAllowed=${isBypassAllowed} (NODE_ENV="${process.env.NODE_ENV}", ALLOW_AUTH_BYPASS="${process.env.ALLOW_AUTH_BYPASS}")`);
@@ -175,72 +180,78 @@ const login = async (req, res) => {
       }
     }
 
-    // 1. IP-based Rate Limiting (max 10 requests per IP per minute)
-    const clientIp = req.ip || req.connection.remoteAddress || "unknown_ip";
-    const ipKey = `ip:${clientIp}`;
-    console.log(`[DIAGNOSTIC] Checking IP Rate Limit for clientIp="${clientIp}" (key="${ipKey}")`);
-    
-    const ipLimit = await RateLimit.findOneAndUpdate(
-      { key: ipKey },
-      { $inc: { attempts: 1 }, $set: { lastAttempt: new Date() } },
-      { new: true, upsert: true }
-    );
+    // 1. IP-based Rate Limiting (max 10 requests per IP per minute, skipped for demo accounts)
+    if (!demoEmails.includes(normalizedEmail)) {
+      const clientIp = req.ip || req.connection.remoteAddress || "unknown_ip";
+      const ipKey = `ip:${clientIp}`;
+      console.log(`[DIAGNOSTIC] Checking IP Rate Limit for clientIp="${clientIp}" (key="${ipKey}")`);
+      
+      const ipLimit = await RateLimit.findOneAndUpdate(
+        { key: ipKey },
+        { $inc: { attempts: 1 }, $set: { lastAttempt: new Date() } },
+        { new: true, upsert: true }
+      );
 
-    console.log(`[DIAGNOSTIC] IP rate-limit attempts: ${ipLimit.attempts}/10`);
-    if (ipLimit.attempts > 10) {
-      const oneMinuteAgo = Date.now() - 60000;
-      if (new Date(ipLimit.lastAttempt).getTime() > oneMinuteAgo) {
-        console.log(`[DIAGNOSTIC - REJECT] IP Rate Limit exceeded for IP: "${clientIp}" (line 187)`);
-        return res.status(429).json({
-          success: false,
-          message: "Incorrect email or password"
-        });
-      } else {
-        console.log(`[DIAGNOSTIC] IP rate-limit block expired. Resetting counter for key "${ipKey}"`);
-        await RateLimit.deleteOne({ key: ipKey });
-      }
-    }
-
-    // 2. Lockout Expiry / Release check
-    const emailFailKey = `email_fail:${normalizedEmail}`;
-    const failuresCount = await LoginAttempt.countDocuments({ email: normalizedEmail });
-    console.log(`[DIAGNOSTIC] Active failed login attempts for "${normalizedEmail}": ${failuresCount}/5`);
-
-    if (failuresCount >= 5) {
-      const latestAttempt = await LoginAttempt.findOne({ email: normalizedEmail }).sort({ createdAt: -1 });
-      if (latestAttempt) {
-        const timeDiffMs = Date.now() - new Date(latestAttempt.createdAt).getTime();
-        const fifteenMinsMs = 15 * 60 * 1000;
-        console.log(`[DIAGNOSTIC] Lockout check: failed attempts >= 5. Last failure was ${timeDiffMs / 1000}s ago. Lockout duration: 15 mins (${fifteenMinsMs}ms)`);
-
-        if (timeDiffMs < fifteenMinsMs) {
-          console.log(`[DIAGNOSTIC - REJECT] Account currently locked out: "${normalizedEmail}" (line 211)`);
-          return res.status(401).json({
+      console.log(`[DIAGNOSTIC] IP rate-limit attempts: ${ipLimit.attempts}/10`);
+      if (ipLimit.attempts > 10) {
+        const oneMinuteAgo = Date.now() - 60000;
+        if (new Date(ipLimit.lastAttempt).getTime() > oneMinuteAgo) {
+          console.log(`[DIAGNOSTIC - REJECT] IP Rate Limit exceeded for IP: "${clientIp}" (line 187)`);
+          return res.status(429).json({
             success: false,
             message: "Incorrect email or password"
           });
         } else {
-          // Re-enable and reset attempts
-          console.log(`[DIAGNOSTIC] Lockout expired. Re-enabling Firebase user and deleting lockout records for "${normalizedEmail}"`);
-          try {
-            const firebaseUser = await admin.auth().getUserByEmail(normalizedEmail);
-            await admin.auth().updateUser(firebaseUser.uid, { disabled: false });
-          } catch (e) {
-            console.log(`[DIAGNOSTIC] Firebase user lookup/update failed on lockout release: ${e.message}`);
-          }
-          await LoginAttempt.deleteMany({ email: normalizedEmail });
-          await RateLimit.deleteOne({ key: emailFailKey });
+          console.log(`[DIAGNOSTIC] IP rate-limit block expired. Resetting counter for key "${ipKey}"`);
+          await RateLimit.deleteOne({ key: ipKey });
         }
       }
     }
 
-    // 3. Progressive Delays on failures
-    const failRecord = await RateLimit.findOne({ key: emailFailKey });
-    if (failRecord && failRecord.attempts > 0) {
-      const progress = Math.min(failRecord.attempts, 4);
-      const delayMs = Math.pow(2, progress - 1) * 1000;
-      console.log(`[DIAGNOSTIC] Progressive delay: attempt count ${failRecord.attempts}, delaying response by ${delayMs}ms`);
-      await new Promise(resolve => setTimeout(resolve, delayMs));
+    // 2. Lockout Expiry / Release check (skipped for demo accounts)
+    const emailFailKey = `email_fail:${normalizedEmail}`;
+    if (!demoEmails.includes(normalizedEmail)) {
+      const failuresCount = await LoginAttempt.countDocuments({ email: normalizedEmail });
+      console.log(`[DIAGNOSTIC] Active failed login attempts for "${normalizedEmail}": ${failuresCount}/5`);
+
+      if (failuresCount >= 5) {
+        const latestAttempt = await LoginAttempt.findOne({ email: normalizedEmail }).sort({ createdAt: -1 });
+        if (latestAttempt) {
+          const timeDiffMs = Date.now() - new Date(latestAttempt.createdAt).getTime();
+          const fifteenMinsMs = 15 * 60 * 1000;
+          console.log(`[DIAGNOSTIC] Lockout check: failed attempts >= 5. Last failure was ${timeDiffMs / 1000}s ago. Lockout duration: 15 mins (${fifteenMinsMs}ms)`);
+
+          if (timeDiffMs < fifteenMinsMs) {
+            console.log(`[DIAGNOSTIC - REJECT] Account currently locked out: "${normalizedEmail}" (line 211)`);
+            return res.status(401).json({
+              success: false,
+              message: "Incorrect email or password"
+            });
+          } else {
+            // Re-enable and reset attempts
+            console.log(`[DIAGNOSTIC] Lockout expired. Re-enabling Firebase user and deleting lockout records for "${normalizedEmail}"`);
+            try {
+              const firebaseUser = await admin.auth().getUserByEmail(normalizedEmail);
+              await admin.auth().updateUser(firebaseUser.uid, { disabled: false });
+            } catch (e) {
+              console.log(`[DIAGNOSTIC] Firebase user lookup/update failed on lockout release: ${e.message}`);
+            }
+            await LoginAttempt.deleteMany({ email: normalizedEmail });
+            await RateLimit.deleteOne({ key: emailFailKey });
+          }
+        }
+      }
+    }
+
+    // 3. Progressive Delays on failures (skipped for demo accounts)
+    if (!demoEmails.includes(normalizedEmail)) {
+      const failRecord = await RateLimit.findOne({ key: emailFailKey });
+      if (failRecord && failRecord.attempts > 0) {
+        const progress = Math.min(failRecord.attempts, 4);
+        const delayMs = Math.pow(2, progress - 1) * 1000;
+        console.log(`[DIAGNOSTIC] Progressive delay: attempt count ${failRecord.attempts}, delaying response by ${delayMs}ms`);
+        await new Promise(resolve => setTimeout(resolve, delayMs));
+      }
     }
 
     // 4. Verify Firebase ID Token

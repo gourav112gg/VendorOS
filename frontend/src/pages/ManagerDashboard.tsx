@@ -90,7 +90,81 @@ export const ManagerDashboard: React.FC = () => {
     return () => window.removeEventListener('vendoros-nav', handleNav);
   }, []);
 
-  if (!user || !company) return null;
+  if (!user) return null;
+
+  // Handle case where user has pending join request
+  if (pendingRequest && !user.companyId && activeSubTab !== 'settings') {
+    return (
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 flex flex-col items-center justify-center min-h-[60vh] text-center space-y-6">
+        <div className="p-4 bg-[#111111] border border-[#222222] rounded-full text-amber-500 animate-pulse">
+          <Clock className="w-12 h-12" />
+        </div>
+        <div className="space-y-2">
+          <h2 className="text-2xl font-serif italic text-white font-light">Join Request Pending</h2>
+          <p className="text-xs text-[#888888] uppercase tracking-wider font-mono">
+            Waiting for approval from the owner of <span className="text-white font-bold">{pendingRequest.company?.companyName || 'the company'}</span>.
+          </p>
+          <p className="text-sm text-[#666666] max-w-md mx-auto leading-relaxed">
+            Your manager account was successfully registered. Once the company owner approves your request, you will gain access to dispatch management and coordination tools.
+          </p>
+        </div>
+        <div className="flex space-x-4 pt-4">
+          <button
+            onClick={() => setActiveSubTab('settings')}
+            className="px-5 py-2.5 bg-[#111111] hover:bg-[#1A1A1A] text-white border border-[#222222] rounded-sm text-xs font-mono font-bold uppercase tracking-widest cursor-pointer transition-colors"
+          >
+            Go to Settings
+          </button>
+          <button
+            onClick={() => logout()}
+            className="px-5 py-2.5 bg-red-950/20 hover:bg-red-950/40 text-red-400 border border-red-900/50 rounded-sm text-xs font-mono font-bold uppercase tracking-widest cursor-pointer transition-colors"
+          >
+            Logout
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // Handle case where user is not associated with a company yet and has no pending request
+  if (!company && !pendingRequest && activeSubTab !== 'settings') {
+    return (
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 flex flex-col items-center justify-center min-h-[60vh] text-center space-y-6">
+        <div className="p-4 bg-[#111111] border border-[#222222] rounded-full text-amber-500">
+          <Building className="w-12 h-12" />
+        </div>
+        <div className="space-y-2">
+          <h2 className="text-2xl font-serif italic text-white font-light">No Company Joined</h2>
+          <p className="text-sm text-[#666666] max-w-md mx-auto leading-relaxed">
+            You are not currently associated with any company. Please navigate to settings to select and request to join a company.
+          </p>
+        </div>
+        <div className="flex space-x-4 pt-4">
+          <button
+            onClick={() => setActiveSubTab('settings')}
+            className="px-5 py-2.5 bg-white hover:bg-[#E5E5E5] text-black text-xs font-mono font-bold uppercase tracking-widest cursor-pointer transition-colors rounded-sm"
+          >
+            Go to Settings
+          </button>
+          <button
+            onClick={() => logout()}
+            className="px-5 py-2.5 bg-red-950/20 hover:bg-red-950/40 text-red-400 border border-red-900/50 rounded-sm text-xs font-mono font-bold uppercase tracking-widest cursor-pointer transition-colors"
+          >
+            Logout
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // Direct render SettingsPanel if no company exists to avoid sidebar crashes
+  if (!company && activeSubTab === 'settings') {
+    return (
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <SettingsPanel initialTab="profile" />
+      </div>
+    );
+  }
 
   const formatCurrency = (amount: number) => {
     if (preferences.currency === 'INR') {
