@@ -7,6 +7,7 @@ import {
   ChevronRight, Calendar, MapPin, Sparkles, PlusCircle, HelpCircle
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { useAuth } from '../context/AuthContext';
 
 interface KpiOverviewProps {
   companyId: string;
@@ -14,7 +15,23 @@ interface KpiOverviewProps {
 }
 
 export const KpiOverview: React.FC<KpiOverviewProps> = ({ companyId, currentUser }) => {
+  const { preferences } = useAuth();
   const [inventory, setInventory] = useState<InventoryItem[]>([]);
+
+  const formatCurrency = (amount: number) => {
+    if (preferences.currency === 'INR') {
+      return new Intl.NumberFormat('en-IN', {
+        style: 'currency',
+        currency: 'INR',
+        maximumFractionDigits: 0
+      }).format(amount);
+    }
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      maximumFractionDigits: 0
+    }).format(amount);
+  };
   const [shipments, setShipments] = useState<Shipment[]>([]);
   const [orders, setOrders] = useState<ServiceOrder[]>([]);
   
@@ -204,7 +221,7 @@ export const KpiOverview: React.FC<KpiOverviewProps> = ({ companyId, currentUser
               </span>
               <span className="text-xs text-slate-400 mt-1 inline-flex items-center">
                 <TrendingUp className="w-3.5 h-3.5 text-emerald-400 mr-1" />
-                Value: ${totalActiveValue.toLocaleString()} pending
+                Value: {formatCurrency(totalActiveValue)} pending
               </span>
             </div>
           </div>
@@ -755,7 +772,7 @@ export const KpiOverview: React.FC<KpiOverviewProps> = ({ companyId, currentUser
                               <div className="flex flex-wrap items-center gap-2">
                                 <span className="text-xs font-extrabold text-white">{order.title}</span>
                                 <span className="text-[10px] font-mono text-slate-500">•</span>
-                                <span className="text-[10px] font-mono text-emerald-400 font-bold">${order.value}</span>
+                                <span className="text-[10px] font-mono text-emerald-400 font-bold">{formatCurrency(order.value)}</span>
                                 <span className={`px-2 py-0.2 rounded-sm text-[8px] font-mono uppercase tracking-wider border ${
                                   isCompleted 
                                     ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400' 

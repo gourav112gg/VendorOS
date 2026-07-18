@@ -77,7 +77,7 @@ export const TIER_PRICING = {
   },
   growth: {
     name: 'Growth Core',
-    price: 1499, // ₹1499/mo
+    price: 999, // ₹999/mo
     period: 'month',
     features: [
       'Everything in Free',
@@ -90,7 +90,7 @@ export const TIER_PRICING = {
   },
   scale: {
     name: 'Enterprise Scale',
-    price: 3499, // ₹3499/mo
+    price: 1999, // ₹1999/mo
     period: 'month',
     features: [
       'Everything in Growth',
