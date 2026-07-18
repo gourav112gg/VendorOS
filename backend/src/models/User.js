@@ -55,6 +55,14 @@ const userSchema = new mongoose.Schema(
 
 // Compound uniqueness: allow one operator and one customer per email/phone
 userSchema.index({ email: 1, isCustomer: 1 }, { unique: true, sparse: true });
-userSchema.index({ phone: 1, isCustomer: 1 }, { unique: true, sparse: true });
+userSchema.index(
+  { phone: 1, isCustomer: 1 },
+  { 
+    unique: true, 
+    partialFilterExpression: { 
+      phone: { $type: "string" } 
+    } 
+  }
+);
 
 module.exports = mongoose.model("User", userSchema);
