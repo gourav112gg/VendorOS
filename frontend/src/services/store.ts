@@ -1288,6 +1288,11 @@ class SimulatedStore {
       }
     }
 
+    // 3. Mark session active to prevent auto-logouts on page refresh
+    if (!this.state.activeSessions.includes(user.id)) {
+      this.state.activeSessions.push(user.id);
+    }
+
     this.save();
   }
 }

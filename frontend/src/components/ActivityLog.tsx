@@ -6,12 +6,14 @@ import {
   Trash2, RefreshCw, SlidersHorizontal, AlertCircle, FileText
 } from 'lucide-react';
 import { motion } from 'motion/react';
+import { useAuth } from '../context/AuthContext';
 
 interface ActivityLogProps {
   companyId?: string;
 }
 
 export const ActivityLog: React.FC<ActivityLogProps> = ({ companyId }) => {
+  const { user } = useAuth();
   const [logs, setLogs] = useState<ActivityLogType[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedAction, setSelectedAction] = useState<string>('All');
@@ -37,6 +39,13 @@ export const ActivityLog: React.FC<ActivityLogProps> = ({ companyId }) => {
   // Filter and sort logs
   const filteredLogs = logs
     .filter(log => {
+      // Security Boundary: Managers cannot view Owner logs
+      if (user?.role?.toLowerCase() === 'manager') {
+        if (log.userRole?.toLowerCase() === 'owner') {
+          return false;
+        }
+      }
+
       const matchesSearch = 
         log.userName.toLowerCase().includes(searchQuery.toLowerCase()) ||
         log.action.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -239,7 +248,7 @@ export const ActivityLog: React.FC<ActivityLogProps> = ({ companyId }) => {
                   initial={{ opacity: 0, y: 5 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.2, delay: Math.min(index * 0.03, 0.3) }}
-                  className="p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-[#151515] transition-colors"
+                  className="p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-neutral-800/15 dark:hover:bg-white/[3%] transition-colors"
                 >
                   <div className="flex items-start space-x-4">
                     {/* Action Icon Circle */}
