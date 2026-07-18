@@ -131,7 +131,7 @@ const login = async (req, res) => {
     // 0. Demo & Owner Bypass check (instant return, bypassing all rate limits, lockout checks, and Firebase verification)
     const demoEmails = [
       "alice@apex.com", "bob@apex.com", "charlie@apex.com", "dave@gmail.com",
-      "kaushal@gmail.com", "rahul@gmail.com", "amit@gmail.com", "garggourav647@gmail.com"
+      "kaushal@gmail.com", "rahul@gmail.com", "amit@gmail.com"
     ];
 
     const isBypassAllowed = process.env.NODE_ENV !== "production" && process.env.ALLOW_AUTH_BYPASS === "true";
