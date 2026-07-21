@@ -423,10 +423,10 @@ export const WorkerDashboard: React.FC = () => {
           <div>
             <h1 className="text-3xl font-serif italic font-light text-white tracking-tight flex items-center">
               <Briefcase className="w-8 h-8 mr-3 text-[#666666]" />
-              Technician Service Hub
+              {t('workerDashboard', 'Technician Service Hub')}
             </h1>
             <p className="text-[#666666] mt-1 text-xs font-mono uppercase tracking-widest">
-              Worker Dashboard ΓÇó View assigned dispatches, update service stages, and log job details.
+              Vendor Portal • View assigned dispatches, update service stages, and log job details.
             </p>
           </div>
           <div className="md:hidden mt-1 mr-2">
@@ -444,7 +444,7 @@ export const WorkerDashboard: React.FC = () => {
             <div className="flex items-center space-x-2">
               <RefreshCw className={`w-3.5 h-3.5 ${autoRefresh ? 'text-emerald-400 animate-spin' : 'text-[#666666]'}`} style={autoRefresh ? { animationDuration: '3s' } : undefined} />
               <span className="text-[10px] font-mono font-bold text-[#888888] uppercase tracking-wider">
-                Auto Refresh (60s)
+                {t('autoRefresh', 'Auto Refresh (60s)')}
               </span>
             </div>
             <button
@@ -473,7 +473,7 @@ export const WorkerDashboard: React.FC = () => {
                   : 'text-[#666666] hover:text-[#888888]'
               }`}
             >
-              <span>My Jobs</span>
+              <span>{t('myJobs', 'MY JOBS')}</span>
               <ShortcutBadge tab="jobs" className="opacity-0 group-hover:opacity-100 transition-opacity ml-1.5" />
             </button>
             <button
@@ -485,7 +485,7 @@ export const WorkerDashboard: React.FC = () => {
               }`}
             >
               <Settings className="w-3.5 h-3.5" />
-              <span>Settings</span>
+              <span>{t('settings', 'SETTINGS')}</span>
               <ShortcutBadge tab="settings" className="opacity-0 group-hover:opacity-100 transition-opacity ml-1.5" />
             </button>
           </div>

@@ -379,6 +379,23 @@ export const ManagerDashboard: React.FC = () => {
     );
   }
 
+  const getTabLabel = (tab: string) => {
+    switch (tab) {
+      case 'overview': return t('overview', 'OVERVIEW');
+      case 'domains': return t('domains', 'DOMAINS');
+      case 'team': return t('team', 'TEAM MEMBERS');
+      case 'orders': return t('dispatch', 'DISPATCH');
+      case 'copilot': return t('aiCopilot', 'AI COPILOT');
+      case 'invoices': return t('invoices', 'INVOICES');
+      case 'trust-score': return t('trustScore', 'TRUST SCORE');
+      case 'analytics': return t('analytics', 'ANALYTICS');
+      case 'billing': return t('pricingBilling', 'PRICING & BILLING');
+      case 'activity': return t('activityLog', 'ACTIVITY LOG');
+      case 'settings': return t('settings', 'SETTINGS');
+      default: return tab.toUpperCase();
+    }
+  };
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* If sidebar mode, we use a grid layout. Otherwise, standard flow. */}
@@ -399,13 +416,13 @@ export const ManagerDashboard: React.FC = () => {
                   {company.name}
                 </h1>
                 <p className="text-[#666666] mt-0.5 text-[10px] font-mono uppercase tracking-widest">
-                  Manager Dashboard
+                  {t('managerDashboard', 'Manager Dashboard')}
                 </p>
               </div>
               <NotificationCenter />
             </div>
 
-            <div className="flex flex-col bg-[#111111] p-1.5 border border-[#222222] rounded-sm space-y-1 shadow-md">
+            <div className="flex flex-col bg-[#111111] p-1 border border-[#222222] rounded-sm space-y-1">
               {(
                 [
                   "overview",
@@ -424,8 +441,7 @@ export const ManagerDashboard: React.FC = () => {
                 <motion.button
                   key={tab}
                   onClick={() => setActiveSubTab(tab)}
-                  whileHover={{ x: activeSubTab === tab ? 0 : 2 }}
-                  className={`relative w-full text-left px-4 py-2 text-[10px] font-bold rounded-sm uppercase tracking-widest cursor-pointer flex items-center justify-between group ${
+                  className={`relative w-full text-left px-4 py-2 text-[10px] font-bold rounded-sm uppercase tracking-widest transition-colors duration-150 cursor-pointer flex items-center justify-between group z-10 ${
                     activeSubTab === tab
                       ? "text-black font-extrabold"
                       : "text-[#666666] hover:text-[#AAAAAA]"
@@ -443,17 +459,7 @@ export const ManagerDashboard: React.FC = () => {
                     />
                   )}
                   <span>
-                    {tab === "orders"
-                      ? "dispatch"
-                      : tab === "activity"
-                        ? "activity log"
-                        : tab === "copilot"
-                          ? "ai copilot"
-                          : tab === "trust-score"
-                            ? "trust score"
-                            : tab === "billing"
-                              ? "pricing & billing"
-                              : tab}
+                    {getTabLabel(tab)}
                   </span>
                   <ShortcutBadge
                     tab={tab}
@@ -520,7 +526,7 @@ export const ManagerDashboard: React.FC = () => {
                         />
                       )}
                       <span>
-                        {tab === 'orders' ? 'dispatch' : tab === 'activity' ? 'activity log' : tab === 'copilot' ? 'ai copilot' : tab === 'trust-score' ? 'trust score' : tab === 'billing' ? 'billing' : tab}
+                        {getTabLabel(tab)}
                       </span>
                       <ShortcutBadge tab={tab} className="opacity-0 group-hover:opacity-100 transition-opacity ml-1" />
                     </motion.button>

@@ -21,7 +21,7 @@ export interface TranslationDictionary {
   worker: string;
   customer: string;
 
-  // Tabs
+  // Sidebar & Top Nav Tabs
   overview: string;
   domains: string;
   team: string;
@@ -34,8 +34,21 @@ export interface TranslationDictionary {
   activityLog: string;
   settings: string;
   myJobs: string;
+  customerRequests: string;
 
-  // KPI Metrics
+  // Header Subtitles & Badges
+  operationalSuite: string;
+  ownerLevel: string;
+  managerLevel: string;
+  workerLevel: string;
+  adminSystemProfile: string;
+  realtimeArchitecture: string;
+  ownerQuickOps: string;
+  addOpDomain: string;
+  addOpDomainDesc: string;
+  manageTeamDesc: string;
+
+  // KPI Bento Metrics
   kpiTitle: string;
   kpiSubtitle: string;
   activeWorkOrders: string;
@@ -52,6 +65,29 @@ export interface TranslationDictionary {
   viewDispatch: string;
   restockParts: string;
   manageShipments: string;
+  partsStocked: string;
+  shipmentsTracking: string;
+  qualityStandard: string;
+  pendingValue: string;
+  completedCount: string;
+
+  // Sub-tabs & Tables
+  alertsAndStock: string;
+  shipmentsTab: string;
+  inventoryStockAlerts: string;
+  logisticsShipments: string;
+  activeOrderPipeline: string;
+  addNewPart: string;
+  partDescription: string;
+  category: string;
+  currentStock: string;
+  warehouseLocation: string;
+  fulfillmentRestock: string;
+  domainName: string;
+  typeTag: string;
+  status: string;
+  createdDate: string;
+  actions: string;
 
   // Common Actions & Controls
   newOrder: string;
@@ -70,6 +106,7 @@ export interface TranslationDictionary {
   updating: string;
   allRoles: string;
   allStatuses: string;
+  createDomain: string;
   
   // Settings & Preferences
   appPreferences: string;
@@ -103,35 +140,69 @@ export const translations: Record<Language, TranslationDictionary> = {
     worker: "Worker",
     customer: "Customer",
 
-    overview: "Overview",
-    domains: "Domains",
-    team: "Team",
-    dispatch: "Dispatch",
-    aiCopilot: "AI Copilot",
-    invoices: "Invoices",
-    trustScore: "Trust Score",
-    analytics: "Analytics",
-    pricingBilling: "Pricing & Billing",
-    activityLog: "Activity Log",
-    settings: "Settings",
-    myJobs: "My Jobs",
+    overview: "OVERVIEW",
+    domains: "DOMAINS",
+    team: "TEAM MEMBERS",
+    dispatch: "DISPATCH",
+    aiCopilot: "AI COPILOT",
+    invoices: "INVOICES",
+    trustScore: "TRUST SCORE",
+    analytics: "ANALYTICS",
+    pricingBilling: "PRICING & BILLING",
+    activityLog: "ACTIVITY LOG",
+    settings: "SETTINGS",
+    myJobs: "MY JOBS",
+    customerRequests: "SERVICE REQUESTS",
+
+    operationalSuite: "OPERATIONAL SUITE",
+    ownerLevel: "OWNER LEVEL",
+    managerLevel: "MANAGER LEVEL",
+    workerLevel: "WORKER LEVEL",
+    adminSystemProfile: "Admin System Profile",
+    realtimeArchitecture: "VendorOS Real-Time Architecture",
+    ownerQuickOps: "Owner Quick Operations",
+    addOpDomain: "Add Operational Domain",
+    addOpDomainDesc: "Add categories like HVAC, Plumbing, or custom specializations.",
+    manageTeamDesc: "View registered Managers and Workers, or simulate session deletion.",
 
     kpiTitle: "Key Performance Indicators",
     kpiSubtitle: "Real-time fulfillment metrics, logistics pipeline, & critical inventory triggers",
-    activeWorkOrders: "Active Work Orders",
-    inventoryAlerts: "Inventory Alerts",
-    pendingShipments: "Pending Shipments",
-    fulfillmentEfficiency: "Fulfillment Efficiency",
+    activeWorkOrders: "ACTIVE WORK ORDERS",
+    inventoryAlerts: "INVENTORY ALERTS",
+    pendingShipments: "PENDING SHIPMENTS",
+    fulfillmentEfficiency: "FULFILLMENT EFFICIENCY",
     atRiskOrders: "Orders At Risk",
     belowMinThreshold: "Below Min. Threshold",
     pendingApprovals: "Pending Approvals",
-    liveQueue: "Live Queue",
-    healthy: "Healthy",
-    logistics: "Logistics",
-    metric: "Metric",
-    viewDispatch: "View Dispatch >",
-    restockParts: "Restock Parts >",
-    manageShipments: "Manage Shipments >",
+    liveQueue: "LIVE QUEUE",
+    healthy: "HEALTHY",
+    logistics: "LOGISTICS",
+    metric: "METRIC",
+    viewDispatch: "VIEW DISPATCH >",
+    restockParts: "RESTOCK PARTS >",
+    manageShipments: "MANAGE SHIPMENTS >",
+    partsStocked: "All critical parts fully stocked",
+    shipmentsTracking: "In-bound or outbound packages pending tracking",
+    qualityStandard: "Quality service standard maintained",
+    pendingValue: "Value pending",
+    completedCount: "orders completed",
+
+    alertsAndStock: "ALERTS & STOCK",
+    shipmentsTab: "SHIPMENTS",
+    inventoryStockAlerts: "INVENTORY STOCK & ALERTS",
+    logisticsShipments: "LOGISTICS SHIPMENTS",
+    activeOrderPipeline: "ACTIVE ORDER PIPELINE",
+    addNewPart: "+ ADD NEW PART",
+    partDescription: "PART DESCRIPTION / SKU",
+    category: "CATEGORY",
+    currentStock: "CURRENT STOCK",
+    warehouseLocation: "WAREHOUSE LOCATION",
+    fulfillmentRestock: "FULFILLMENT RESTOCK",
+    domainName: "DOMAIN NAME",
+    typeTag: "TYPE / TAG",
+    status: "STATUS",
+    createdDate: "CREATED DATE",
+    actions: "ACTIONS",
 
     newOrder: "+ New Order",
     approve: "Approve",
@@ -149,6 +220,7 @@ export const translations: Record<Language, TranslationDictionary> = {
     updating: "Updating...",
     allRoles: "All Roles",
     allStatuses: "All Statuses",
+    createDomain: "Create Domain",
 
     appPreferences: "App Preferences",
     visualCustomization: "Visual Interface Customization",
@@ -191,6 +263,18 @@ export const translations: Record<Language, TranslationDictionary> = {
     activityLog: "गतिविधि लॉग",
     settings: "सेटिंग्स",
     myJobs: "मेरे कार्य",
+    customerRequests: "सेवा अनुरोध",
+
+    operationalSuite: "ऑपरेशन्स सूट",
+    ownerLevel: "मालिक स्तर",
+    managerLevel: "प्रबंधक स्तर",
+    workerLevel: "तकनीशियन स्तर",
+    adminSystemProfile: "एडमिन सिस्टम प्रोफ़ाइल",
+    realtimeArchitecture: "वेंडर-ओएस रियल-टाइम आर्किटेक्चर",
+    ownerQuickOps: "मालिक त्वरित संचालन",
+    addOpDomain: "कार्य क्षेत्र जोड़ें",
+    addOpDomainDesc: "एचवीएसी, प्लंबिंग, या कस्टम श्रेणियां जोड़ें।",
+    manageTeamDesc: "पंजीकृत प्रबंधकों और कर्मचारियों को देखें या सत्र प्रबंधित करें।",
 
     kpiTitle: "मुख्य प्रदर्शन संकेतक (KPI)",
     kpiSubtitle: "वास्तविक समय पूर्ति संकेत, रसद पाइपलाइन और महत्वपूर्ण इन्वेंट्री अलर्ट",
@@ -208,6 +292,28 @@ export const translations: Record<Language, TranslationDictionary> = {
     viewDispatch: "डिसपैच देखें >",
     restockParts: "पार्ट्स रीस्टॉक करें >",
     manageShipments: "शिपमेंट प्रबंधित करें >",
+    partsStocked: "सभी महत्वपूर्ण पार्ट्स पर्याप्त मात्रा में उपलब्ध हैं",
+    shipmentsTracking: "आवक या जावक पैकेज ट्रैकिंग के लिए लंबित",
+    qualityStandard: "गुणवत्ता सेवा मानक बनाए रखा गया",
+    pendingValue: "लंबित मूल्य",
+    completedCount: "आदेश पूरे हुए",
+
+    alertsAndStock: "अलर्ट और स्टॉक",
+    shipmentsTab: "शिपमेंट",
+    inventoryStockAlerts: "इन्वेंट्री स्टॉक और अलर्ट",
+    logisticsShipments: "रसद शिपमेंट",
+    activeOrderPipeline: "सक्रिय आदेश पाइपलाइन",
+    addNewPart: "+ नया पार्ट जोड़ें",
+    partDescription: "पार्ट विवरण / SKU",
+    category: "श्रेणी",
+    currentStock: "वर्तमान स्टॉक",
+    warehouseLocation: "गोदाम का स्थान",
+    fulfillmentRestock: "पूर्ति रीस्टॉक",
+    domainName: "क्षेत्र का नाम",
+    typeTag: "प्रकार / टैग",
+    status: "स्थिति",
+    createdDate: "बनाने की तिथि",
+    actions: "कार्रवाई",
 
     newOrder: "+ नया आदेश",
     approve: "स्वीकृत करें",
@@ -225,6 +331,7 @@ export const translations: Record<Language, TranslationDictionary> = {
     updating: "अपडेट हो रहा है...",
     allRoles: "सभी भूमिकाएं",
     allStatuses: "सभी स्थितियां",
+    createDomain: "क्षेत्र बनाएं",
 
     appPreferences: "ऐप प्राथमिकताएं",
     visualCustomization: "दृश्य इंटरफ़ेस अनुकूलन",
@@ -267,6 +374,18 @@ export const translations: Record<Language, TranslationDictionary> = {
     activityLog: "ਗਤੀਵਿਧੀ ਲੌਗ",
     settings: "ਸੈਟਿੰਗਾਂ",
     myJobs: "ਮੇਰੇ ਕੰਮ",
+    customerRequests: "ਸੇਵਾ ਬੇਨਤੀਆਂ",
+
+    operationalSuite: "ਓਪਰੇਸ਼ਨਲ ਸੂਟ",
+    ownerLevel: "ਮਾਲਕ ਪੱਧਰ",
+    managerLevel: "ਮੈਨੇਜਰ ਪੱਧਰ",
+    workerLevel: "ਤਕਨੀਸ਼ੀਅਨ ਪੱਧਰ",
+    adminSystemProfile: "ਐਡਮਿਨ ਸਿਸਟਮ ਪ੍ਰੋਫਾਈਲ",
+    realtimeArchitecture: "ਵੇਂਡਰ-ਓ.ਐਸ ਰੀਅਲ-ਟਾਈਮ ਆਰਕੀਟੈਕਚਰ",
+    ownerQuickOps: "ਮਾਲਕ ਤੁਰੰਤ ਕਾਰਜ",
+    addOpDomain: "ਕਾਰਜ ਖੇਤਰ ਜੋੜੋ",
+    addOpDomainDesc: "ਐਚ.ਵੀ.ਏ.ਸੀ, ਪਲੰਬਿੰਗ, ਜਾਂ ਕਸਟਮ ਸ਼੍ਰੇਣੀਆਂ ਜੋੜੋ।",
+    manageTeamDesc: "ਰਜਿਸਟਰਡ ਮੈਨੇਜਰਾਂ ਅਤੇ ਕਰਮਚਾਰੀਆਂ ਨੂੰ ਵੇਖੋ ਜਾਂ ਸੈਸ਼ਨ ਪ੍ਰਬੰਧਿਤ ਕਰੋ।",
 
     kpiTitle: "ਮੁੱਖ ਪ੍ਰਦਰਸ਼ਨ ਸੰਕੇਤਕ (KPI)",
     kpiSubtitle: "ਰੀਅਲ-ਟਾਈਮ ਪੂਰਤੀ ਮੈਟ੍ਰਿਕਸ, ਲੌਜਿਸਟਿਕਸ ਪਾਈਪਲਾਈਨ ਅਤੇ ਇਨਵੈਂਟਰੀ ਚੇਤਾਵਨੀਆਂ",
@@ -284,6 +403,28 @@ export const translations: Record<Language, TranslationDictionary> = {
     viewDispatch: "ਡਿਸਪੈਚ ਵੇਖੋ >",
     restockParts: "ਪਾਰਟਸ ਮੁੜ ਭਰੋ >",
     manageShipments: "ਸ਼ਿਪਮੈਂਟ ਪ੍ਰਬੰਧਿਤ ਕਰੋ >",
+    partsStocked: "ਸਾਰੇ ਮਹੱਤਵਪੂਰਨ ਪਾਰਟਸ ਪੂਰੀ ਤਰ੍ਹਾਂ ਸਟਾਕ ਵਿੱਚ ਹਨ",
+    shipmentsTracking: "ਆਉਣ ਵਾਲੇ ਜਾਂ ਜਾਣ ਵਾਲੇ ਪੈਕੇਜ ਟ੍ਰੈਕਿੰਗ ਲਈ ਬਕਾਇਆ",
+    qualityStandard: "ਗੁਣਵੱਤਾ ਸੇਵਾ ਮਿਆਰ ਬਣਾਇਆ ਰੱਖਿਆ ਗਿਆ",
+    pendingValue: "ਬਕਾਇਆ ਮੁੱਲ",
+    completedCount: "ਆਰਡਰ ਪੂਰੇ ਹੋਏ",
+
+    alertsAndStock: "ਅਲਰਟ ਅਤੇ ਸਟਾਕ",
+    shipmentsTab: "ਸ਼ਿਪਮੈਂਟ",
+    inventoryStockAlerts: "ਇਨਵੈਂਟਰੀ ਸਟਾਕ ਅਤੇ ਅਲਰਟ",
+    logisticsShipments: "ਲੌਜਿਸਟਿਕਸ ਸ਼ਿਪਮੈਂਟ",
+    activeOrderPipeline: "ਸਰਗਰਮ ਆਰਡਰ ਪਾਈਪਲਾਈਨ",
+    addNewPart: "+ ਨਵਾਂ ਪਾਰਟ ਜੋੜੋ",
+    partDescription: "ਪਾਰਟ ਵੇਰਵਾ / SKU",
+    category: "ਸ਼੍ਰੇਣੀ",
+    currentStock: "ਮੌਜੂਦਾ ਸਟਾਕ",
+    warehouseLocation: "ਗੋਦਾਮ ਦਾ ਸਥਾਨ",
+    fulfillmentRestock: "ਪੂਰਤੀ ਰੀਸਟਾਕ",
+    domainName: "ਖੇਤਰ ਦਾ ਨਾਂ",
+    typeTag: "ਕਿਸਮ / ਟੈਗ",
+    status: "ਸਥਿਤੀ",
+    createdDate: "ਬਣਾਉਣ ਦੀ ਮਿਤੀ",
+    actions: "ਕਾਰਵਾਈਆਂ",
 
     newOrder: "+ ਨਵਾਂ ਆਰਡਰ",
     approve: "ਮਨਜ਼ੂਰ ਕਰੋ",
@@ -301,6 +442,7 @@ export const translations: Record<Language, TranslationDictionary> = {
     updating: "ਅੱਪਡੇਟ ਹੋ ਰਿਹਾ ਹੈ...",
     allRoles: "ਸਾਰੇ ਰੋਲ",
     allStatuses: "ਸਾਰੀਆਂ ਸਥਿਤੀਆਂ",
+    createDomain: "ਖੇਤਰ ਬਣਾਓ",
 
     appPreferences: "ਐਪ ਤਰਜੀਹਾਂ",
     visualCustomization: "ਦ੍ਰਿਸ਼ਟੀਗਤ ਇੰਟਰਫੇਸ ਅਨੁਕੂਲਨ",

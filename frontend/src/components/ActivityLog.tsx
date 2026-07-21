@@ -169,7 +169,7 @@ export const ActivityLog: React.FC<ActivityLogProps> = ({ companyId }) => {
             </span>
             <input
               type="text"
-              placeholder="Search audit actions..."
+              placeholder={t('search', 'Search audit actions...')}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full bg-[#0A0A0A] border border-[#222222] text-xs text-white pl-10 pr-4 py-2.5 rounded-sm focus:outline-none focus:border-[#444444] transition-colors placeholder:text-[#444444]"
@@ -185,7 +185,7 @@ export const ActivityLog: React.FC<ActivityLogProps> = ({ companyId }) => {
             >
               <option disabled>Filter by Action</option>
               {actionTypes.map(act => (
-                <option key={act} value={act}>{act === 'All' ? 'All Actions' : act}</option>
+                <option key={act} value={act}>{act === 'All' ? t('filter', 'All Actions') : act}</option>
               ))}
             </select>
           </div>
@@ -199,7 +199,7 @@ export const ActivityLog: React.FC<ActivityLogProps> = ({ companyId }) => {
             >
               <option disabled>Filter by Role</option>
               {roleTypes.map(role => (
-                <option key={role} value={role}>{role === 'All' ? 'All Roles' : role}</option>
+                <option key={role} value={role}>{role === 'All' ? t('allRoles', 'All Roles') : role === 'Owner' ? t('owner', 'Owner') : role === 'Manager' ? t('manager', 'Manager') : role === 'Worker' ? t('worker', 'Worker') : role === 'Customer' ? t('customer', 'Customer') : role}</option>
               ))}
             </select>
           </div>

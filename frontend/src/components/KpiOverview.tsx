@@ -223,7 +223,7 @@ export const KpiOverview: React.FC<KpiOverviewProps> = ({ companyId, currentUser
               </span>
               <span className="text-xs text-slate-400 mt-1 inline-flex items-center">
                 <TrendingUp className="w-3.5 h-3.5 text-emerald-400 mr-1" />
-                Value: {formatCurrency(totalActiveValue)} pending
+                {t('pendingValue', 'Value:')} {formatCurrency(totalActiveValue)}
               </span>
             </div>
           </div>
@@ -231,7 +231,7 @@ export const KpiOverview: React.FC<KpiOverviewProps> = ({ companyId, currentUser
             onClick={() => setActiveDetailsTab('orders')}
             className="text-[10px] uppercase tracking-widest font-extrabold text-white hover:text-emerald-400 transition-colors flex items-center mt-6 group-hover:translate-x-1"
           >
-            View Dispatch <ChevronRight className="w-3 h-3 ml-1" />
+            {t('viewDispatch', 'VIEW DISPATCH >')}
           </button>
         </div>
 
@@ -246,14 +246,14 @@ export const KpiOverview: React.FC<KpiOverviewProps> = ({ companyId, currentUser
           </div>
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <span className="text-[10px] font-mono font-bold text-[#888888] uppercase tracking-widest block">Inventory Alerts</span>
+              <span className="text-[10px] font-mono font-bold text-[#888888] uppercase tracking-widest block">{t('inventoryAlerts', 'Inventory Alerts')}</span>
               {inventoryAlertsCount > 0 ? (
                 <span className="bg-amber-400 text-black font-extrabold px-1.5 py-0.5 rounded-sm text-[8px] font-mono animate-pulse">
                   DEPLETED
                 </span>
               ) : (
                 <span className="bg-[#1A1A1A] border border-[#222222] text-[#888888] px-2 py-0.5 rounded-sm text-[9px] font-mono">
-                  HEALTHY
+                  {t('healthy', 'HEALTHY')}
                 </span>
               )}
             </div>
@@ -264,7 +264,7 @@ export const KpiOverview: React.FC<KpiOverviewProps> = ({ companyId, currentUser
               <span className="text-xs text-slate-400 mt-1 block">
                 {inventoryAlertsCount > 0 
                   ? `${inventoryAlertsCount} stock items below safe limit`
-                  : 'All critical parts fully stocked'}
+                  : t('partsStocked', 'All critical parts fully stocked')}
               </span>
             </div>
           </div>
@@ -272,7 +272,7 @@ export const KpiOverview: React.FC<KpiOverviewProps> = ({ companyId, currentUser
             onClick={() => setActiveDetailsTab('inventory')}
             className="text-[10px] uppercase tracking-widest font-extrabold text-white hover:text-amber-400 transition-colors flex items-center mt-6 group-hover:translate-x-1"
           >
-            Restock parts <ChevronRight className="w-3 h-3 ml-1" />
+            {t('restockParts', 'RESTOCK PARTS >')}
           </button>
         </div>
 
@@ -283,9 +283,9 @@ export const KpiOverview: React.FC<KpiOverviewProps> = ({ companyId, currentUser
           </div>
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <span className="text-[10px] font-mono font-bold text-[#666666] uppercase tracking-widest block">Pending Shipments</span>
+              <span className="text-[10px] font-mono font-bold text-[#666666] uppercase tracking-widest block">{t('pendingShipments', 'Pending Shipments')}</span>
               <span className="bg-blue-500/10 text-blue-400 border border-blue-500/20 px-2 py-0.5 rounded-sm text-[9px] font-mono">
-                LOGISTICS
+                {t('logistics', 'LOGISTICS')}
               </span>
             </div>
             <div>
@@ -293,7 +293,7 @@ export const KpiOverview: React.FC<KpiOverviewProps> = ({ companyId, currentUser
                 {pendingShipmentsCount}
               </span>
               <span className="text-xs text-slate-400 mt-1 block">
-                In-bound or outbound packages pending tracking
+                {t('shipmentsTracking', 'In-bound or outbound packages pending tracking')}
               </span>
             </div>
           </div>
@@ -301,7 +301,7 @@ export const KpiOverview: React.FC<KpiOverviewProps> = ({ companyId, currentUser
             onClick={() => setActiveDetailsTab('shipments')}
             className="text-[10px] uppercase tracking-widest font-extrabold text-white hover:text-blue-400 transition-colors flex items-center mt-6 group-hover:translate-x-1"
           >
-            Manage shipments <ChevronRight className="w-3 h-3 ml-1" />
+            {t('manageShipments', 'MANAGE SHIPMENTS >')}
           </button>
         </div>
 
@@ -312,9 +312,9 @@ export const KpiOverview: React.FC<KpiOverviewProps> = ({ companyId, currentUser
           </div>
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <span className="text-[10px] font-mono font-bold text-[#666666] uppercase tracking-widest block">Fulfillment Efficiency</span>
+              <span className="text-[10px] font-mono font-bold text-[#666666] uppercase tracking-widest block">{t('fulfillmentEfficiency', 'Fulfillment Efficiency')}</span>
               <span className="bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 px-2 py-0.5 rounded-sm text-[9px] font-mono">
-                METRIC
+                {t('metric', 'METRIC')}
               </span>
             </div>
             <div>
@@ -324,12 +324,12 @@ export const KpiOverview: React.FC<KpiOverviewProps> = ({ companyId, currentUser
                   : 100}%
               </span>
               <span className="text-xs text-slate-400 mt-1 block">
-                {orders.filter(o => o.stage === 'Completed').length} of {orders.length} orders completed
+                {orders.filter(o => o.stage === 'Completed').length} / {orders.length} {t('completedCount', 'orders completed')}
               </span>
             </div>
           </div>
           <div className="text-[10px] font-mono text-[#555555] mt-6 flex items-center">
-            <Sparkles className="w-3 h-3 text-indigo-400 mr-1" /> Quality service standard maintained
+            <Sparkles className="w-3 h-3 text-indigo-400 mr-1" /> {t('qualityStandard', 'Quality service standard maintained')}
           </div>
         </div>
 
@@ -537,7 +537,7 @@ export const KpiOverview: React.FC<KpiOverviewProps> = ({ companyId, currentUser
                   : 'border-transparent text-[#666666] hover:text-white'
               }`}
             >
-              Inventory stock & Alerts ({inventory.length})
+              {t('inventoryStockAlerts', 'Inventory Stock & Alerts')} ({inventory.length})
             </button>
             <button
               onClick={() => setActiveDetailsTab('shipments')}
@@ -547,7 +547,7 @@ export const KpiOverview: React.FC<KpiOverviewProps> = ({ companyId, currentUser
                   : 'border-transparent text-[#666666] hover:text-white'
               }`}
             >
-              Logistics Shipments ({shipments.length})
+              {t('logisticsShipments', 'Logistics Shipments')} ({shipments.length})
             </button>
             <button
               onClick={() => setActiveDetailsTab('orders')}
@@ -557,7 +557,7 @@ export const KpiOverview: React.FC<KpiOverviewProps> = ({ companyId, currentUser
                   : 'border-transparent text-[#666666] hover:text-white'
               }`}
             >
-              Active Order pipeline ({orders.length})
+              {t('activeOrderPipeline', 'Active Order Pipeline')} ({orders.length})
             </button>
           </div>
 
@@ -565,15 +565,15 @@ export const KpiOverview: React.FC<KpiOverviewProps> = ({ companyId, currentUser
             {activeDetailsTab === 'inventory' && (
               <button 
                 onClick={() => setIsAddInvOpen(!isAddInvOpen)}
-                className="text-[9px] uppercase tracking-widest font-extrabold bg-[#1A1A1A] border border-[#222222] hover:bg-white hover:text-black hover:border-white text-white px-3 py-1.5 rounded-sm transition-colors flex items-center"
+                className="text-[9px] uppercase tracking-widest font-extrabold bg-[#1A1A1A] border border-[#222222] hover:bg-white hover:text-black hover:border-white text-white px-3 py-1.5 rounded-sm transition-colors flex items-center cursor-pointer"
               >
-                <PlusCircle className="w-3.5 h-3.5 mr-1" /> Add New Part
+                <PlusCircle className="w-3.5 h-3.5 mr-1" /> {t('addNewPart', '+ ADD NEW PART')}
               </button>
             )}
             {activeDetailsTab === 'shipments' && (
               <button 
                 onClick={() => setIsAddShpOpen(!isAddShpOpen)}
-                className="text-[9px] uppercase tracking-widest font-extrabold bg-[#1A1A1A] border border-[#222222] hover:bg-white hover:text-black hover:border-white text-white px-3 py-1.5 rounded-sm transition-colors flex items-center"
+                className="text-[9px] uppercase tracking-widest font-extrabold bg-[#1A1A1A] border border-[#222222] hover:bg-white hover:text-black hover:border-white text-white px-3 py-1.5 rounded-sm transition-colors flex items-center cursor-pointer"
               >
                 <PlusCircle className="w-3.5 h-3.5 mr-1" /> Schedule delivery
               </button>
@@ -607,11 +607,11 @@ export const KpiOverview: React.FC<KpiOverviewProps> = ({ companyId, currentUser
                   <table className="w-full text-left border-collapse">
                     <thead>
                       <tr className="border-b border-[#222222] text-[10px] font-mono uppercase text-[#555555]">
-                        <th className="pb-3 font-semibold">Part Description / SKU</th>
-                        <th className="pb-3 font-semibold">Category</th>
-                        <th className="pb-3 font-semibold">Current Stock</th>
-                        <th className="pb-3 font-semibold">Warehouse Location</th>
-                        <th className="pb-3 font-semibold text-right">Fulfillment Restock</th>
+                        <th className="pb-3 font-semibold">{t('partDescription', 'PART DESCRIPTION / SKU')}</th>
+                        <th className="pb-3 font-semibold">{t('category', 'CATEGORY')}</th>
+                        <th className="pb-3 font-semibold">{t('currentStock', 'CURRENT STOCK')}</th>
+                        <th className="pb-3 font-semibold">{t('warehouseLocation', 'WAREHOUSE LOCATION')}</th>
+                        <th className="pb-3 font-semibold text-right">{t('fulfillmentRestock', 'FULFILLMENT RESTOCK')}</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-[#222222]">
