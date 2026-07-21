@@ -11,12 +11,13 @@
 
 | Layer | Technology |
 |-------|-----------|
-| Runtime | Node.js |
-| Framework | Express.js v5 |
+| Runtime | Node.js + Python 3.x |
+| Framework | Express.js v5 + FastAPI (Uvicorn) |
+| Machine Learning | Scikit-learn (StackingRegressor), Joblib, Pandas |
+| LLM Intelligence | Gemini 2.5 Pro via Google Generative AI SDK |
 | Database | MongoDB Atlas (via Mongoose v9) |
-| Auth | JWT (jsonwebtoken) + bcryptjs |
-| Validation | express built-ins + validator |
-| Dev tooling | nodemon |
+| Auth | JWT (jsonwebtoken) + Firebase Admin SDK |
+| Deployment | Single Docker Container (Render web service) |
 
 ---
 
@@ -24,40 +25,25 @@
 
 ```
 backend/
+├── Dockerfile                 # Multi-stage Docker container (Node 20 + Python 3)
+├── start.sh                   # Startup script running FastAPI (port 8000) & Express (port 5000)
+├── ML_training/               # Python ML Stacking Service
+│   ├── app.py                 # FastAPI predict server (/predict)
+│   ├── stack_model_risk.pkl   # Trained risk prediction model
+│   ├── stack_model_delay.pkl  # Trained expected delay model
+│   └── train_model.py         # StackingRegressor training script
 ├── src/
 │   ├── server.js              # Entry point — connects DB and starts server
 │   ├── app.js                 # Express app — all routes registered here
 │   ├── config/
-│   │   └── db.js              # MongoDB connection (Mongoose)
-│   ├── models/
-│   │   ├── User.js            # Roles: owner | manager | worker | customer
-│   │   ├── Company.js         # Company profile + trust score
-│   │   ├── Order.js           # Service orders with status lifecycle
-│   │   ├── Inventory.js       # Product/item stock with low-stock alerts
-│   │   ├── Domain.js          # Service domains (Plumbing, Electrical, etc.)
-│   │   ├── Notification.js    # Real-time alert notifications collection
-│   │   └── JoinRequest.js     # Pending manager/worker company join requests
-│   ├── controllers/
-│   │   ├── auth.controller.js          # Owner/Manager/Worker signup+login
-│   │   ├── user.controller.js          # Update name, phone, role, email (Firebase sync)
-│   │   ├── customer.controller.js      # Customer signup, login, order history
-│   │   ├── manager.controller.js       # Manager CRUD (owner only)
-│   │   ├── worker.controller.js        # Worker CRUD + availability toggle
-│   │   ├── order.controller.js         # Order CRUD + assign manager/worker + notifications trigger
-│   │   ├── inventory.controller.js     # Inventory CRUD + stock update
-│   │   ├── domain.controller.js        # Domain CRUD (owner only)
-│   │   ├── dashboard.controller.js     # Owner dashboard KPI stats
-│   │   ├── managerDashboard.controller.js  # Manager dashboard stats
-│   │   ├── trust.controller.js         # Trust score computation
-│   │   ├── notification.controller.js  # Retrieve and read user notifications
-│   │   └── joinRequest.controller.js   # Submit, fetch, and approve/reject company requests
-│   ├── routes/
-│   │   ├── auth.routes.js
-│   │   ├── user.routes.js
-│   │   ├── customer.routes.js
-│   │   ├── manager.routes.js
-│   │   ├── worker.routes.js
-│   │   ├── order.routes.js
+│   │   ├── db.js              # MongoDB connection (Mongoose)
+│   │   └── gemini.js          # Google Gemini AI SDK configuration
+│   ├── prompts/
+│   │   └── risk.prompt.js     # Prompt template for Gemini risk explanations
+│   ├── services/
+│   │   ├── risk.service.js    # ML Stacking prediction + Rules fallback
+│   │   └── llm.service.js     # Gemini AI risk explanation generator
+```
 │   │   ├── inventory.routes.js
 │   │   ├── domain.routes.js
 │   │   ├── dashboard.routes.js

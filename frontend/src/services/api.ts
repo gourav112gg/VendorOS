@@ -118,6 +118,7 @@ const orders = {
     customerPhone: string;
     customerAddress: string;
     products: Array<{ product: string; quantity: number }>;
+    deliveryDate?: string;
   }) => request('POST', '/api/orders', payload, getToken() || undefined),
 
   update: (id: string, payload: Record<string, unknown>) =>
@@ -266,6 +267,27 @@ const risk = {
       activeTaskLoadScore: number;
     };
   }) => request('POST', '/api/risk/analyze', payload, getToken() || undefined),
+
+  predict: (payload: {
+    orderId?: string;
+    deliveryDate?: string;
+    stagesRemaining?: number;
+    totalStages?: number;
+    assignedWorker?: any;
+    sla_days?: number;
+    defect_rate?: number;
+    weather_hazard?: number;
+    location_risk?: number;
+    worker_load?: number;
+    total_pending_tasks?: number;
+  }) => request<{
+    success: boolean;
+    riskPercentage: number;
+    expectedDelayDays: number;
+    reason: string;
+    suggestedAction: string;
+    engine: string;
+  }>('POST', '/api/risk/predict', payload, getToken() || undefined),
 };
 
 const users = {

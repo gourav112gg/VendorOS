@@ -23,7 +23,7 @@ const joinRequestRoutes = require("./routes/joinRequest.routes");
 const protect = require("./middleware/auth.middleware");
 const authorize = require("./middleware/role.middleware");
 const { getTrustScore } = require("./controllers/trust.controller");
-const { analyzeRisk } = require("./services/risk.service");
+const { analyzeRisk, predictRiskML } = require("./services/risk.service");
 
 const app = express();
 const compression = require("compression");
@@ -100,6 +100,13 @@ app.post(
   protect,
   authorize("owner", "manager"),
   analyzeRisk
+);
+
+app.post(
+  "/api/risk/predict",
+  protect,
+  authorize("owner", "manager"),
+  predictRiskML
 );
 
 // --- Health Check ---

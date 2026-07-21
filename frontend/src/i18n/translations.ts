@@ -147,6 +147,13 @@ export interface TranslationDictionary {
   vendorOsEnvironment: string;
   pressShortcuts: string;
   allRightsReserved: string;
+
+  // ML & Risk Engine
+  riskAnalysis: string;
+  riskScore: string;
+  expectedDelay: string;
+  analyzeRisk: string;
+  predictedBy: string;
 }
 
 export const translations: Record<Language, TranslationDictionary> = {
@@ -286,6 +293,12 @@ export const translations: Record<Language, TranslationDictionary> = {
     vendorOsEnvironment: "VendorOS Operational Environment",
     pressShortcuts: "Press \"?\" for Shortcuts",
     allRightsReserved: "VendorOS Systems. All Rights Reserved.",
+
+    riskAnalysis: "Risk Analysis",
+    riskScore: "Risk Score",
+    expectedDelay: "Expected Delay",
+    analyzeRisk: "Analyze Risk",
+    predictedBy: "Engine",
   },
   hi: {
     vendorOS: "वेंडर-ओएस",
@@ -423,6 +436,12 @@ export const translations: Record<Language, TranslationDictionary> = {
     vendorOsEnvironment: "वेंडर-ओएस परिचालन वातावरण",
     pressShortcuts: "शॉर्टकट के लिए \"?\" दबाएं",
     allRightsReserved: "वेंडर-ओएस सिस्टम। सर्वाधिकार सुरक्षित।",
+
+    riskAnalysis: "जोखिम विश्लेषण",
+    riskScore: "जोखिम स्कोर",
+    expectedDelay: "अपेक्षित देरी",
+    analyzeRisk: "जोखिम विश्लेषण करें",
+    predictedBy: "इंजन",
   },
   pa: {
     vendorOS: "ਵੇਂਡਰ-ਓ.ਐਸ",
@@ -560,5 +579,11 @@ export const translations: Record<Language, TranslationDictionary> = {
     vendorOsEnvironment: "ਵੇਂਡਰ-ਓ.ਐਸ ਓਪਰੇਸ਼ਨਲ ਵਾਤਾਵਰਣ",
     pressShortcuts: "ਸ਼ਾਰਟਕੱਟਾਂ ਲਈ \"?\" ਦਬਾਓ",
     allRightsReserved: "ਵੇਂਡਰ-ਓ.ਐਸ ਸਿਸਟਮ। ਸਾਰੇ ਹੱਕ ਰਾਖਵੇਂ ਹਨ।",
+
+    riskAnalysis: "ਜੋਖਮ ਵਿਸ਼ਲੇਸ਼ਣ",
+    riskScore: "ਜੋਖਮ ਸਕੋਰ",
+    expectedDelay: "ਸੰਭਾਵਿਤ ਦੇਰੀ",
+    analyzeRisk: "ਜੋਖਮ ਵਿਸ਼ਲੇਸ਼ਣ ਕਰੋ",
+    predictedBy: "ਇੰਜਣ",
   },
 };

@@ -75,6 +75,40 @@ export const OwnerDashboard: React.FC = () => {
   // Selected order for detail view
   const [viewingOrder, setViewingOrder] = useState<ServiceOrder | null>(null);
 
+  // ML Risk Analysis state
+  const [riskResult, setRiskResult] = useState<{
+    riskPercentage: number;
+    expectedDelayDays: number;
+    reason: string;
+    suggestedAction: string;
+    engine: string;
+  } | null>(null);
+  const [isAnalyzingRisk, setIsAnalyzingRisk] = useState(false);
+
+  const handleRunRiskAnalysis = async (orderId: string) => {
+    setIsAnalyzingRisk(true);
+    try {
+      const res = await api.risk.predict({
+        orderId,
+        stagesRemaining: viewingOrder?.stages?.filter(s => s.status !== 'Completed').length || 1,
+        totalStages: viewingOrder?.stages?.length || 3,
+      });
+      if (res && res.success) {
+        setRiskResult({
+          riskPercentage: res.riskPercentage,
+          expectedDelayDays: res.expectedDelayDays,
+          reason: res.reason,
+          suggestedAction: res.suggestedAction,
+          engine: res.engine,
+        });
+      }
+    } catch (err) {
+      console.error("Risk prediction error:", err);
+    } finally {
+      setIsAnalyzingRisk(false);
+    }
+  };
+
   // Load and subscribe to DB changes
   useEffect(() => {
     if (!user || !user.companyId) return;
@@ -1256,6 +1290,59 @@ export const OwnerDashboard: React.FC = () => {
                   <div>
                     <span className="text-[10px] font-mono text-[#666666] uppercase tracking-wider block mb-1">Customer Notes</span>
                     <p className="text-xs text-[#888888] bg-[#0A0A0A] p-3 border border-[#222222] rounded-sm whitespace-pre-wrap">{viewingOrder.description || 'No description provided.'}</p>
+                  </div>
+
+                  {/* ML RISK ENGINE ANALYSIS CARD */}
+                  <div className="p-4 rounded-sm border bg-[#0D0D0D] border-[#222222] space-y-3">
+                    <div className="flex justify-between items-center">
+                      <div className="flex items-center space-x-2">
+                        <Bot className="w-4 h-4 text-purple-400" />
+                        <span className="text-xs font-mono font-bold text-white uppercase tracking-wider">
+                          {t('riskAnalysis', 'Risk Analysis')}
+                        </span>
+                      </div>
+                      <button
+                        onClick={() => handleRunRiskAnalysis(viewingOrder.id)}
+                        disabled={isAnalyzingRisk}
+                        className="px-3 py-1 bg-[#1F1F1F] hover:bg-[#2F2F2F] border border-[#333333] text-white rounded-sm text-[10px] font-mono font-semibold uppercase tracking-wider transition-all cursor-pointer disabled:opacity-50"
+                      >
+                        {isAnalyzingRisk ? 'Running Engine...' : t('analyzeRisk', 'Analyze Risk')}
+                      </button>
+                    </div>
+
+                    {riskResult && (
+                      <div className="space-y-3 pt-2 border-t border-[#1F1F1F]">
+                        <div className="grid grid-cols-2 gap-3 text-xs font-mono">
+                          <div className="bg-[#141414] p-2.5 rounded border border-[#222222]">
+                            <span className="text-[9px] text-[#666666] uppercase block mb-0.5">{t('riskScore', 'Risk Score')}</span>
+                            <span className={`text-base font-bold ${
+                              riskResult.riskPercentage >= 70 ? 'text-red-400' : riskResult.riskPercentage >= 40 ? 'text-amber-400' : 'text-emerald-400'
+                            }`}>
+                              {riskResult.riskPercentage}%
+                            </span>
+                          </div>
+                          <div className="bg-[#141414] p-2.5 rounded border border-[#222222]">
+                            <span className="text-[9px] text-[#666666] uppercase block mb-0.5">{t('expectedDelay', 'Expected Delay')}</span>
+                            <span className="text-base font-bold text-white">
+                              {riskResult.expectedDelayDays} days
+                            </span>
+                          </div>
+                        </div>
+
+                        <div className="bg-[#141414] p-3 rounded border border-[#222222] space-y-1.5 text-xs">
+                          <div className="flex justify-between items-center text-[9px] text-[#666666] font-mono uppercase">
+                            <span>Analysis & Action</span>
+                            <span className="text-purple-400 font-bold">{riskResult.engine}</span>
+                          </div>
+                          <p className="text-white text-xs leading-relaxed">{riskResult.reason}</p>
+                          {riskResult.suggestedAction && (
+                            <p className="text-amber-400/90 text-xs font-mono mt-1 border-t border-[#222222] pt-1.5">
+                              💡 {riskResult.suggestedAction}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    )}
                   </div>
 
                   {/* Assignments Section */}

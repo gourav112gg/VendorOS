@@ -10,6 +10,10 @@ const createOrder = async (req, res) => {
       customerPhone,
       customerAddress,
       products,
+      deliveryDate,
+      slaOverride,
+      riskScore,
+      expectedDelayDays,
     } = req.body;
 
     if (
@@ -66,6 +70,10 @@ const createOrder = async (req, res) => {
       customerAddress,
       products,
       totalAmount,
+      deliveryDate: deliveryDate ? new Date(deliveryDate) : null,
+      slaOverride: slaOverride ?? null,
+      riskScore: riskScore ?? null,
+      expectedDelayDays: expectedDelayDays ?? null,
     });
 
     return res.status(201).json({

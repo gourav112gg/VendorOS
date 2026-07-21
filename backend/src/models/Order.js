@@ -61,17 +61,37 @@ const orderSchema = new mongoose.Schema(
       default: null,
     },
 
-status: {
-  type: String,
-  enum: [
-    "Pending",
-    "Accepted",
-    "Packed",
-    "Out For Delivery",
-    "Delivered",
-    "Cancelled",
-  ],
-  default: "Pending",
+    status: {
+      type: String,
+      enum: [
+        "Pending",
+        "Accepted",
+        "Packed",
+        "Out For Delivery",
+        "Delivered",
+        "Cancelled",
+      ],
+      default: "Pending",
+    },
+
+    deliveryDate: {
+      type: Date,
+      default: null,
+    },
+
+    riskScore: {
+      type: Number,
+      default: null,
+    },
+
+    expectedDelayDays: {
+      type: Number,
+      default: null,
+    },
+
+    slaOverride: {
+      type: Number,
+      default: null,
     },
   },
   {
