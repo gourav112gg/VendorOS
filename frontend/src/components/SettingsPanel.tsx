@@ -450,37 +450,35 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ initialTab = 'prof
     >
       {/* 1. Header Navigation Switcher */}
       <div className="flex border-b border-[#222222] overflow-x-auto select-none no-scrollbar">
-        {(
-          [
-            {
-              id: "profile",
-              label: "Profile & Security",
-              icon: <User className="w-4 h-4" />,
-            },
-            {
-              id: "preferences",
-              label: "App Preferences",
-              icon: <Settings className="w-4 h-4" />,
-            },
-            {
-              id: "subscription",
-              label: "Subscription & Pricing",
-              icon: <CreditCard className="w-4 h-4" />,
-            },
-          ] as const
-        ).map((t) => (
+        {[
+          {
+            id: "profile",
+            label: t('profileSecurity', 'Profile & Security'),
+            icon: <User className="w-4 h-4" />,
+          },
+          {
+            id: "preferences",
+            label: t('appPreferences', 'App Preferences'),
+            icon: <Settings className="w-4 h-4" />,
+          },
+          {
+            id: "subscription",
+            label: t('subscriptionPricing', 'Subscription & Pricing'),
+            icon: <CreditCard className="w-4 h-4" />,
+          },
+        ].map((tItem) => (
           <button
-            key={t.id}
-            onClick={() => setActiveSubTab(t.id)}
+            key={tItem.id}
+            onClick={() => setActiveSubTab(tItem.id as any)}
             className={`relative flex items-center space-x-2 py-3 px-4 text-xs font-mono font-bold uppercase tracking-widest cursor-pointer whitespace-nowrap transition-colors ${
-              activeSubTab === t.id
+              activeSubTab === tItem.id
                 ? "text-white font-extrabold"
                 : "text-[#666666] hover:text-[#AAAAAA]"
             }`}
           >
-            {t.icon}
-            <span>{t.label}</span>
-            {activeSubTab === t.id && (
+            {tItem.icon}
+            <span>{tItem.label}</span>
+            {activeSubTab === tItem.id && (
               <motion.span
                 layoutId="vos-settings-underline"
                 className="absolute left-0 right-0 -bottom-[1px] h-0.5 bg-white"
@@ -505,10 +503,10 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ initialTab = 'prof
                 </div>
                 <div>
                   <h3 className="text-sm font-mono font-bold text-white uppercase tracking-wider">
-                    Profile Settings
+                    {t('profileSettings', 'Profile Settings')}
                   </h3>
                   <p className="text-xs text-[#666666] mt-0.5">
-                    Update your display name and contact details.
+                    {t('updateProfileDesc', 'Update your display name and contact details.')}
                   </p>
                 </div>
               </div>
@@ -527,7 +525,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ initialTab = 'prof
                     htmlFor="profile-name"
                     className="text-[10px] font-mono font-bold text-[#666666] uppercase tracking-widest"
                   >
-                    Display Name
+                    {t('displayName', 'Display Name')}
                   </label>
                   <input
                     id="profile-name"
@@ -545,7 +543,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ initialTab = 'prof
                     htmlFor="profile-phone"
                     className="text-[10px] font-mono font-bold text-[#666666] uppercase tracking-widest"
                   >
-                    Contact Phone
+                    {t('contactPhone', 'Contact Phone')}
                   </label>
                   <input
                     id="profile-phone"
@@ -560,7 +558,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ initialTab = 'prof
 
               <div className="space-y-1.5">
                 <label htmlFor="profile-email" className="text-[10px] font-mono font-bold text-[#666666] uppercase tracking-widest">
-                  Email Address
+                  {t('emailAddress', 'Email Address')}
                 </label>
                 <input
                   id="profile-email"
@@ -615,7 +613,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ initialTab = 'prof
                   disabled={isSavingProfile}
                   className="px-5 py-2.5 bg-white text-black text-[10px] font-mono font-bold uppercase tracking-widest hover:bg-[#F0EAD8] rounded-sm transition-all duration-150 cursor-pointer disabled:opacity-50"
                 >
-                  {isSavingProfile ? "Saving..." : "Save Profile Details"}
+                  {isSavingProfile ? t('saving', 'Saving...') : t('saveProfileDetails', 'Save Profile Details')}
                 </button>
               </div>
             </form>
@@ -628,8 +626,8 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ initialTab = 'prof
                   <Layers className="w-4 h-4 text-white" />
                 </div>
                 <div>
-                  <h3 className="text-sm font-mono font-bold text-white uppercase tracking-wider">Company Profile</h3>
-                  <p className="text-xs text-[#666666] mt-0.5">Manage your company's public information and business rules.</p>
+                  <h3 className="text-sm font-mono font-bold text-white uppercase tracking-wider">{t('companyProfile', 'Company Profile')}</h3>
+                  <p className="text-xs text-[#666666] mt-0.5">{t('manageCompanyDesc', "Manage your company's public information and business rules.")}</p>
                 </div>
               </div>
 
@@ -643,7 +641,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ initialTab = 'prof
               <form onSubmit={handleSaveCompany} className="space-y-4 max-w-xl">
                 <div className="space-y-1.5">
                   <label className="text-[10px] font-mono font-bold text-[#666666] uppercase tracking-widest">
-                    Company Name
+                    {t('companyName', 'Company Name')}
                   </label>
                   <input
                     type="text"

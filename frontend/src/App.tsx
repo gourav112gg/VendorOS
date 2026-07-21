@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { AuthProvider, useAuth } from "./context/AuthContext";
-import { LanguageProvider } from "./context/LanguageContext";
+import { LanguageProvider, useTranslation } from "./context/LanguageContext";
 import { Navigation } from "./components/Navigation";
 import { ThemeManager } from "./components/ThemeManager";
 import { Login } from "./pages/Login";
@@ -24,6 +24,7 @@ import {
 
 const MainLayout: React.FC = () => {
   const { user, loading } = useAuth();
+  const { t } = useTranslation();
   const [authScreen, setAuthScreen] = useState<
     "landing" | "login" | "signup" | "public"
   >("landing");
@@ -456,7 +457,7 @@ const MainLayout: React.FC = () => {
       <footer className="bg-[#111111] border-t border-[#222222] py-6 text-[10px] text-[#666666] font-mono">
         <div className="max-w-7xl mx-auto px-6 flex flex-col sm:flex-row justify-between items-center gap-4 text-center">
           <span className="uppercase tracking-widest opacity-80">
-            VendorOS Operational Environment
+            {t('vendorOsEnvironment', 'VendorOS Operational Environment')}
           </span>
 
           <button
@@ -464,11 +465,11 @@ const MainLayout: React.FC = () => {
             className="flex items-center gap-1.5 px-3 py-1.5 bg-[#161616] hover:bg-[#202020] border border-[#222222] hover:border-[#333333] text-[9px] uppercase tracking-wider text-[#888888] hover:text-white rounded-sm transition-all cursor-pointer font-mono"
           >
             <Keyboard className="w-3.5 h-3.5 text-emerald-500" />
-            Press "?" for Shortcuts
+            {t('pressShortcuts', 'Press "?" for Shortcuts')}
           </button>
 
           <span className="uppercase tracking-widest opacity-80">
-            © {new Date().getFullYear()} VendorOS Systems. All Rights Reserved.
+            {t('allRightsReserved', `© ${new Date().getFullYear()} VendorOS Systems. All Rights Reserved.`)}
           </span>
         </div>
       </footer>

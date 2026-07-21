@@ -93,9 +93,29 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     themeName: 'slate',
   });
 
+  // Helper to persist session
+  const saveSession = (u: UserProfile | null, c: Company | null) => {
+    if (u) {
+      localStorage.setItem('vendoros_current_user_id', u.id);
+      localStorage.setItem('vendoros_user_profile', JSON.stringify(u));
+      dbStore.syncUserSession(u, c);
+    } else {
+      localStorage.removeItem('vendoros_current_user_id');
+      localStorage.removeItem('vendoros_user_profile');
+    }
+
+    if (c) {
+      localStorage.setItem('vendoros_company_profile', JSON.stringify(c));
+    } else {
+      localStorage.removeItem('vendoros_company_profile');
+    }
+  };
+
   // Sync state from localStorage on init
   useEffect(() => {
     const savedUserId = localStorage.getItem('vendoros_current_user_id');
+    const savedUserProfile = localStorage.getItem('vendoros_user_profile');
+    const savedCompanyProfile = localStorage.getItem('vendoros_company_profile');
     const savedPrefs = localStorage.getItem('vendoros_user_preferences');
     
     if (savedPrefs) {
@@ -106,20 +126,39 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
     }
 
-    if (savedUserId) {
-      const allUsers = dbStore.getUsers();
-      const foundUser = allUsers.find(u => u.id === savedUserId);
-      if (foundUser && dbStore.isSessionActive(savedUserId)) {
-        setUser(foundUser);
-        if (foundUser.companyId) {
-          const comps = dbStore.getCompanies();
-          const foundComp = comps.find(c => c.id === foundUser.companyId);
-          setCompany(foundComp || null);
-        }
-      } else {
-        localStorage.removeItem('vendoros_current_user_id');
+    let activeUser: UserProfile | null = null;
+    let activeCompany: Company | null = null;
+
+    if (savedUserProfile) {
+      try {
+        activeUser = JSON.parse(savedUserProfile);
+      } catch (e) {
+        console.error('Failed to parse saved user profile', e);
       }
     }
+
+    if (savedCompanyProfile) {
+      try {
+        activeCompany = JSON.parse(savedCompanyProfile);
+      } catch (e) {
+        console.error('Failed to parse saved company profile', e);
+      }
+    }
+
+    if (!activeUser && savedUserId) {
+      const allUsers = dbStore.getUsers();
+      activeUser = allUsers.find(u => u.id === savedUserId) || null;
+      if (activeUser?.companyId) {
+        activeCompany = dbStore.getCompanies().find(comp => comp.id === activeUser?.companyId) || null;
+      }
+    }
+
+    if (activeUser) {
+      setUser(activeUser);
+      setCompany(activeCompany);
+      dbStore.syncUserSession(activeUser, activeCompany);
+    }
+
     setLoading(false);
   }, []);
 
@@ -132,12 +171,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   // Set up real-time listener for the store.
-  // This achieves the "Immediate Logout on Session Revocation" trigger
   useEffect(() => {
     if (!user) return;
 
     const unsubscribe = dbStore.subscribe(() => {
-      if (api.getToken()) {
+      const savedUserProfile = localStorage.getItem('vendoros_user_profile');
+      if (api.getToken() || savedUserProfile) {
         const allUsers = dbStore.getUsers();
         const stillExists = allUsers.find(u => u.id === user.id);
         if (stillExists) {
@@ -158,18 +197,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const isSessionActive = dbStore.isSessionActive(user.id);
 
       if (!stillExists || !isSessionActive) {
-        // Force immediate logout
+        // Force immediate logout only if explicitly revoked
         setUser(null);
         setCompany(null);
         localStorage.removeItem('vendoros_current_user_id');
-      } else {
-        // Update user state if name or details change
-        setUser(stillExists);
-        if (stillExists.companyId) {
-          const comps = dbStore.getCompanies();
-          const foundComp = comps.find(c => c.id === stillExists.companyId);
-          setCompany(foundComp || null);
-        }
+        localStorage.removeItem('vendoros_user_profile');
+        localStorage.removeItem('vendoros_company_profile');
       }
     });
 
@@ -219,10 +252,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         };
 
         setUser(loggedUser);
-        localStorage.setItem('vendoros_current_user_id', loggedUser.id);
-
+        let companyObj: Company | null = null;
         if (res.user.company) {
-          const companyObj: Company = {
+          companyObj = {
             id: res.user.company._id,
             name: res.user.company.companyName,
             createdAt: res.user.company.createdAt,
@@ -236,7 +268,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           setCompany(null);
         }
 
-        dbStore.syncUserSession(loggedUser, res.user.company);
+        saveSession(loggedUser, companyObj);
         return loggedUser;
       } catch (backendErr: any) {
         console.error("[Login Demo Bypass Backend Error]", backendErr);
@@ -267,10 +299,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         };
 
         setUser(loggedUser);
-        localStorage.setItem('vendoros_current_user_id', loggedUser.id);
 
+        let companyObj: Company | null = null;
         if (res.user.company) {
-          const companyObj: Company = {
+          companyObj = {
             id: res.user.company._id,
             name: res.user.company.companyName,
             createdAt: res.user.company.createdAt,
@@ -284,9 +316,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           setCompany(null);
         }
 
-        // Sync with simulated local db
-        dbStore.syncUserSession(loggedUser, res.user.company);
-
+        saveSession(loggedUser, companyObj);
         return loggedUser;
       } catch (backendErr: any) {
         // Sign out Firebase if category validation fails (zero leakage)
@@ -330,15 +360,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
 
     setUser(loggedUser);
-    localStorage.setItem('vendoros_current_user_id', loggedUser.id);
+    let companyObj: Company | null = null;
     if (loggedUser.companyId) {
       const comps = dbStore.getCompanies();
-      const foundComp = comps.find(c => c.id === loggedUser.companyId);
-      setCompany(foundComp || null);
+      companyObj = comps.find(c => c.id === loggedUser.companyId) || null;
+      setCompany(companyObj);
     } else {
       setCompany(null);
     }
     
+    saveSession(loggedUser, companyObj);
     return loggedUser;
   };
 
@@ -349,7 +380,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
     setUser(null);
     setCompany(null);
-    localStorage.removeItem('vendoros_current_user_id');
+    saveSession(null, null);
+    api.clearToken();
   };
 
   const registerOwner = async (name: string, email: string, companyName: string, phone?: string, password?: string): Promise<{ user: UserProfile; company: Company }> => {

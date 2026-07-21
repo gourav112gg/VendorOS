@@ -456,24 +456,24 @@ export const OwnerDashboard: React.FC = () => {
               </div>
               <div className="relative z-10">
                 <span className="bg-[#1A1A1A] text-[#888888] px-3 py-1 rounded-sm text-[9px] font-mono uppercase tracking-widest border border-[#222222]">
-                  Admin System Profile
+                  {t('adminSystemProfile', 'Admin System Profile')}
                 </span>
-                <h3 className="text-2xl font-serif italic font-light mt-4 tracking-tight text-white">VendorOS Real-Time Architecture</h3>
+                <h3 className="text-2xl font-serif italic font-light mt-4 tracking-tight text-white">{t('realtimeArchitecture', 'VendorOS Real-Time Architecture')}</h3>
                 <p className="text-[#888888] mt-2 text-sm max-w-md leading-relaxed">
-                  Your team, operational domains, and field service requests are managed via local persistence. 
+                  {t('realtimeArchitectureDesc', 'Your team, operational domains, and field service requests are managed via local persistence.')} 
                   All permissions rules listed in <code className="font-mono bg-[#0A0A0A] border border-[#222222] px-1.5 py-0.5 rounded-sm text-[#E5E5E5]">firestore.rules</code> are actively simulated inside the React state router.
                 </p>
 
                 <div className="grid grid-cols-2 gap-4 mt-6 pt-6 border-t border-[#1D1D1D]">
                   <div>
-                    <span className="text-[10px] font-mono text-[#666666] uppercase tracking-widest block">Session Status</span>
+                    <span className="text-[10px] font-mono text-[#666666] uppercase tracking-widest block">{t('sessionStatus', 'Session Status')}</span>
                     <span className="text-xs font-semibold font-sans mt-1 block flex items-center text-[#888888]">
                       <span className="w-2 h-2 bg-emerald-500 rounded-full mr-2 inline-block"></span>
-                      Local Active Simulation
+                      {t('localActiveSimulation', 'Local Active Simulation')}
                     </span>
                   </div>
                   <div>
-                    <span className="text-[10px] font-mono text-[#666666] uppercase tracking-widest block">System Claims State</span>
+                    <span className="text-[10px] font-mono text-[#666666] uppercase tracking-widest block">{t('systemClaimsState', 'System Claims State')}</span>
                     <span className="text-xs font-mono mt-1 block truncate text-[#888888]">
                       role: 'Owner' • companyId: {user.companyId}
                     </span>
@@ -484,7 +484,7 @@ export const OwnerDashboard: React.FC = () => {
 
             {/* Quick Actions List */}
             <div className="bg-[#111111] p-6 rounded-sm border border-[#222222]">
-              <h3 className="text-[10px] font-mono font-bold text-[#666666] uppercase tracking-widest mb-4 block">Owner Quick Operations</h3>
+              <h3 className="text-[10px] font-mono font-bold text-[#666666] uppercase tracking-widest mb-4 block">{t('ownerQuickOps', 'Owner Quick Operations')}</h3>
               <div className="space-y-3">
                 <button 
                   onClick={() => { setActiveSubTab('domains'); handleOpenAddDomain(); }}
@@ -495,8 +495,8 @@ export const OwnerDashboard: React.FC = () => {
                       <Layers className="w-4 h-4" />
                     </div>
                     <div>
-                      <span className="block text-xs font-semibold text-white uppercase tracking-widest">Add Operational Domain</span>
-                      <span className="block text-[11px] text-[#666666] mt-0.5">Add categories like HVAC, Plumbing, or custom specializations.</span>
+                      <span className="block text-xs font-semibold text-white uppercase tracking-widest">{t('addOpDomain', 'Add Operational Domain')}</span>
+                      <span className="block text-[11px] text-[#666666] mt-0.5">{t('addOpDomainDesc', 'Add categories like HVAC, Plumbing, or custom specializations.')}</span>
                     </div>
                   </div>
                   <Plus className="w-4 h-4 text-[#444444]" />
@@ -511,8 +511,8 @@ export const OwnerDashboard: React.FC = () => {
                       <Users className="w-4 h-4" />
                     </div>
                     <div>
-                      <span className="block text-xs font-semibold text-white uppercase tracking-widest">Manage Team Members</span>
-                      <span className="block text-[11px] text-[#666666] mt-0.5">View registered Managers and Workers, or simulate session deletion.</span>
+                      <span className="block text-xs font-semibold text-white uppercase tracking-widest">{t('manageTeamMembers', 'Manage Team Members')}</span>
+                      <span className="block text-[11px] text-[#666666] mt-0.5">{t('manageTeamDesc', 'View registered Managers and Workers, or simulate session deletion.')}</span>
                     </div>
                   </div>
                   <Users className="w-4 h-4 text-[#444444]" />
@@ -533,9 +533,9 @@ export const OwnerDashboard: React.FC = () => {
         >
           <div className="p-6 border-b border-[#222222] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-[#0A0A0A]">
             <div>
-              <h2 className="text-lg font-serif italic font-light text-white">Registered Operational Domains</h2>
+              <h2 className="text-lg font-serif italic font-light text-white">{t('registeredOpDomains', 'Registered Operational Domains')}</h2>
               <p className="text-xs text-[#666666] mt-1">
-                Owners define the fields of service the company provides to customers.
+                {t('opDomainsDesc', 'Owners define the fields of service the company provides to customers.')}
               </p>
             </div>
             <button
@@ -543,7 +543,7 @@ export const OwnerDashboard: React.FC = () => {
               className="flex items-center justify-center space-x-1.5 px-4 py-2 bg-white hover:bg-[#E5E5E5] text-black rounded-sm text-[10px] font-bold uppercase tracking-widest transition-all self-start sm:self-center cursor-pointer"
             >
               <Plus className="w-3.5 h-3.5" />
-              <span>Create Domain</span>
+              <span>{t('createDomain', 'Create Domain')}</span>
             </button>
           </div>
 
@@ -561,11 +561,11 @@ export const OwnerDashboard: React.FC = () => {
               <table className="w-full text-left border-collapse">
                 <thead>
                   <tr className="bg-[#0D0D0D] text-[#666666] font-mono text-[9px] uppercase tracking-widest border-b border-[#222222]">
-                    <th className="px-6 py-4">Domain Name</th>
-                    <th className="px-6 py-4">Type / Tag</th>
-                    <th className="px-6 py-4">Status</th>
-                    <th className="px-6 py-4">Created Date</th>
-                    <th className="px-6 py-4 text-right">Actions</th>
+                    <th className="px-6 py-4">{t('domainName', 'DOMAIN NAME')}</th>
+                    <th className="px-6 py-4">{t('typeTag', 'TYPE / TAG')}</th>
+                    <th className="px-6 py-4">{t('status', 'STATUS')}</th>
+                    <th className="px-6 py-4">{t('createdDate', 'CREATED DATE')}</th>
+                    <th className="px-6 py-4 text-right">{t('actions', 'ACTIONS')}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[#1A1A1A] text-xs">

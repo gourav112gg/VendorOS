@@ -43,10 +43,21 @@ export interface TranslationDictionary {
   workerLevel: string;
   adminSystemProfile: string;
   realtimeArchitecture: string;
+  realtimeArchitectureDesc: string;
+  sessionStatus: string;
+  localActiveSimulation: string;
+  systemClaimsState: string;
   ownerQuickOps: string;
   addOpDomain: string;
   addOpDomainDesc: string;
+  manageTeamMembers: string;
   manageTeamDesc: string;
+
+  // Domains Tab
+  registeredOpDomains: string;
+  opDomainsDesc: string;
+  createDomain: string;
+  activeStatus: string;
 
   // KPI Bento Metrics
   kpiTitle: string;
@@ -89,6 +100,20 @@ export interface TranslationDictionary {
   createdDate: string;
   actions: string;
 
+  // Settings Panel Forms
+  profileSecurity: string;
+  subscriptionPricing: string;
+  updateProfileDesc: string;
+  displayName: string;
+  contactPhone: string;
+  emailAddress: string;
+  saveProfileDetails: string;
+  companyProfile: string;
+  manageCompanyDesc: string;
+  companyName: string;
+  companyNameUnique: string;
+  descriptionBio: string;
+
   // Common Actions & Controls
   newOrder: string;
   approve: string;
@@ -106,7 +131,6 @@ export interface TranslationDictionary {
   updating: string;
   allRoles: string;
   allStatuses: string;
-  createDomain: string;
   
   // Settings & Preferences
   appPreferences: string;
@@ -118,6 +142,11 @@ export interface TranslationDictionary {
   profileSettings: string;
   activeDevicesSessions: string;
   revokeOtherSessions: string;
+
+  // Footer Elements
+  vendorOsEnvironment: string;
+  pressShortcuts: string;
+  allRightsReserved: string;
 }
 
 export const translations: Record<Language, TranslationDictionary> = {
@@ -160,10 +189,20 @@ export const translations: Record<Language, TranslationDictionary> = {
     workerLevel: "WORKER LEVEL",
     adminSystemProfile: "Admin System Profile",
     realtimeArchitecture: "VendorOS Real-Time Architecture",
+    realtimeArchitectureDesc: "Your team, operational domains, and field service requests are managed via local persistence.",
+    sessionStatus: "Session Status",
+    localActiveSimulation: "Local Active Simulation",
+    systemClaimsState: "System Claims State",
     ownerQuickOps: "Owner Quick Operations",
     addOpDomain: "Add Operational Domain",
     addOpDomainDesc: "Add categories like HVAC, Plumbing, or custom specializations.",
+    manageTeamMembers: "Manage Team Members",
     manageTeamDesc: "View registered Managers and Workers, or simulate session deletion.",
+
+    registeredOpDomains: "Registered Operational Domains",
+    opDomainsDesc: "Owners define the fields of service the company provides to customers.",
+    createDomain: "Create Domain",
+    activeStatus: "Active",
 
     kpiTitle: "Key Performance Indicators",
     kpiSubtitle: "Real-time fulfillment metrics, logistics pipeline, & critical inventory triggers",
@@ -204,6 +243,19 @@ export const translations: Record<Language, TranslationDictionary> = {
     createdDate: "CREATED DATE",
     actions: "ACTIONS",
 
+    profileSecurity: "Profile & Security",
+    subscriptionPricing: "Subscription & Pricing",
+    updateProfileDesc: "Update your display name and contact details.",
+    displayName: "Display Name",
+    contactPhone: "Contact Phone",
+    emailAddress: "Email Address",
+    saveProfileDetails: "Save Profile Details",
+    companyProfile: "Company Profile",
+    manageCompanyDesc: "Manage your company's public information and business rules.",
+    companyName: "Company Name",
+    companyNameUnique: "Company name is unique and cannot be changed.",
+    descriptionBio: "Description / Bio",
+
     newOrder: "+ New Order",
     approve: "Approve",
     reject: "Reject",
@@ -220,7 +272,6 @@ export const translations: Record<Language, TranslationDictionary> = {
     updating: "Updating...",
     allRoles: "All Roles",
     allStatuses: "All Statuses",
-    createDomain: "Create Domain",
 
     appPreferences: "App Preferences",
     visualCustomization: "Visual Interface Customization",
@@ -231,6 +282,10 @@ export const translations: Record<Language, TranslationDictionary> = {
     profileSettings: "Profile & Identity Settings",
     activeDevicesSessions: "Active Devices & Sessions",
     revokeOtherSessions: "Revoke Other Sessions",
+
+    vendorOsEnvironment: "VendorOS Operational Environment",
+    pressShortcuts: "Press \"?\" for Shortcuts",
+    allRightsReserved: "VendorOS Systems. All Rights Reserved.",
   },
   hi: {
     vendorOS: "वेंडर-ओएस",
@@ -271,10 +326,20 @@ export const translations: Record<Language, TranslationDictionary> = {
     workerLevel: "तकनीशियन स्तर",
     adminSystemProfile: "एडमिन सिस्टम प्रोफ़ाइल",
     realtimeArchitecture: "वेंडर-ओएस रियल-टाइम आर्किटेक्चर",
+    realtimeArchitectureDesc: "आपकी टीम, परिचालन डोमेन, और सेवा अनुरोधों को प्रबंधित किया जाता है।",
+    sessionStatus: "सत्र स्थिति",
+    localActiveSimulation: "लोकल सक्रिय सिमुलेशन",
+    systemClaimsState: "सिस्टम क्लेम स्थिति",
     ownerQuickOps: "मालिक त्वरित संचालन",
     addOpDomain: "कार्य क्षेत्र जोड़ें",
     addOpDomainDesc: "एचवीएसी, प्लंबिंग, या कस्टम श्रेणियां जोड़ें।",
+    manageTeamMembers: "टीम सदस्यों का प्रबंधन करें",
     manageTeamDesc: "पंजीकृत प्रबंधकों और कर्मचारियों को देखें या सत्र प्रबंधित करें।",
+
+    registeredOpDomains: "पंजीकृत परिचालन डोमेन",
+    opDomainsDesc: "मालिक उन सेवा क्षेत्रों को परिभाषित करते हैं जो कंपनी ग्राहकों को प्रदान करती है।",
+    createDomain: "डोमेन बनाएं",
+    activeStatus: "सक्रिय",
 
     kpiTitle: "मुख्य प्रदर्शन संकेतक (KPI)",
     kpiSubtitle: "वास्तविक समय पूर्ति संकेत, रसद पाइपलाइन और महत्वपूर्ण इन्वेंट्री अलर्ट",
@@ -315,6 +380,19 @@ export const translations: Record<Language, TranslationDictionary> = {
     createdDate: "बनाने की तिथि",
     actions: "कार्रवाई",
 
+    profileSecurity: "प्रोफ़ाइल और सुरक्षा",
+    subscriptionPricing: "सदस्यता और मूल्य निर्धारण",
+    updateProfileDesc: "अपना प्रदर्शन नाम और संपर्क विवरण अपडेट करें।",
+    displayName: "प्रदर्शन नाम",
+    contactPhone: "संपर्क फोन",
+    emailAddress: "ईमेल पता",
+    saveProfileDetails: "प्रोफ़ाइल विवरण सहेजें",
+    companyProfile: "कंपनी प्रोफ़ाइल",
+    manageCompanyDesc: "अपनी कंपनी की सार्वजनिक जानकारी और व्यावसायिक नियमों का प्रबंधन करें।",
+    companyName: "कंपनी का नाम",
+    companyNameUnique: "कंपनी का नाम अद्वितीय है और इसे बदला नहीं जा सकता।",
+    descriptionBio: "विवरण / बायो",
+
     newOrder: "+ नया आदेश",
     approve: "स्वीकृत करें",
     reject: "अस्वीकृत करें",
@@ -331,7 +409,6 @@ export const translations: Record<Language, TranslationDictionary> = {
     updating: "अपडेट हो रहा है...",
     allRoles: "सभी भूमिकाएं",
     allStatuses: "सभी स्थितियां",
-    createDomain: "क्षेत्र बनाएं",
 
     appPreferences: "ऐप प्राथमिकताएं",
     visualCustomization: "दृश्य इंटरफ़ेस अनुकूलन",
@@ -342,6 +419,10 @@ export const translations: Record<Language, TranslationDictionary> = {
     profileSettings: "प्रोफ़ाइल और पहचान सेटिंग्स",
     activeDevicesSessions: "सक्रिय उपकरण और सत्र",
     revokeOtherSessions: "अन्य सत्र रद्द करें",
+
+    vendorOsEnvironment: "वेंडर-ओएस परिचालन वातावरण",
+    pressShortcuts: "शॉर्टकट के लिए \"?\" दबाएं",
+    allRightsReserved: "वेंडर-ओएस सिस्टम। सर्वाधिकार सुरक्षित।",
   },
   pa: {
     vendorOS: "ਵੇਂਡਰ-ਓ.ਐਸ",
@@ -382,10 +463,20 @@ export const translations: Record<Language, TranslationDictionary> = {
     workerLevel: "ਤਕਨੀਸ਼ੀਅਨ ਪੱਧਰ",
     adminSystemProfile: "ਐਡਮਿਨ ਸਿਸਟਮ ਪ੍ਰੋਫਾਈਲ",
     realtimeArchitecture: "ਵੇਂਡਰ-ਓ.ਐਸ ਰੀਅਲ-ਟਾਈਮ ਆਰਕੀਟੈਕਚਰ",
+    realtimeArchitectureDesc: "ਤੁਹਾਡੀ ਟੀਮ, ਓਪਰੇਸ਼ਨਲ ਡੋਮੇਨ ਅਤੇ ਸੇਵਾ ਬੇਨਤੀਆਂ ਨੂੰ ਪ੍ਰਬੰਧਿਤ ਕੀਤਾ ਜਾਂਦਾ ਹੈ।",
+    sessionStatus: "ਸੈਸ਼ਨ ਸਥਿਤੀ",
+    localActiveSimulation: "ਲੋਕਲ ਸਰਗਰਮ ਸਿਮੂਲੇਸ਼ਨ",
+    systemClaimsState: "ਸਿਸਟਮ ਕਲੇਮ ਸਥਿਤੀ",
     ownerQuickOps: "ਮਾਲਕ ਤੁਰੰਤ ਕਾਰਜ",
     addOpDomain: "ਕਾਰਜ ਖੇਤਰ ਜੋੜੋ",
     addOpDomainDesc: "ਐਚ.ਵੀ.ਏ.ਸੀ, ਪਲੰਬਿੰਗ, ਜਾਂ ਕਸਟਮ ਸ਼੍ਰੇਣੀਆਂ ਜੋੜੋ।",
+    manageTeamMembers: "ਟੀਮ ਮੈਂਬਰ ਪ੍ਰਬੰਧਿਤ ਕਰੋ",
     manageTeamDesc: "ਰਜਿਸਟਰਡ ਮੈਨੇਜਰਾਂ ਅਤੇ ਕਰਮਚਾਰੀਆਂ ਨੂੰ ਵੇਖੋ ਜਾਂ ਸੈਸ਼ਨ ਪ੍ਰਬੰਧਿਤ ਕਰੋ।",
+
+    registeredOpDomains: "ਰਜਿਸਟਰਡ ਓਪਰੇਸ਼ਨਲ ਡੋਮੇਨ",
+    opDomainsDesc: "ਮਾਲਕ ਉਹ ਸੇਵਾ ਖੇਤਰ ਨਿਰਧਾਰਤ ਕਰਦੇ ਹਨ ਜੋ ਕੰਪਨੀ ਗਾਹਕਾਂ ਨੂੰ ਪ੍ਰਦਾਨ ਕਰਦੀ ਹੈ।",
+    createDomain: "ਖੇਤਰ ਬਣਾਓ",
+    activeStatus: "ਸਰਗਰਮ",
 
     kpiTitle: "ਮੁੱਖ ਪ੍ਰਦਰਸ਼ਨ ਸੰਕੇਤਕ (KPI)",
     kpiSubtitle: "ਰੀਅਲ-ਟਾਈਮ ਪੂਰਤੀ ਮੈਟ੍ਰਿਕਸ, ਲੌਜਿਸਟਿਕਸ ਪਾਈਪਲਾਈਨ ਅਤੇ ਇਨਵੈਂਟਰੀ ਚੇਤਾਵਨੀਆਂ",
@@ -426,6 +517,19 @@ export const translations: Record<Language, TranslationDictionary> = {
     createdDate: "ਬਣਾਉਣ ਦੀ ਮਿਤੀ",
     actions: "ਕਾਰਵਾਈਆਂ",
 
+    profileSecurity: "ਪ੍ਰੋਫਾਈਲ ਅਤੇ ਸੁਰੱਖਿਆ",
+    subscriptionPricing: "ਗਾਹਕੀ ਅਤੇ ਕੀਮਤਾਂ",
+    updateProfileDesc: "ਆਪਣਾ ਨਾਮ ਅਤੇ ਸੰਪਰਕ ਵੇਰਵੇ ਅੱਪਡੇਟ ਕਰੋ।",
+    displayName: "ਦਰਸਾਉਣ ਵਾਲਾ ਨਾਮ",
+    contactPhone: "ਸੰਪਰਕ ਫੋਨ",
+    emailAddress: "ਈਮੇਲ ਪਤਾ",
+    saveProfileDetails: "ਪ੍ਰੋਫਾਈਲ ਵੇਰਵੇ ਸੰਭਾਲੋ",
+    companyProfile: "ਕੰਪਨੀ ਪ੍ਰੋਫਾਈਲ",
+    manageCompanyDesc: "ਆਪਣੀ ਕੰਪਨੀ ਦੀ ਜਾਣਕਾਰੀ ਅਤੇ ਨਿਯਮਾਂ ਦਾ ਪ੍ਰਬੰਧਨ ਕਰੋ।",
+    companyName: "ਕੰਪਨੀ ਦਾ ਨਾਂ",
+    companyNameUnique: "ਕੰਪਨੀ ਦਾ ਨਾਂ ਵਿਲੱਖਣ ਹੈ ਅਤੇ ਬਦਲਿਆ ਨਹੀਂ ਜਾ ਸਕਦਾ।",
+    descriptionBio: "ਵੇਰਵਾ / ਬਾਇਓ",
+
     newOrder: "+ ਨਵਾਂ ਆਰਡਰ",
     approve: "ਮਨਜ਼ੂਰ ਕਰੋ",
     reject: "ਰੱਦ ਕਰੋ",
@@ -442,7 +546,6 @@ export const translations: Record<Language, TranslationDictionary> = {
     updating: "ਅੱਪਡੇਟ ਹੋ ਰਿਹਾ ਹੈ...",
     allRoles: "ਸਾਰੇ ਰੋਲ",
     allStatuses: "ਸਾਰੀਆਂ ਸਥਿਤੀਆਂ",
-    createDomain: "ਖੇਤਰ ਬਣਾਓ",
 
     appPreferences: "ਐਪ ਤਰਜੀਹਾਂ",
     visualCustomization: "ਦ੍ਰਿਸ਼ਟੀਗਤ ਇੰਟਰਫੇਸ ਅਨੁਕੂਲਨ",
@@ -453,5 +556,9 @@ export const translations: Record<Language, TranslationDictionary> = {
     profileSettings: "ਪ੍ਰੋਫਾਈਲ ਅਤੇ ਪਛਾਣ ਸੈਟਿੰਗਾਂ",
     activeDevicesSessions: "ਸਰਗਰਮ ਉਪਕਰਣ ਅਤੇ ਸੈਸ਼ਨ",
     revokeOtherSessions: "ਬਾਕੀ ਸੈਸ਼ਨ ਰੱਦ ਕਰੋ",
+
+    vendorOsEnvironment: "ਵੇਂਡਰ-ਓ.ਐਸ ਓਪਰੇਸ਼ਨਲ ਵਾਤਾਵਰਣ",
+    pressShortcuts: "ਸ਼ਾਰਟਕੱਟਾਂ ਲਈ \"?\" ਦਬਾਓ",
+    allRightsReserved: "ਵੇਂਡਰ-ਓ.ਐਸ ਸਿਸਟਮ। ਸਾਰੇ ਹੱਕ ਰਾਖਵੇਂ ਹਨ।",
   },
 };
