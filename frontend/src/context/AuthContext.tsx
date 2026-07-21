@@ -42,7 +42,7 @@ interface AuthContextType {
   loginWithGoogle: () => Promise<UserProfile>;
   logout: () => void;
   registerOwner: (name: string, email: string, companyName: string, phone?: string, password?: string) => Promise<{ user: UserProfile; company: Company }>;
-  registerManagerOrWorker: (name: string, email: string, companyId: string, role: 'Manager' | 'Worker', phone?: string) => Promise<UserProfile>;
+  registerManagerOrWorker: (name: string, email: string, companyId: string, role: 'Manager' | 'Worker', phone?: string, password?: string) => Promise<UserProfile>;
   registerCustomer: (name: string, email: string, phone?: string, password?: string) => Promise<UserProfile>;
   sendPasswordReset: (email: string) => Promise<void>;
 }
@@ -249,12 +249,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       // 1. Authenticate credentials at Firebase Auth layer
       const userCredential = await signInWithEmailAndPassword(firebaseAuth, email, password);
-      // 2. Obtain Firebase ID token to send to backend (never send raw password)
-      const idToken = await getIdToken(userCredential.user);
-
-      // 3. Validate selected category against actual identity in MongoDB
+      
+      // 2. Validate selected category against actual identity in MongoDB
       try {
-        const res = await api.auth.login({ idToken, email, category });
+        const res = await api.auth.login({ email, password, category });
 
         const loggedUser: UserProfile = {
           id: res.user._id,
@@ -289,18 +287,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
         return loggedUser;
       } catch (backendErr: any) {
-        console.error("[Login Backend Error]", backendErr);
         // Sign out Firebase if category validation fails (zero leakage)
         await signOut(firebaseAuth);
+        
+        // Report failure to backend
         await api.auth.reportFailure({ email });
-        throw new Error('Incorrect email or password');
+        
+        throw new Error(backendErr.message || 'Incorrect email or password');
       }
     } catch (fbErr: any) {
-      console.error("[Login Firebase Auth Error]", fbErr);
-      if (fbErr.code && fbErr.message !== 'Incorrect email or password') {
-        // Firebase auth failure — report and use generic message
-        try { await api.auth.reportFailure({ email }); } catch (_) {}
+      if (fbErr.code === 'auth/user-disabled') {
+        throw new Error('Too many failed attempts. Try again in 15 minutes.');
       }
+      
+      // Report failed credentials attempt to backend
+      await api.auth.reportFailure({ email });
       throw new Error('Incorrect email or password');
     }
   };
@@ -476,6 +477,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  const sendPasswordReset = async (email: string): Promise<void> => {
+    const { sendPasswordResetEmail } = await import('firebase/auth');
+    const { auth: firebaseAuth } = await import('../services/firebase');
+
+    try {
+      await sendPasswordResetEmail(firebaseAuth, email);
+    } catch (fbErr: any) {
+      console.error("[Firebase Password Reset Error]", fbErr);
+      throw new Error('Something went wrong, please try again or contact support');
+    }
+  };
+
   const updateProfile = async (name: string, phone?: string, role?: string, companyId?: string, email?: string): Promise<void> => {
     if (api.getToken() && user) {
       const res = await api.users.updateProfile({ name, phone, role, companyId, email });
@@ -543,18 +556,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         };
         setCompany(companyObj);
       }
-    }
-  };
-
-  const sendPasswordReset = async (email: string): Promise<void> => {
-    const { sendPasswordResetEmail } = await import('firebase/auth');
-    const { auth: firebaseAuth } = await import('../services/firebase');
-
-    try {
-      await sendPasswordResetEmail(firebaseAuth, email);
-    } catch (fbErr: any) {
-      console.error("[Firebase Password Reset Error]", fbErr);
-      throw new Error('Something went wrong, please try again or contact support');
     }
   };
 

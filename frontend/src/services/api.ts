@@ -48,13 +48,15 @@ const getToken = (): string | null => localStorage.getItem('vendoros_token');
 const saveToken = (token: string) => localStorage.setItem('vendoros_token', token);
 const clearToken = () => localStorage.removeItem('vendoros_token');
 
+// ─── Auth API ─────────────────────────────────────────────────────────────────
+
 const auth = {
   /** Register a new company Owner — sends Firebase ID token to backend */
   ownerSignup: (payload: {
     idToken: string;
     name: string;
     email: string;
-    phone: string;
+    phone?: string;
     companyName: string;
   }) => request('POST', '/api/auth/owner/signup', payload),
 
@@ -90,6 +92,8 @@ const auth = {
   /** Clear stored token (logout) */
   logout: () => clearToken(),
 };
+
+// ─── Orders API ───────────────────────────────────────────────────────────────
 
 const orders = {
   getAll: (page: number = 1, limit: number = 10) => request('GET', `/api/orders?page=${page}&limit=${limit}`, undefined, getToken() || undefined),

@@ -1,7 +1,143 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+/* @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 @import "tailwindcss";
 
 @theme {
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+} */
+
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Fraunces", ui-serif, Georgia, serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+}
+
+
+
+:root {
+  --vos-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --vos-ease-soft: cubic-bezier(0.4, 0, 0.2, 1);
+  --vos-radius: 14px;
+  --vos-radius-sm: 10px;
+  --vos-radius-lg: 20px;
+  --vos-accent: #cf9f4f;
+  --vos-accent-soft: rgba(207, 159, 79, 0.16);
+  --vos-shadow-card: 0 1px 2px rgba(0, 0, 0, 0.24), 0 12px 28px -12px rgba(0, 0, 0, 0.45);
+  --vos-shadow-hover: 0 4px 10px rgba(0, 0, 0, 0.28), 0 20px 40px -16px rgba(0, 0, 0, 0.55);
+  color-scheme: dark;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(212, 191, 150, 0.25) transparent;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: var(--vos-accent-soft);
+  color: #fff;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background-color: rgba(212, 191, 150, 0.18);
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+  transition: background-color 0.2s var(--vos-ease-soft);
+}
+::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(212, 191, 150, 0.32);
+  background-clip: padding-box;
+}
+
+:focus-visible {
+  outline: 2px solid rgba(207, 159, 79, 0.55);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+input:focus, select:focus, textarea:focus {
+  outline: none !important;
+}
+
+@keyframes vosFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes vosFadeInUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes vosFadeInDown {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes vosScaleIn {
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: scale(1); }
+}
+@keyframes vosShimmer {
+  0% { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+@keyframes vosFloat {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-6px); }
+}
+
+.animate-fade-in { animation: vosFadeIn 0.35s var(--vos-ease-soft) both; }
+.animate-fade-in-up { animation: vosFadeInUp 0.45s var(--vos-ease) both; }
+.animate-fade-in-down { animation: vosFadeInDown 0.4s var(--vos-ease) both; }
+.animate-scale-in { animation: vosScaleIn 0.3s var(--vos-ease) both; }
+.animate-float { animation: vosFloat 6s ease-in-out infinite; }
+
+.vos-stagger > * { animation: vosFadeInUp 0.5s var(--vos-ease) both; }
+.vos-stagger > *:nth-child(1) { animation-delay: 0.02s; }
+.vos-stagger > *:nth-child(2) { animation-delay: 0.06s; }
+.vos-stagger > *:nth-child(3) { animation-delay: 0.1s; }
+.vos-stagger > *:nth-child(4) { animation-delay: 0.14s; }
+.vos-stagger > *:nth-child(5) { animation-delay: 0.18s; }
+.vos-stagger > *:nth-child(6) { animation-delay: 0.22s; }
+.vos-stagger > *:nth-child(n+7) { animation-delay: 0.26s; }
+
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.06);
+}
+.skeleton::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), transparent);
+  background-size: 400px 100%;
+  animation: vosShimmer 1.4s infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
 }

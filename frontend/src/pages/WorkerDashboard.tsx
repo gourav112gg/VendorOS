@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import dbStore from '../services/store';
 import { Company, ServiceOrder } from '../types';
@@ -115,7 +115,7 @@ export const WorkerDashboard: React.FC = () => {
 
   const formatCurrency = (amount: number) => {
     if (preferences.currency === 'INR') {
-      return `₹${amount}`;
+      return `Γé╣${amount}`;
     }
     return `$${amount}`;
   };
@@ -424,7 +424,7 @@ export const WorkerDashboard: React.FC = () => {
               Technician Service Hub
             </h1>
             <p className="text-[#666666] mt-1 text-xs font-mono uppercase tracking-widest">
-              Worker Dashboard • View assigned dispatches, update service stages, and log job details.
+              Worker Dashboard ΓÇó View assigned dispatches, update service stages, and log job details.
             </p>
           </div>
           <div className="md:hidden mt-1 mr-2">
@@ -663,7 +663,7 @@ export const WorkerDashboard: React.FC = () => {
                   <div className="flex items-center space-x-1.5 mt-3">
                     <span className="text-[10px] font-mono font-bold text-[#666666] uppercase tracking-widest">Technician Account:</span>
                     <span className="bg-[#1A1A1A] border border-[#222222] text-[#888888] font-semibold px-2 py-0.5 rounded-sm text-[10px] font-mono">
-                      {user.role} • {user.name}
+                      {user.role} ΓÇó {user.name}
                     </span>
                   </div>
                 </div>
@@ -758,7 +758,7 @@ export const WorkerDashboard: React.FC = () => {
                               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-3">
                                 <div>
                                   <span className="text-[9px] font-mono text-[#888888] uppercase block">
-                                    Stage {sIdx + 1} • {stg.domainName}
+                                    Stage {sIdx + 1} ΓÇó {stg.domainName}
                                   </span>
                                   <h4 className="text-sm font-bold text-white mt-0.5">{stg.title}</h4>
                                 </div>
