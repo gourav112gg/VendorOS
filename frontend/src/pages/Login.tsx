@@ -9,6 +9,7 @@ import {
   UserCheck,
   ChevronRight,
   Info,
+  ArrowLeft,
 } from "lucide-react";
 import { motion } from "motion/react";
 import { AuthAmbientBackground } from "../components/AuthAmbientBackground";
@@ -18,6 +19,7 @@ import { useTranslation } from "../context/LanguageContext";
 interface LoginProps {
   onNavigateToSignUp: () => void;
   onNavigateToPublic?: () => void;
+  onNavigateToLanding?: () => void;
 }
 
 const sanitizeErrorMessage = (message: string): string => {
@@ -42,6 +44,7 @@ const sanitizeErrorMessage = (message: string): string => {
 export const Login: React.FC<LoginProps> = ({
   onNavigateToSignUp,
   onNavigateToPublic,
+  onNavigateToLanding,
 }) => {
   const { login, loginWithGoogle } = useAuth();
 
@@ -90,19 +93,34 @@ export const Login: React.FC<LoginProps> = ({
     <div className="relative min-h-screen bg-[#0B1420] text-[#EDEDED] flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8 overflow-hidden">
       <AuthAmbientBackground />
 
-      {/* Top Language Switcher Bar */}
-      <div className="absolute top-6 right-6 z-20">
+      {/* Top Bar Navigation (Back to Landing Page & Language Switcher) */}
+      <div className="absolute top-6 left-6 right-6 z-20 flex items-center justify-between">
+        {onNavigateToLanding ? (
+          <button
+            onClick={onNavigateToLanding}
+            className="flex items-center space-x-2 px-3 py-1.5 bg-[#162436] hover:bg-[#20324B] border border-[#273B54] text-[#A6C0E0] hover:text-white rounded-sm text-xs font-mono transition-all cursor-pointer"
+          >
+            <ArrowLeft className="w-3.5 h-3.5" />
+            <span>Back to Home</span>
+          </button>
+        ) : <div />}
         <LanguageSwitcher />
       </div>
 
       {/* Centered Logo block */}
       <div className="relative z-10 sm:mx-auto sm:w-full sm:max-w-md text-center">
-        <div className="flex items-center justify-center mx-auto w-10 h-10 bg-[#1B3A5C] rounded-sm text-[#7FA0C4]">
-          <Layers className="w-5 h-5" />
-        </div>
-        <h2 className="mt-6 text-4xl font-light font-serif italic text-[#6FA8FF] tracking-tight">
-          Welcome to VendorOS
-        </h2>
+        <button
+          onClick={onNavigateToLanding}
+          disabled={!onNavigateToLanding}
+          className="inline-flex flex-col items-center group cursor-pointer disabled:cursor-default"
+        >
+          <div className="flex items-center justify-center mx-auto w-10 h-10 bg-[#1B3A5C] group-hover:bg-[#254F7D] rounded-sm text-[#7FA0C4] transition-colors">
+            <Layers className="w-5 h-5" />
+          </div>
+          <h2 className="mt-6 text-4xl font-light font-serif italic text-[#6FA8FF] group-hover:text-[#99C2FF] tracking-tight transition-colors">
+            Welcome to VendorOS
+          </h2>
+        </button>
         <p className="mt-2 text-xs uppercase tracking-widest text-[#7C8B9C] font-sans">
           B2B Operations & Field Service Management
         </p>

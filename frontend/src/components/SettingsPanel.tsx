@@ -979,18 +979,18 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ initialTab = 'prof
           </div>
 
           {/* MULTI-LANGUAGE SELECTION */}
-          <div className="p-5 bg-[#0A0A0A] border border-[#222222] rounded-sm space-y-4">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-[#222222] pb-4 gap-4">
+          <div className="p-5 bg-black/5 dark:bg-[#0A0A0A] border border-black/10 dark:border-[#222222] rounded-sm space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-black/10 dark:border-[#222222] pb-4 gap-4">
               <div className="space-y-1">
-                <span className="text-[10px] font-mono font-bold text-[#666666] uppercase tracking-widest block">
+                <span className="text-[10px] font-mono font-bold text-slate-500 dark:text-[#666666] uppercase tracking-widest block">
                   Platform Internationalization
                 </span>
-                <h4 className="text-xs font-mono font-bold text-white uppercase tracking-wider flex items-center gap-2">
-                  <Globe className="w-4 h-4 text-[#7FA0C4]" /> Preferred Interface Language
+                <h4 className="text-xs font-mono font-bold text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-2">
+                  <Globe className="w-4 h-4 text-blue-600 dark:text-[#7FA0C4]" /> Preferred Interface Language
                 </h4>
               </div>
 
-              <div className="flex items-center space-x-1.5 p-1 bg-[#111111] border border-[#222222] rounded-sm">
+              <div className="flex items-center space-x-1.5 p-1 bg-black/5 dark:bg-[#111111] border border-black/15 dark:border-[#222222] rounded-sm">
                 {(['en', 'hi', 'pa'] as const).map((lang) => (
                   <button
                     key={lang}
@@ -1001,8 +1001,8 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ initialTab = 'prof
                     }}
                     className={`px-3 py-1.5 flex items-center gap-1.5 rounded-sm font-mono text-[9px] uppercase tracking-wider transition-all cursor-pointer ${
                       language === lang
-                        ? 'bg-[#1F2B3A] text-white border border-[#3E5066] font-bold'
-                        : 'text-[#888888] hover:text-white'
+                        ? 'bg-slate-900 text-white dark:bg-[#1F2B3A] dark:text-white border border-slate-700 dark:border-[#3E5066] font-bold shadow-sm'
+                        : 'text-slate-600 dark:text-[#888888] hover:text-slate-900 dark:hover:text-white hover:bg-black/5 dark:hover:bg-[#1A1A1A]'
                     }`}
                   >
                     {lang === 'en' ? 'English (EN)' : lang === 'hi' ? 'हिन्दी (HI)' : 'ਪੰਜਾਬੀ (PB)'}

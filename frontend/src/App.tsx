@@ -221,6 +221,7 @@ const MainLayout: React.FC = () => {
               <Login
                 onNavigateToSignUp={() => setAuthScreen("signup")}
                 onNavigateToPublic={() => setAuthScreen("public")}
+                onNavigateToLanding={() => setAuthScreen("landing")}
               />
             </motion.div>
           ) : (
@@ -231,7 +232,10 @@ const MainLayout: React.FC = () => {
               exit={{ opacity: 0, x: -12 }}
               transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
             >
-              <SignUp onNavigateToLogin={() => setAuthScreen("login")} />
+              <SignUp
+                onNavigateToLogin={() => setAuthScreen("login")}
+                onNavigateToLanding={() => setAuthScreen("landing")}
+              />
             </motion.div>
           )}
         </AnimatePresence>
