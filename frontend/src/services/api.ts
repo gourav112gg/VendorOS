@@ -52,31 +52,43 @@ const clearToken = () => localStorage.removeItem('vendoros_token');
 
 const auth = {
   /** Register a new company Owner — sends Firebase ID token to backend */
-  ownerSignup: (payload: {
+  ownerSignup: async (payload: {
     idToken: string;
     name: string;
     email: string;
     phone?: string;
     companyName: string;
-  }) => request('POST', '/api/auth/owner/signup', payload),
+  }) => {
+    const data = await request<{ token: string; owner: any; company: any }>('POST', '/api/auth/owner/signup', payload);
+    if (data.token) saveToken(data.token);
+    return data;
+  },
 
   /** Register a new Customer — sends Firebase ID token to backend */
-  customerSignup: (payload: {
+  customerSignup: async (payload: {
     idToken: string;
     name: string;
     email: string;
     phone?: string;
-  }) => request('POST', '/api/auth/customer/signup', payload),
+  }) => {
+    const data = await request<{ token: string; customer: any }>('POST', '/api/auth/customer/signup', payload);
+    if (data.token) saveToken(data.token);
+    return data;
+  },
 
   /** Register a new Vendor (Manager/Worker) — sends Firebase ID token to backend */
-  vendorSignup: (payload: {
+  vendorSignup: async (payload: {
     idToken: string;
     name: string;
     email: string;
     phone?: string;
     companyId: string;
     role: 'Manager' | 'Worker';
-  }) => request<{ token: string; user: any }>('POST', '/api/auth/vendor/signup', payload),
+  }) => {
+    const data = await request<{ token: string; user: any }>('POST', '/api/auth/vendor/signup', payload);
+    if (data.token) saveToken(data.token);
+    return data;
+  },
 
   /** Unified login endpoint — sends Firebase ID token + category to backend */
   login: async (payload: { idToken: string; email: string; category: string }) => {

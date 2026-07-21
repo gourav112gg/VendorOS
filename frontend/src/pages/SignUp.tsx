@@ -129,14 +129,14 @@ export const SignUp: React.FC<SignUpProps> = ({ onNavigateToLogin }) => {
         if (!isCompanyAvailable) {
           throw new Error("Please choose a unique and available company name.");
         }
-        await registerOwner(name, email, companyName);
+        await registerOwner(name, email, companyName, phone, password);
       } else if (signUpMode === "employee") {
         if (!selectedCompanyId) {
           throw new Error("Please select a valid company to join.");
         }
         await registerManagerOrWorker(name, email, selectedCompanyId, role, phone, password);
       } else {
-        await registerCustomer(name, email, phone);
+        await registerCustomer(name, email, phone, password);
       }
     } catch (err: any) {
       setError(sanitizeErrorMessage(err.message || "Registration failed."));

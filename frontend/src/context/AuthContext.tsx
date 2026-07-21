@@ -249,10 +249,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       // 1. Authenticate credentials at Firebase Auth layer
       const userCredential = await signInWithEmailAndPassword(firebaseAuth, email, password);
+      const idToken = await getIdToken(userCredential.user);
       
       // 2. Validate selected category against actual identity in MongoDB
       try {
-        const res = await api.auth.login({ email, password, category });
+        const res = await api.auth.login({ idToken, email, category });
 
         const loggedUser: UserProfile = {
           id: res.user._id,
