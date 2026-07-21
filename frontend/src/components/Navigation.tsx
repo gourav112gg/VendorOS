@@ -1,6 +1,8 @@
 
 import React from "react";
 import { useAuth } from "../context/AuthContext";
+import { useTranslation } from "../context/LanguageContext";
+import { LanguageSwitcher } from "./LanguageSwitcher";
 import { LogOut, Building } from "lucide-react";
 import { motion } from "motion/react";
 
@@ -16,6 +18,7 @@ export const Navigation: React.FC<NavigationProps> = ({
   tabs = [],
 }) => {
   const { user, company, logout } = useAuth();
+  const { t } = useTranslation();
 
   if (!user) return null;
 
@@ -91,6 +94,9 @@ export const Navigation: React.FC<NavigationProps> = ({
 
           {/* User Profile & Actions */}
           <div className="flex items-center space-x-4">
+            {/* Multi-Language Switcher (positioned to the left of User Profile) */}
+            <LanguageSwitcher />
+
             <div className="text-right hidden sm:block">
               <span className="block text-xs text-white font-medium">
                 {user.name}
@@ -108,7 +114,7 @@ export const Navigation: React.FC<NavigationProps> = ({
               title="Logout from VendorOS"
             >
               <LogOut className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">Sign Out</span>
+              <span className="hidden sm:inline">{t('signOut', 'Sign Out')}</span>
             </button>
           </div>
         </div>

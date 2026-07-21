@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { useTranslation } from '../context/LanguageContext';
 import dbStore from '../services/store';
 import { Domain, UserProfile, ServiceOrder } from '../types';
 import api from '../services/api';
@@ -22,6 +23,7 @@ import { AnalyticsTab } from '../components/AnalyticsTab';
 
 export const OwnerDashboard: React.FC = () => {
   const { user, company, preferences } = useAuth();
+  const { t } = useTranslation();
   
   // Tab states
   const [activeSubTab, setActiveSubTab] = useState<'overview' | 'domains' | 'team' | 'orders' | 'copilot' | 'invoices' | 'trust-score' | 'analytics' | 'billing' | 'activity' | 'settings'>('overview');

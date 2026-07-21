@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { AuthProvider, useAuth } from "./context/AuthContext";
+import { LanguageProvider } from "./context/LanguageContext";
 import { Navigation } from "./components/Navigation";
 import { ThemeManager } from "./components/ThemeManager";
 import { Login } from "./pages/Login";
@@ -477,9 +478,11 @@ const MainLayout: React.FC = () => {
 
 const App: React.FC = () => {
   return (
-    <AuthProvider>
-      <MainLayout />
-    </AuthProvider>
+    <LanguageProvider>
+      <AuthProvider>
+        <MainLayout />
+      </AuthProvider>
+    </LanguageProvider>
   );
 };
 

@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useAuth } from '../context/AuthContext';
+import { useTranslation } from '../context/LanguageContext';
 
 interface KpiOverviewProps {
   companyId: string;
@@ -16,6 +17,7 @@ interface KpiOverviewProps {
 
 export const KpiOverview: React.FC<KpiOverviewProps> = ({ companyId, currentUser }) => {
   const { preferences } = useAuth();
+  const { t } = useTranslation();
   const [inventory, setInventory] = useState<InventoryItem[]>([]);
 
   const formatCurrency = (amount: number) => {
@@ -167,10 +169,10 @@ export const KpiOverview: React.FC<KpiOverviewProps> = ({ companyId, currentUser
             </span>
           </div>
           <h1 className="text-2xl font-serif italic text-white mt-2 font-light tracking-tight">
-            Key Performance Indicators
+            {t('kpiTitle', 'Key Performance Indicators')}
           </h1>
           <p className="text-xs text-[#666666] font-mono uppercase tracking-wider mt-0.5">
-            Real-time fulfillment metrics, logistics pipeline, & critical inventory triggers
+            {t('kpiSubtitle', 'Real-time fulfillment metrics, logistics pipeline, & critical inventory triggers')}
           </p>
         </div>
 
@@ -210,9 +212,9 @@ export const KpiOverview: React.FC<KpiOverviewProps> = ({ companyId, currentUser
           </div>
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <span className="text-[10px] font-mono font-bold text-[#666666] uppercase tracking-widest block">Active Work Orders</span>
+              <span className="text-[10px] font-mono font-bold text-[#666666] uppercase tracking-widest block">{t('activeWorkOrders', 'Active Work Orders')}</span>
               <span className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded-sm text-[9px] font-mono">
-                LIVE QUEUE
+                {t('liveQueue', 'LIVE QUEUE')}
               </span>
             </div>
             <div>

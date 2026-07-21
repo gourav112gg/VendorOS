@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { useTranslation } from '../context/LanguageContext';
 import { 
   IndianRupee, DollarSign, Layout, Columns, AlignLeft, AlignRight, 
   Settings, Check, HelpCircle, User, Shield, Bell, Key, Phone, 
   Mail, Lock, ShieldAlert, CheckCircle, RefreshCw, Smartphone,
   CreditCard, Sparkles, AlertTriangle, Activity, FileText, Clock,
-  Layers, ArrowUpRight, Zap, CheckSquare, Sun, Moon, Palette, RotateCcw
+  Layers, ArrowUpRight, Zap, CheckSquare, Sun, Moon, Palette, RotateCcw, Globe
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import dbStore from '../services/store';
@@ -20,6 +21,7 @@ interface SettingsPanelProps {
 
 export const SettingsPanel: React.FC<SettingsPanelProps> = ({ initialTab = 'profile' }) => {
   const { user, company, preferences, updatePreference, updateProfile, updateCompany, setPendingRequest, sendPasswordReset } = useAuth();
+  const { language, setLanguage, t } = useTranslation();
   
   // Tab states
   const [activeSubTab, setActiveSubTab] = useState<
@@ -975,6 +977,40 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ initialTab = 'prof
               <p className="text-xs text-[#666666] mt-0.5">
                 Customize your display currency and dashboard layout settings.
               </p>
+            </div>
+          </div>
+
+          {/* MULTI-LANGUAGE SELECTION */}
+          <div className="p-5 bg-[#0A0A0A] border border-[#222222] rounded-sm space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-[#222222] pb-4 gap-4">
+              <div className="space-y-1">
+                <span className="text-[10px] font-mono font-bold text-[#666666] uppercase tracking-widest block">
+                  Platform Internationalization
+                </span>
+                <h4 className="text-xs font-mono font-bold text-white uppercase tracking-wider flex items-center gap-2">
+                  <Globe className="w-4 h-4 text-[#7FA0C4]" /> Preferred Interface Language
+                </h4>
+              </div>
+
+              <div className="flex items-center space-x-1.5 p-1 bg-[#111111] border border-[#222222] rounded-sm">
+                {(['en', 'hi', 'pa'] as const).map((lang) => (
+                  <button
+                    key={lang}
+                    type="button"
+                    onClick={() => {
+                      setLanguage(lang);
+                      updatePreference('language', lang);
+                    }}
+                    className={`px-3 py-1.5 flex items-center gap-1.5 rounded-sm font-mono text-[9px] uppercase tracking-wider transition-all cursor-pointer ${
+                      language === lang
+                        ? 'bg-[#1F2B3A] text-white border border-[#3E5066] font-bold'
+                        : 'text-[#888888] hover:text-white'
+                    }`}
+                  >
+                    {lang === 'en' ? 'English (EN)' : lang === 'hi' ? 'हिन्दी (HI)' : 'ਪੰਜਾਬੀ (PB)'}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
 

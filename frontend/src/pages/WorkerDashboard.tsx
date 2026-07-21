@@ -1,5 +1,6 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { useTranslation } from '../context/LanguageContext';
 import dbStore from '../services/store';
 import { Company, ServiceOrder } from '../types';
 import { 
@@ -14,6 +15,7 @@ import { NotificationCenter } from '../components/NotificationCenter';
 
 export const WorkerDashboard: React.FC = () => {
   const { user, company, preferences, pendingRequest, logout } = useAuth();
+  const { t } = useTranslation();
   
   const [activeTab, setActiveTab] = useState<'jobs' | 'settings'>('jobs');
   const [assignedOrders, setAssignedOrders] = useState<ServiceOrder[]>([]);

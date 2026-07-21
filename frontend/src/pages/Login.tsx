@@ -12,6 +12,8 @@ import {
 } from "lucide-react";
 import { motion } from "motion/react";
 import { AuthAmbientBackground } from "../components/AuthAmbientBackground";
+import { LanguageSwitcher } from "../components/LanguageSwitcher";
+import { useTranslation } from "../context/LanguageContext";
 
 interface LoginProps {
   onNavigateToSignUp: () => void;
@@ -87,6 +89,11 @@ export const Login: React.FC<LoginProps> = ({
   return (
     <div className="relative min-h-screen bg-[#0B1420] text-[#EDEDED] flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8 overflow-hidden">
       <AuthAmbientBackground />
+
+      {/* Top Language Switcher Bar */}
+      <div className="absolute top-6 right-6 z-20">
+        <LanguageSwitcher />
+      </div>
 
       {/* Centered Logo block */}
       <div className="relative z-10 sm:mx-auto sm:w-full sm:max-w-md text-center">

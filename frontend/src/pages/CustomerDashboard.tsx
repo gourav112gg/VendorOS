@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
+import { useTranslation } from "../context/LanguageContext";
 import dbStore from "../services/store";
 import { Company, ServiceOrder } from "../types";
 import {
@@ -21,6 +22,7 @@ import { ShortcutBadge } from "../components/ShortcutBadge";
 
 export const CustomerDashboard: React.FC = () => {
   const { user, preferences } = useAuth();
+  const { t } = useTranslation();
 
   const [activeTab, setActiveTab] = useState<"requests" | "settings">(
     "requests",

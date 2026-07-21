@@ -13,6 +13,7 @@ export interface UserPreferences {
   notifyPush?: boolean;
   themeMode: 'dark' | 'light';
   themeName: 'slate' | 'sage' | 'sapphire' | 'warm' | 'tokyo' | 'custom';
+  language?: 'en' | 'hi' | 'pa';
   customThemePrompt?: string;
   customThemeColors?: {
     bgApp: string;

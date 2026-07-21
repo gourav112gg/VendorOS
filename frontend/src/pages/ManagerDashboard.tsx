@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { useTranslation } from '../context/LanguageContext';
 import dbStore from '../services/store';
 import { Domain, UserProfile, ServiceOrder } from '../types';
 import { 
@@ -22,6 +23,7 @@ import { AnalyticsTab } from "../components/AnalyticsTab";
 
 export const ManagerDashboard: React.FC = () => {
   const { user, company, preferences, pendingRequest, logout } = useAuth();
+  const { t } = useTranslation();
   
   // Tab states
   const [activeSubTab, setActiveSubTab] = useState<

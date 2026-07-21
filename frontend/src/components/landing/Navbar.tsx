@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "motion/react";
 import { Search, ChevronRight } from "lucide-react";
+import { LanguageSwitcher } from "../LanguageSwitcher";
+import { useTranslation } from "../../context/LanguageContext";
 
 interface NavbarProps {
   onNavigateToLogin: () => void;
@@ -14,6 +16,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   onNavigateToPublic,
 }) => {
   const [scrolled, setScrolled] = useState(false);
+  const { t } = useTranslation();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 48);
@@ -57,12 +60,13 @@ export const Navbar: React.FC<NavbarProps> = ({
           Find a Company
         </button>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
+          <LanguageSwitcher />
           <button
             onClick={onNavigateToLogin}
             className="whitespace-nowrap px-3 sm:px-4 py-2 text-[11px] font-mono font-bold uppercase tracking-widest text-[#B7C4DA] hover:text-white transition-colors rounded-sm"
           >
-            Log In
+            {t('signIn', 'Log In')}
           </button>
           <motion.button
             whileHover={{ y: -1 }}

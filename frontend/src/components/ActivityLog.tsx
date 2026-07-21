@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { motion } from 'motion/react';
 import { useAuth } from '../context/AuthContext';
+import { useTranslation } from '../context/LanguageContext';
 
 interface ActivityLogProps {
   companyId?: string;
@@ -14,6 +15,7 @@ interface ActivityLogProps {
 
 export const ActivityLog: React.FC<ActivityLogProps> = ({ companyId }) => {
   const { user } = useAuth();
+  const { t } = useTranslation();
   const [logs, setLogs] = useState<ActivityLogType[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedAction, setSelectedAction] = useState<string>('All');
