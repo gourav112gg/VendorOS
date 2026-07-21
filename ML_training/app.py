@@ -6,7 +6,7 @@ import uvicorn
 
 app = FastAPI()
 
-# 1. Dono trained ML models (dimaag) ko load kiya
+# 1. Load both trained ML models
 try:
     model_risk = joblib.load('stack_model_risk.pkl')
     model_delay = joblib.load('stack_model_delay.pkl')
@@ -14,10 +14,10 @@ try:
 except Exception as e:
     print(f"❌ Error loading models: {e}")
 
-# Features ki list jo training ke time use hui thi
+# List of features used during time of training
 feature_cols = ['sla_days', 'defect_rate', 'weather_hazard', 'location_risk', 'worker_load', 'total_pending_tasks']
 
-# Input validation ke liye format define kiya
+# Format defined for input validation
 class PredictionInput(BaseModel):
     sla_days: int
     defect_rate: float
@@ -38,11 +38,11 @@ def predict_metrics(data: PredictionInput):
         data.total_pending_tasks
     ]], columns=feature_cols)
     
-    # Live predictions run karien
+    # Live predictions run
     pred_risk = round(model_risk.predict(input_df)[0])
     pred_delay = round(model_delay.predict(input_df)[0], 1)
     
-    # Safe limits set karien (0-100 for risk, non-negative for delay)
+    # Safe limits set (0-100 for risk, non-negative for delay)
     pred_risk = min(max(pred_risk, 0), 100)
     pred_delay = max(pred_delay, 0.0)
     
