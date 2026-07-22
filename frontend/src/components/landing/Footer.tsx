@@ -1,94 +1,79 @@
 import React from "react";
 import { motion } from "motion/react";
-import { Linkedin, Twitter } from "lucide-react";
+import { Linkedin, Twitter, ShieldCheck } from "lucide-react";
 
 export const Footer: React.FC = () => {
   return (
-    <motion.footer
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.2 }}
-      transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-      className="bg-[#0B0F17] pt-16 pb-7 px-6 lg:px-8 border-t border-[#1E2836]"
-    >
-      <div className="max-w-[1240px] mx-auto">
-        <div className="flex flex-wrap justify-between gap-10 pb-11 border-b border-[#1E2836]">
-          <div className="max-w-[280px]">
-            <a href="#top" className="flex items-center gap-2.5 mb-3">
-              <div className="w-8 h-8 shrink-0 bg-white flex items-center justify-center rounded-sm text-black">
-                <span className="font-serif italic font-semibold text-[13px] leading-none">
-                  V
-                </span>
+    <footer className="bg-[#0A0F1F] pt-16 pb-8 px-6 lg:px-8 border-t border-white/10 text-white font-sans">
+      <div className="max-w-6xl mx-auto space-y-12">
+        <div className="flex flex-col md:flex-row justify-between items-start gap-8 pb-12 border-b border-white/10">
+          {/* Brand Info */}
+          <div className="space-y-4 max-w-sm">
+            <a href="#top" className="flex items-center space-x-2.5">
+              <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center text-[#0A0F1F] font-serif-italic text-lg font-bold">
+                V
               </div>
-              <span className="font-sans font-medium text-[15px] text-white">
+              <span className="font-display font-semibold text-base text-white tracking-wide">
                 VendorOS
               </span>
             </a>
-            <p className="text-[13px] leading-relaxed text-[#7A8CA8]">
-              Operations software for manufacturing and production teams — order
-              tracking, workforce coordination, and delivery visibility in one
-              workspace.
+            <p className="text-xs text-white/60 leading-relaxed font-sans">
+              Operations software for manufacturing and production teams — real-time order tracking, workforce coordination, and SLA risk prediction in one unified engine.
             </p>
           </div>
-          <div className="flex flex-wrap gap-16">
-            <div>
-              <h5 className="text-[11px] font-mono font-bold uppercase tracking-widest text-[#EDF1F8] mb-3.5">
-                Company
-              </h5>
-              <a
-                href="#"
-                className="block text-[13px] text-[#7A8CA8] hover:text-white transition-colors mb-2.5"
-              >
-                About
+
+          {/* Nav & Links */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-8 font-mono text-xs">
+            <div className="space-y-3">
+              <span className="text-white/40 uppercase tracking-widest text-[10px] font-bold block">
+                Platform
+              </span>
+              <a href="#operations" className="block text-white/70 hover:text-white transition-colors">
+                Operations
               </a>
-              <a
-                href="#"
-                className="block text-[13px] text-[#7A8CA8] hover:text-white transition-colors mb-2.5"
-              >
-                Contact
+              <a href="#copilot" className="block text-white/70 hover:text-white transition-colors">
+                AI Copilot
+              </a>
+              <a href="#built-on" className="block text-white/70 hover:text-white transition-colors">
+                Built On Stack
               </a>
             </div>
-            <div>
-              <h5 className="text-[11px] font-mono font-bold uppercase tracking-widest text-[#EDF1F8] mb-3.5">
-                Legal
-              </h5>
-              <a
-                href="#"
-                className="block text-[13px] text-[#7A8CA8] hover:text-white transition-colors mb-2.5"
-              >
-                Terms
+
+            <div className="space-y-3">
+              <span className="text-white/40 uppercase tracking-widest text-[10px] font-bold block">
+                System Status
+              </span>
+              <div className="flex items-center space-x-2 text-emerald-400 font-data text-[10px]">
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                <span>All Systems Operational</span>
+              </div>
+              <span className="block text-[10px] text-white/50">Stacking ML Engine v1.0</span>
+            </div>
+
+            <div className="space-y-3">
+              <span className="text-white/40 uppercase tracking-widest text-[10px] font-bold block">
+                Legal & Governance
+              </span>
+              <a href="#" className="block text-white/70 hover:text-white transition-colors">
+                Privacy Policy
               </a>
-              <a
-                href="#"
-                className="block text-[13px] text-[#7A8CA8] hover:text-white transition-colors mb-2.5"
-              >
-                Privacy
+              <a href="#" className="block text-white/70 hover:text-white transition-colors">
+                Terms of Service
               </a>
             </div>
           </div>
         </div>
-        <div className="flex flex-wrap items-center justify-between gap-3.5 pt-6">
-          <p className="text-[11px] font-mono text-[#4E5C70]">
-            © 2026 VendorOS. All rights reserved.
-          </p>
-          <div className="flex gap-3">
-            <a
-              href="#"
-              aria-label="LinkedIn"
-              className="w-[34px] h-[34px] rounded-[9px] bg-white/5 text-[#8A97AB] flex items-center justify-center hover:bg-[#D8A548] hover:text-black transition-colors"
-            >
-              <Linkedin className="w-[15px] h-[15px]" />
-            </a>
-            <a
-              href="#"
-              aria-label="Twitter"
-              className="w-[34px] h-[34px] rounded-[9px] bg-white/5 text-[#8A97AB] flex items-center justify-center hover:bg-[#D8A548] hover:text-black transition-colors"
-            >
-              <Twitter className="w-[15px] h-[15px]" />
-            </a>
+
+        {/* Copyright */}
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 font-mono text-xs text-white/40">
+          <p>© 2026 VendorOS Systems Inc. All rights reserved.</p>
+          <div className="flex items-center space-x-3">
+            <span className="text-[10px] uppercase font-bold tracking-widest text-indigo-400 bg-indigo-500/10 px-2 py-0.5 rounded border border-indigo-500/20">
+              Multi-Tenant Architecture
+            </span>
           </div>
         </div>
       </div>
-    </motion.footer>
+    </footer>
   );
 };
