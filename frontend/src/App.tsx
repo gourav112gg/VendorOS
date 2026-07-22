@@ -11,6 +11,9 @@ import { ManagerDashboard } from "./pages/ManagerDashboard";
 import { WorkerDashboard } from "./pages/WorkerDashboard";
 import { CustomerDashboard } from "./pages/CustomerDashboard";
 import { PublicCompanyProfile } from "./pages/PublicCompanyProfile";
+import { AdminProvider, useSuperAdmin } from "./context/AdminContext";
+import { AdminLogin } from "./pages/AdminLogin";
+import { AdminDashboard } from "./pages/AdminDashboard";
 import { ShortcutBadge } from "./components/ShortcutBadge";
 import { motion, AnimatePresence } from "motion/react";
 import {
@@ -22,7 +25,37 @@ import {
   Terminal,
 } from "lucide-react";
 
+const SuperAdminPortalContent: React.FC = () => {
+  const { admin, loading } = useSuperAdmin();
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#080606] flex items-center justify-center text-red-500 font-mono">
+        <RefreshCw className="w-5 h-5 animate-spin mr-2" />
+        <span>Verifying Admin Credentials...</span>
+      </div>
+    );
+  }
+
+  if (!admin) {
+    return <AdminLogin />;
+  }
+
+  return <AdminDashboard />;
+};
+
+const SuperAdminPortalApp: React.FC = () => {
+  return (
+    <AdminProvider>
+      <SuperAdminPortalContent />
+    </AdminProvider>
+  );
+};
+
 const MainLayout: React.FC = () => {
+  if (window.location.pathname.startsWith('/super-admin')) {
+    return <SuperAdminPortalApp />;
+  }
   const { user, loading } = useAuth();
   const { t } = useTranslation();
   const [authScreen, setAuthScreen] = useState<

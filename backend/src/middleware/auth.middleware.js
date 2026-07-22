@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
+const Company = require("../models/Company");
 
 const protect = async (req, res, next) => {
   try {
@@ -20,6 +21,17 @@ const protect = async (req, res, next) => {
           success: false,
           message: "Not authorized",
         });
+      }
+
+      // Check if user's company is suspended
+      if (req.user.company) {
+        const companyObj = await Company.findById(req.user.company);
+        if (companyObj && companyObj.status === "suspended") {
+          return res.status(403).json({
+            success: false,
+            message: "Company account is currently suspended by Super Admin. Please contact administration.",
+          });
+        }
       }
 
       return next();

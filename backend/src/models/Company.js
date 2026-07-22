@@ -45,6 +45,12 @@ const companySchema = new mongoose.Schema(
       default: 100,
     },
 
+    status: {
+      type: String,
+      enum: ["active", "suspended"],
+      default: "active",
+    },
+
     subscription: {
       tier: {
         type: String,
@@ -64,6 +70,25 @@ const companySchema = new mongoose.Schema(
         type: String,
         default: "",
       },
+      manualOverride: {
+        active: {
+          type: Boolean,
+          default: false,
+        },
+        tier: {
+          type: String,
+          enum: ["free", "growth", "scale"],
+          default: "free",
+        },
+        setBy: {
+          type: String,
+          default: "",
+        },
+        setAt: {
+          type: Date,
+          default: null,
+        },
+      },
     },
   },
   {
@@ -71,4 +96,4 @@ const companySchema = new mongoose.Schema(
   }
 );
 
-module.exports = mongoose.model("Company", companySchema);
+module.exports = mongoose.model("Company", companySchema);
