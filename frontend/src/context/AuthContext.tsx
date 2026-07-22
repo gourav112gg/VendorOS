@@ -211,9 +211,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     const unsubscribe = dbStore.subscribe(() => {
       const savedUserProfile = localStorage.getItem('vendoros_user_profile');
-      if (api.getToken() || savedUserProfile) {
+      const savedUserId = localStorage.getItem('vendoros_current_user_id');
+      const hasToken = !!api.getToken();
+
+      // If session is persisted in localStorage, never forcibly log out on store updates
+      if (hasToken || savedUserProfile || savedUserId) {
         const allUsers = dbStore.getUsers();
-        const stillExists = allUsers.find(u => u.id === user.id);
+        const stillExists = allUsers.find(u => u.id === user.id || u.email.toLowerCase() === user.email.toLowerCase());
         if (stillExists) {
           setUser(prev => {
             if (!prev) return null;
@@ -228,11 +232,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
 
       const allUsers = dbStore.getUsers();
-      const stillExists = allUsers.find(u => u.id === user.id);
+      const stillExists = allUsers.find(u => u.id === user.id || u.email.toLowerCase() === user.email.toLowerCase());
       const isSessionActive = dbStore.isSessionActive(user.id);
 
       if (!stillExists || !isSessionActive) {
-        // Force immediate logout only if explicitly revoked
+        // Force immediate logout only if explicitly revoked and no local session stored
         setUser(null);
         setCompany(null);
         localStorage.removeItem('vendoros_current_user_id');
