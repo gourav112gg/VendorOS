@@ -5,17 +5,17 @@ import { useAuth } from "../context/AuthContext";
 export const THEME_PRESETS = {
   slate: {
     dark: {
-      bgApp: "#121924",
-      bgCard: "#1B1815",
-      bgSecondary: "#100E0C",
-      bgInput: "#211D19",
-      border: "#2E2820",
-      borderStrong: "#4A3F2F",
-      textPrimary: "#F5EEDF",
-      textSecondary: "#D3C4A6",
-      textMuted: "#8B8071",
-      accent: "#CBA35C",
-      accentHover: "#B78D46",
+      bgApp: "#0B0F17",
+      bgCard: "#131B2A",
+      bgSecondary: "#0E1420",
+      bgInput: "#1A2436",
+      border: "#243248",
+      borderStrong: "#374B6C",
+      textPrimary: "#F0F6FC",
+      textSecondary: "#94A3B8",
+      textMuted: "#64748B",
+      accent: "#10B981",
+      accentHover: "#059669",
     },
     light: {
       bgApp: "#FAF6EE",

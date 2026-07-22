@@ -13,19 +13,9 @@ import {
 import { motion, AnimatePresence } from "motion/react";
 import { Company, ServiceOrder } from "../types";
 import { hasFeatureAccess } from "../services/subscriptionService";
-import NoDataPlaceholder from "./NoDataPlaceholder";
+import api from "../services/api";
 
-interface AiCopilotTabProps {
-  company: Company;
-  orders: ServiceOrder[];
-  onNavigateToBilling: () => void;
-}
-
-interface CopilotResult {
-  score: number;
-  reason: string;
-  action: string;
-}
+const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
 export const AiCopilotTab: React.FC<AiCopilotTabProps> = ({
   company,
@@ -67,21 +57,34 @@ export const AiCopilotTab: React.FC<AiCopilotTabProps> = ({
     }, 1200);
 
     try {
-      const response = await fetch("/api/copilot/risk", {
+      const headers: Record<string, string> = { "Content-Type": "application/json" };
+      const token = api.getToken();
+      if (token) {
+        headers["Authorization"] = `Bearer ${token}`;
+      }
+
+      const response = await fetch(`${API_BASE}/api/copilot/risk`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers,
         body: JSON.stringify({
           order,
           subscription: company.subscription,
         }),
       });
 
-      if (!response.ok) {
-        const errData = await response.json();
-        throw new Error(errData.error || "Failed to complete analysis.");
+      const rawText = await response.text();
+      let data: any = {};
+      try {
+        data = rawText ? JSON.parse(rawText) : {};
+      } catch (parseErr) {
+        console.error("Non-JSON copilot response:", rawText);
+        throw new Error("Server returned an unparseable response. Please ensure backend is active.");
       }
 
-      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.error || data.message || `Analysis failed (HTTP ${response.status})`);
+      }
+
       setAnalysisResult(data);
     } catch (err: any) {
       setError(err.message || "An error occurred during analysis.");

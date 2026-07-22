@@ -43,7 +43,7 @@ export const LanguageSwitcher: React.FC<{ className?: string }> = ({ className =
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center space-x-1.5 px-2.5 py-1.5 bg-black/5 dark:bg-[#161616] hover:bg-black/10 dark:hover:bg-[#222222] border border-black/15 dark:border-[#2A2A2A] hover:border-black/30 dark:hover:border-[#444444] rounded-sm text-xs text-slate-800 dark:text-white transition-all cursor-pointer select-none font-mono"
+        className="flex items-center space-x-1.5 px-2.5 py-1.5 bg-stone-100 dark:bg-[#161616] hover:bg-stone-200 dark:hover:bg-[#222222] border border-stone-300 dark:border-[#2A2A2A] hover:border-stone-400 dark:hover:border-[#444444] rounded-lg text-xs text-slate-800 dark:text-white transition-all cursor-pointer select-none font-mono"
         title="Switch Platform Language"
       >
         <Globe className="w-3.5 h-3.5 text-blue-600 dark:text-[#7FA0C4]" />
@@ -59,7 +59,7 @@ export const LanguageSwitcher: React.FC<{ className?: string }> = ({ className =
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -4, scale: 0.96 }}
             transition={{ duration: 0.15 }}
-            className="absolute right-0 mt-1.5 w-40 bg-white dark:bg-[#141414] border border-slate-200 dark:border-[#2A2A2A] rounded-sm shadow-2xl z-50 py-1 divide-y divide-slate-100 dark:divide-[#222222]"
+            className="absolute right-0 mt-1.5 w-40 bg-white dark:bg-[#141414] border border-stone-200 dark:border-[#2A2A2A] rounded-lg shadow-2xl z-50 py-1 divide-y divide-stone-100 dark:divide-[#222222]"
           >
             <div className="px-3 py-1.5 text-[9px] font-mono font-bold text-slate-500 dark:text-[#666666] uppercase tracking-widest">
               Select Language / ਭਾਸ਼ਾ

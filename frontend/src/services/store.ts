@@ -1228,7 +1228,39 @@ class SimulatedStore {
     if (!this.state.spendIntelligenceRecords) {
       this.state.spendIntelligenceRecords = [];
     }
-    return this.state.spendIntelligenceRecords.filter(r => r.companyId === companyId);
+    const records = this.state.spendIntelligenceRecords.filter(r => r.companyId === companyId);
+    if (records.length > 0) {
+      return records;
+    }
+    return [
+      {
+        id: `sp_def_1_${companyId}`,
+        companyId,
+        month: 'Current Cycle',
+        category: 'Copper Pipes & Fittings',
+        amount: 45000,
+        changePercent: 12.5,
+        suggestedAction: 'Consolidate orders to primary supplier to save 10% delivery surcharge.'
+      },
+      {
+        id: `sp_def_2_${companyId}`,
+        companyId,
+        month: 'Current Cycle',
+        category: 'Valves & Fasteners',
+        amount: 22000,
+        changePercent: -5.2,
+        suggestedAction: 'Optimal pricing locked with local vendor. No leakage detected.'
+      },
+      {
+        id: `sp_def_3_${companyId}`,
+        companyId,
+        month: 'Current Cycle',
+        category: 'HVAC Refrigerant & Gas',
+        amount: 68000,
+        changePercent: 18.0,
+        suggestedAction: 'Demand surge detected. Re-negotiate contract for Q3 volume rebate.'
+      }
+    ];
   }
 
   public addSpendIntelligence(record: Omit<SpendIntelligenceRecord, 'id'>): SpendIntelligenceRecord {

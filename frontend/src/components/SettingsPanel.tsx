@@ -977,10 +977,9 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ initialTab = 'prof
               </p>
             </div>
           </div>
-
           {/* MULTI-LANGUAGE SELECTION */}
-          <div className="p-5 bg-black/5 dark:bg-[#0A0A0A] border border-black/10 dark:border-[#222222] rounded-sm space-y-4">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-black/10 dark:border-[#222222] pb-4 gap-4">
+          <div className="p-5 bg-stone-100/80 dark:bg-[#0A0A0A] border border-stone-200 dark:border-[#222222] rounded-xl space-y-4 shadow-sm">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-stone-200 dark:border-[#222222] pb-4 gap-4">
               <div className="space-y-1">
                 <span className="text-[10px] font-mono font-bold text-slate-500 dark:text-[#666666] uppercase tracking-widest block">
                   Platform Internationalization
@@ -990,7 +989,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ initialTab = 'prof
                 </h4>
               </div>
 
-              <div className="flex items-center space-x-1.5 p-1 bg-black/5 dark:bg-[#111111] border border-black/15 dark:border-[#222222] rounded-sm">
+              <div className="flex items-center space-x-1.5 p-1 bg-stone-200/60 dark:bg-[#111111] border border-stone-300 dark:border-[#222222] rounded-lg">
                 {(['en', 'hi', 'pa'] as const).map((lang) => (
                   <button
                     key={lang}
@@ -999,10 +998,10 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ initialTab = 'prof
                       setLanguage(lang);
                       updatePreference('language', lang);
                     }}
-                    className={`px-3 py-1.5 flex items-center gap-1.5 rounded-sm font-mono text-[9px] uppercase tracking-wider transition-all cursor-pointer ${
+                    className={`px-3 py-1.5 flex items-center gap-1.5 rounded-md font-mono text-[9px] uppercase tracking-wider transition-all cursor-pointer ${
                       language === lang
                         ? 'bg-slate-900 text-white dark:bg-[#1F2B3A] dark:text-white border border-slate-700 dark:border-[#3E5066] font-bold shadow-sm'
-                        : 'text-slate-600 dark:text-[#888888] hover:text-slate-900 dark:hover:text-white hover:bg-black/5 dark:hover:bg-[#1A1A1A]'
+                        : 'text-slate-700 dark:text-[#888888] hover:text-slate-900 dark:hover:text-white hover:bg-stone-300/40 dark:hover:bg-[#1A1A1A]'
                     }`}
                   >
                     {lang === 'en' ? 'English (EN)' : lang === 'hi' ? 'हिन्दी (HI)' : 'ਪੰਜਾਬੀ (PB)'}
@@ -1013,27 +1012,27 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ initialTab = 'prof
           </div>
 
           {/* THEME & LIGHT/DARK MODE DYNAMIC PICKER */}
-          <div className="p-5 bg-[#0A0A0A] border border-[#222222] rounded-sm space-y-6">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-[#222222] pb-4 gap-4">
+          <div className="p-5 bg-stone-100/80 dark:bg-[#0A0A0A] border border-stone-200 dark:border-[#222222] rounded-xl space-y-6 shadow-sm">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-stone-200 dark:border-[#222222] pb-4 gap-4">
               <div className="space-y-1">
-                <span className="text-[10px] font-mono font-bold text-[#666666] uppercase tracking-widest block">
+                <span className="text-[10px] font-mono font-bold text-slate-500 dark:text-[#666666] uppercase tracking-widest block">
                   Visual Interface Customization
                 </span>
-                <h4 className="text-xs font-mono font-bold text-white uppercase tracking-wider flex items-center gap-2">
-                  <Palette className="w-4 h-4 text-emerald-400" /> Theme &
+                <h4 className="text-xs font-mono font-bold text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-2">
+                  <Palette className="w-4 h-4 text-emerald-500 dark:text-emerald-400" /> Theme &
                   Brightness Modes
                 </h4>
               </div>
 
               {/* Light/Dark mode toggler */}
-              <div className="flex items-center space-x-1 p-1 bg-[#111111] border border-[#222222] rounded-sm">
+              <div className="flex items-center space-x-1 p-1 bg-stone-200/60 dark:bg-[#111111] border border-stone-300 dark:border-[#222222] rounded-lg">
                 <button
                   type="button"
                   onClick={() => updatePreference("themeMode", "dark")}
-                  className={`px-3 py-1.5 flex items-center gap-1.5 rounded-sm font-mono text-[9px] uppercase tracking-wider transition-all cursor-pointer ${
+                  className={`px-3 py-1.5 flex items-center gap-1.5 rounded-md font-mono text-[9px] uppercase tracking-wider transition-all cursor-pointer ${
                     (preferences.themeMode || "dark") === "dark"
-                      ? "bg-[#1A1A1A] text-white border border-[#333333]"
-                      : "text-[#888888] hover:text-white"
+                      ? "bg-slate-900 text-white dark:bg-[#1A1A1A] border border-slate-700 dark:border-[#333333] font-bold shadow-sm"
+                      : "text-slate-600 dark:text-[#888888] hover:text-slate-900 dark:hover:text-white"
                   }`}
                 >
                   <Moon className="w-3.5 h-3.5" /> Dark Mode
@@ -1041,10 +1040,10 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ initialTab = 'prof
                 <button
                   type="button"
                   onClick={() => updatePreference("themeMode", "light")}
-                  className={`px-3 py-1.5 flex items-center gap-1.5 rounded-sm font-mono text-[9px] uppercase tracking-wider transition-all cursor-pointer ${
+                  className={`px-3 py-1.5 flex items-center gap-1.5 rounded-md font-mono text-[9px] uppercase tracking-wider transition-all cursor-pointer ${
                     (preferences.themeMode || "dark") === "light"
-                      ? "bg-[#E5E5E5] text-black font-semibold"
-                      : "text-[#888888] hover:text-white"
+                      ? "bg-white text-slate-900 border border-stone-300 font-bold shadow-sm"
+                      : "text-slate-600 dark:text-[#888888] hover:text-slate-900 dark:hover:text-white"
                   }`}
                 >
                   <Sun className="w-3.5 h-3.5" /> Light Mode
@@ -1054,7 +1053,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ initialTab = 'prof
 
             {/* PRESET PALETTES */}
             <div className="space-y-3">
-              <span className="text-[9px] font-mono font-bold text-[#888888] uppercase tracking-widest block">
+              <span className="text-[9px] font-mono font-bold text-slate-500 dark:text-[#888888] uppercase tracking-widest block">
                 Choose Theme Palette
               </span>
               <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
@@ -1096,15 +1095,15 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ initialTab = 'prof
                       onClick={() =>
                         updatePreference("themeName", preset.id as any)
                       }
-                      className={`flex flex-col items-center justify-center p-3.5 rounded-sm border cursor-pointer transition-colors ${
+                      className={`flex flex-col items-center justify-center p-3.5 rounded-lg border cursor-pointer transition-colors ${
                         isActive
-                          ? "bg-[#1A1A1A] border-[#444444] text-white font-semibold shadow-md"
-                          : "bg-[#0D0D0D] border-[#222222] text-[#888888] hover:border-[#333333]"
+                          ? "bg-white dark:bg-[#1A1A1A] border-stone-400 dark:border-[#444444] text-slate-900 dark:text-white font-semibold shadow-md"
+                          : "bg-stone-50 dark:bg-[#0D0D0D] border-stone-200 dark:border-[#222222] text-slate-600 dark:text-[#888888] hover:border-stone-300 dark:hover:border-[#333333]"
                       }`}
                     >
                       <div className="flex gap-1 mb-2">
                         <span
-                          className="w-3 h-3 rounded-full border border-[#333333]"
+                          className="w-3 h-3 rounded-full border border-stone-300 dark:border-[#333333]"
                           style={{ backgroundColor: preset.colors[0] }}
                         />
                         <span
@@ -1116,91 +1115,13 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ initialTab = 'prof
                         {preset.name}
                       </span>
                       {isActive && (
-                        <span className="text-[8px] text-emerald-400 font-mono mt-1 uppercase tracking-widest font-bold">
+                        <span className="text-[8px] text-emerald-600 dark:text-emerald-400 font-mono mt-1 uppercase tracking-widest font-bold">
                           ● Active
                         </span>
                       )}
                     </motion.button>
                   );
                 })}
-              </div>
-            </div>
-
-            {/* AI NATURAL LANGUAGE THEME GENERATOR */}
-            <div className="pt-4 border-t border-[#1F1F1F]">
-              <div className="flex items-start justify-between mb-3">
-                <div className="space-y-0.5">
-                  <span className="text-[10px] font-mono font-bold text-white uppercase tracking-wider block flex items-center gap-1">
-                    <Sparkles className="w-3.5 h-3.5 text-amber-400 animate-pulse" />{" "}
-                    Generative AI Vibe Theme
-                  </span>
-                  <p className="text-[10px] text-[#666666]">
-                    Enter any prompt or aesthetic to let Gemini build a
-                    customized color scheme.
-                  </p>
-                </div>
-                {(preferences.themeName || "slate") === "custom" && (
-                  <span className="text-[9px] font-mono text-emerald-400 bg-[#0D2A1D] border border-emerald-950/40 px-2 py-0.5 rounded-sm uppercase tracking-widest animate-pulse">
-                    USING CUSTOM AI PALETTE
-                  </span>
-                )}
-              </div>
-
-              <div className="space-y-3">
-                <div className="flex gap-2">
-                  <input
-                    type="text"
-                    value={aiPrompt}
-                    onChange={(e) => setAiPrompt(e.target.value)}
-                    placeholder="e.g., 'Retro arcade games', 'Matcha Mint', 'Lava Cave', 'Sunset over Malibu beach'..."
-                    disabled={isGeneratingTheme}
-                    className="flex-grow bg-[#0D0D0D] border border-[#222222] hover:border-[#333333] focus:border-[#444444] rounded-sm px-3 py-2 text-xs font-mono text-white placeholder-[#444444] focus:outline-none transition-all"
-                  />
-                  <button
-                    type="button"
-                    onClick={handleGenerateAiTheme}
-                    disabled={isGeneratingTheme || !aiPrompt.trim()}
-                    className="px-4 py-2 bg-[#1A1A1A] hover:bg-[#252525] border border-[#333333] text-[10px] font-mono font-bold text-white uppercase tracking-wider rounded-sm transition-all cursor-pointer flex items-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {isGeneratingTheme ? (
-                      <>
-                        <RefreshCw className="w-3.5 h-3.5 animate-spin" />{" "}
-                        Crafting...
-                      </>
-                    ) : (
-                      <>
-                        <Sparkles className="w-3.5 h-3.5 text-amber-400" />{" "}
-                        Generate
-                      </>
-                    )}
-                  </button>
-                </div>
-
-                {themeError && (
-                  <p className="text-[10px] font-mono text-red-500 bg-[#2D0D0D] border border-red-950/40 p-2 rounded-sm uppercase tracking-wider">
-                    ⚠️ Error: {themeError}
-                  </p>
-                )}
-
-                {preferences.customThemePrompt && (
-                  <div className="flex items-center justify-between text-[9px] text-[#444444] font-mono">
-                    <span>
-                      Generated theme: "{preferences.customThemePrompt}"
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        updatePreference("themeName", "slate");
-                        updatePreference("customThemeColors", undefined);
-                        updatePreference("customThemePrompt", undefined);
-                        setAiPrompt("");
-                      }}
-                      className="text-red-400 hover:text-red-300 uppercase tracking-widest cursor-pointer flex items-center gap-1"
-                    >
-                      <RotateCcw className="w-2.5 h-2.5" /> Clear Custom Theme
-                    </button>
-                  </div>
-                )}
               </div>
             </div>
           </div>
