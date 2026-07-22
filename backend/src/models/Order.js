@@ -109,6 +109,10 @@ const orderSchema = new mongoose.Schema(
         },
       },
     ],
+    deliveryDate: {
+      type: Date,
+      default: null,
+    },
   },
   {
     timestamps: true,

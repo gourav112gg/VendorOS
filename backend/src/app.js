@@ -15,6 +15,7 @@ const customerRoutes = require("./routes/customer.routes");
 const domainRoutes = require("./routes/domain.routes");
 const templateRoutes = require("./routes/template.routes");
 const chatbotRoutes = require("./routes/chatbot.routes");
+const policyRoutes = require("./routes/policy.routes");
 
 
 // Trust score controller (lightweight — no dedicated route file needed)
@@ -80,6 +81,7 @@ app.use("/api/customers", customerRoutes);
 app.use("/api/domains", domainRoutes);
 app.use("/api/templates", templateRoutes);
 app.use("/api/chatbot", chatbotRoutes);
+app.use("/api/policies", policyRoutes);
 
 
 // --- Trust Score (owner only) ---
