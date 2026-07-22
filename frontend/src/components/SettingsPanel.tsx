@@ -978,18 +978,18 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ initialTab = 'prof
             </div>
           </div>
           {/* MULTI-LANGUAGE SELECTION */}
-          <div className="p-5 bg-stone-100/80 dark:bg-[#0A0A0A] border border-stone-200 dark:border-[#222222] rounded-xl space-y-4 shadow-sm">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-stone-200 dark:border-[#222222] pb-4 gap-4">
+          <div className="p-5 bg-[#0D0D0D] border border-[#222222] rounded-xl space-y-4 shadow-sm">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-[#222222] pb-4 gap-4">
               <div className="space-y-1">
-                <span className="text-[10px] font-mono font-bold text-slate-500 dark:text-[#666666] uppercase tracking-widest block">
+                <span className="text-[10px] font-mono font-bold text-[#888888] uppercase tracking-widest block">
                   Platform Internationalization
                 </span>
-                <h4 className="text-xs font-mono font-bold text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-2">
-                  <Globe className="w-4 h-4 text-blue-600 dark:text-[#7FA0C4]" /> Preferred Interface Language
+                <h4 className="text-xs font-mono font-bold text-white uppercase tracking-wider flex items-center gap-2">
+                  <Globe className="w-4 h-4 text-blue-500" /> Preferred Interface Language
                 </h4>
               </div>
 
-              <div className="flex items-center space-x-1.5 p-1 bg-stone-200/60 dark:bg-[#111111] border border-stone-300 dark:border-[#222222] rounded-lg">
+              <div className="flex items-center space-x-1.5 p-1 bg-[#111111] border border-[#222222] rounded-lg">
                 {(['en', 'hi', 'pa'] as const).map((lang) => (
                   <button
                     key={lang}
@@ -1000,8 +1000,8 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ initialTab = 'prof
                     }}
                     className={`px-3 py-1.5 flex items-center gap-1.5 rounded-md font-mono text-[9px] uppercase tracking-wider transition-all cursor-pointer ${
                       language === lang
-                        ? 'bg-slate-900 text-white dark:bg-[#1F2B3A] dark:text-white border border-slate-700 dark:border-[#3E5066] font-bold shadow-sm'
-                        : 'text-slate-700 dark:text-[#888888] hover:text-slate-900 dark:hover:text-white hover:bg-stone-300/40 dark:hover:bg-[#1A1A1A]'
+                        ? 'bg-white text-black font-bold shadow-sm'
+                        : 'text-[#888888] hover:text-white hover:bg-[#1A1A1A]'
                     }`}
                   >
                     {lang === 'en' ? 'English (EN)' : lang === 'hi' ? 'हिन्दी (HI)' : 'ਪੰਜਾਬੀ (PB)'}
@@ -1012,7 +1012,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ initialTab = 'prof
           </div>
 
           {/* THEME & LIGHT/DARK MODE DYNAMIC PICKER */}
-          <div className="p-5 bg-stone-100/80 dark:bg-[#0A0A0A] border border-stone-200 dark:border-[#222222] rounded-xl space-y-6 shadow-sm">
+          <div className="p-5 bg-[#0D0D0D] border border-[#222222] rounded-xl space-y-6 shadow-sm">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-stone-200 dark:border-[#222222] pb-4 gap-4">
               <div className="space-y-1">
                 <span className="text-[10px] font-mono font-bold text-slate-500 dark:text-[#666666] uppercase tracking-widest block">

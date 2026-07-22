@@ -1,34 +1,33 @@
-
-import React from "react";
+import React, { useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 
 export const THEME_PRESETS = {
   slate: {
     dark: {
-      bgApp: "#0B0F17",
-      bgCard: "#131B2A",
-      bgSecondary: "#0E1420",
-      bgInput: "#1A2436",
-      border: "#243248",
-      borderStrong: "#374B6C",
-      textPrimary: "#F0F6FC",
-      textSecondary: "#94A3B8",
-      textMuted: "#64748B",
-      accent: "#10B981",
-      accentHover: "#059669",
+      bgApp: "#09090B",
+      bgCard: "#18181B",
+      bgSecondary: "#121215",
+      bgInput: "#09090B",
+      border: "#27272A",
+      borderStrong: "#3F3F46",
+      textPrimary: "#FAFAFA",
+      textSecondary: "#A1A1AA",
+      textMuted: "#71717A",
+      accent: "#FAFAFA",
+      accentHover: "#E4E4E7",
     },
     light: {
       bgApp: "#FAF6EE",
       bgCard: "#FFFFFF",
-      bgSecondary: "#F3ECDD",
-      bgInput: "#ECE2CC",
-      border: "#E3D6BB",
-      borderStrong: "#CBB98F",
-      textPrimary: "#2B2318",
-      textSecondary: "#52432E",
-      textMuted: "#8A7A5E",
-      accent: "#A97D2E",
-      accentHover: "#8C6522",
+      bgSecondary: "#F4EFE6",
+      bgInput: "#EBE3D5",
+      border: "#E2D7C3",
+      borderStrong: "#C9BA9B",
+      textPrimary: "#18181B",
+      textSecondary: "#52525B",
+      textMuted: "#71717A",
+      accent: "#18181B",
+      accentHover: "#27272A",
     },
   },
   sage: {
@@ -145,8 +144,8 @@ export const THEME_PRESETS = {
   },
 };
 
-// Semantic status colors are intentionally theme-independent (muted, not
-// neon) so success/warning/info/danger read consistently everywhere.
+// Semantic status colors are intentionally theme-independent so
+// success/warning/info/danger read consistently everywhere.
 const STATUS = {
   success: {
     bg: "rgba(122,168,105,0.16)",
@@ -170,8 +169,7 @@ const STATUS = {
   },
 };
 
-// Escapes a literal Tailwind arbitrary-value class name for use as a CSS
-// selector, e.g. "bg-[#111111]" -> ".bg-\[\#111111\]"
+// Escapes a literal Tailwind arbitrary-value class name for use as a CSS selector
 const sel = (className: string) =>
   `.${className.replace(/([\[\]#\/:.])/g, "\\$1")}`;
 const selAll = (classNames: string[]) => classNames.map(sel).join(", ");
@@ -181,6 +179,16 @@ export const ThemeManager: React.FC = () => {
 
   const mode = preferences.themeMode || "dark";
   const theme = preferences.themeName || "slate";
+
+  useEffect(() => {
+    if (mode === "light") {
+      document.documentElement.classList.remove("dark");
+      document.documentElement.classList.add("light");
+    } else {
+      document.documentElement.classList.remove("light");
+      document.documentElement.classList.add("dark");
+    }
+  }, [mode]);
 
   let colors: any = THEME_PRESETS.slate.dark;
 
@@ -207,6 +215,8 @@ export const ThemeManager: React.FC = () => {
     "bg-[#060B18]",
     "bg-[#110F0C]",
     "bg-[#090812]",
+    "bg-[#09090B]",
+    "bg-[#080606]",
   ];
   const bgCardClasses = [
     "bg-[#111111]",
@@ -219,6 +229,9 @@ export const ThemeManager: React.FC = () => {
     "bg-[#141414]",
     "bg-[#151515]",
     "bg-[#0F0F0F]",
+    "bg-[#18181B]",
+    "bg-[#100B0B]",
+    "bg-[#100C14]",
   ];
   const bgSecondaryClasses = [
     "bg-[#0D0D0D]",
@@ -228,6 +241,14 @@ export const ThemeManager: React.FC = () => {
     "bg-[#0D0C1A]",
     "bg-[#0b0e1a]",
     "bg-[#161616]",
+    "bg-[#121215]",
+    "bg-[#170E0E]",
+    "bg-[#0A0707]",
+    "bg-[#1C0D0D]",
+    "bg-[#140D0D]",
+    "bg-stone-100/80",
+    "bg-stone-200/60",
+    "bg-black/5",
   ];
   const bgInputClasses = [
     "bg-[#1A1A1A]",
@@ -239,6 +260,7 @@ export const ThemeManager: React.FC = () => {
     "bg-[#1C1C1C]",
     "bg-[#1D1D2D]",
     "bg-[#202020]",
+    "bg-[#09090B]",
   ];
   const bgBorderTintClasses = [
     "bg-[#222222]",
@@ -250,12 +272,20 @@ export const ThemeManager: React.FC = () => {
     "bg-[#27264D]",
     "bg-[#252525]",
     "bg-zinc-800",
+    "bg-[#27272A]",
   ];
 
   const borderMainClasses = [
     "border-[#222222]",
     "border-zinc-800",
     "border-neutral-800",
+    "border-[#27272A]",
+    "border-red-950/60",
+    "border-red-950/40",
+    "border-stone-200",
+    "border-stone-300",
+    "border-black/10",
+    "border-black/15",
   ];
   const borderSoftClasses = [
     "border-[#1A1A1A]",
@@ -263,15 +293,16 @@ export const ThemeManager: React.FC = () => {
     "border-[#1F1F1F]",
     "border-[#1C1C1C]",
   ];
-  const borderStrongClasses = ["border-[#444444]", "border-[#333333]"];
+  const borderStrongClasses = ["border-[#444444]", "border-[#333333]", "border-[#3F3F46]"];
 
-  const textPrimaryClasses = ["text-white", "text-[#E5E5E5]"];
+  const textPrimaryClasses = ["text-white", "text-[#E5E5E5]", "text-[#FAFAFA]"];
   const textSecondaryClasses = [
     "text-[#888888]",
     "text-zinc-400",
     "text-neutral-400",
     "text-[#999999]",
     "text-[#8c9bb5]",
+    "text-[#A1A1AA]",
   ];
   const textMutedClasses = [
     "text-[#666666]",
@@ -280,6 +311,7 @@ export const ThemeManager: React.FC = () => {
     "text-[#333333]",
     "text-zinc-500",
     "text-neutral-500",
+    "text-[#71717A]",
   ];
 
   const css = `
@@ -336,14 +368,13 @@ export const ThemeManager: React.FC = () => {
 
     /* ================================================================== */
     /* Premium presentation layer — radius, elevation, motion             */
-    /* Purely visual; does not alter markup, state, or behaviour.         */
     /* ================================================================== */
 
-    .rounded-sm { border-radius: var(--vos-radius-sm) !important; }
+    .rounded-sm { border-radius: var(--vos-radius-sm, 10px) !important; }
     .rounded-xs { border-radius: 6px !important; }
-    button.rounded-sm, a.rounded-sm, [role="button"].rounded-sm { border-radius: var(--vos-radius-sm) !important; }
+    button.rounded-sm, a.rounded-sm, [role="button"].rounded-sm { border-radius: var(--vos-radius-sm, 10px) !important; }
 
-    ${selAll(bgCardClasses)} { box-shadow: var(--vos-shadow-card); }
+    ${selAll(bgCardClasses)} { box-shadow: ${mode === "light" ? "var(--vos-shadow-card-light)" : "var(--vos-shadow-card)"}; }
 
     .transition-all, .transition-colors, .transition-opacity, .transition-transform {
       transition-timing-function: var(--vos-ease-soft) !important;
