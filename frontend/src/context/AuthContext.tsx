@@ -159,6 +159,41 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       dbStore.syncUserSession(activeUser, activeCompany);
     }
 
+    // Real-time API Profile Hydration from MongoDB
+    if (api.getToken()) {
+      api.users.getProfile().then(res => {
+        if (res.success && res.user) {
+          const freshUser: UserProfile = {
+            id: res.user._id,
+            name: res.user.name,
+            email: res.user.email,
+            phone: res.user.phone,
+            role: (res.user.role.charAt(0).toUpperCase() + res.user.role.slice(1)) as any,
+            companyId: res.user.company ? (res.user.company._id || res.user.company) : undefined,
+            createdAt: res.user.createdAt,
+          };
+          setUser(freshUser);
+
+          let freshCompany: Company | null = null;
+          if (res.user.company && typeof res.user.company === 'object') {
+            freshCompany = {
+              id: res.user.company._id,
+              name: res.user.company.companyName,
+              createdAt: res.user.company.createdAt,
+              minOrderValue: res.user.company.minimumOrderValue,
+              subscription: res.user.company.subscription,
+              description: res.user.company.description,
+              address: res.user.company.address,
+            };
+            setCompany(freshCompany);
+          }
+          saveSession(freshUser, freshCompany);
+        }
+      }).catch(err => {
+        console.error("Failed to hydrate profile from backend API:", err);
+      });
+    }
+
     setLoading(false);
   }, []);
 

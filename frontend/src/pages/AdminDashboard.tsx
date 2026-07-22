@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useSuperAdmin } from '../context/AdminContext';
 import adminApi from '../services/adminApi';
 import {
-  ShieldAlert, LogOut, Building, Users, Activity, FileText, AlertTriangle,
-  RefreshCw, CheckCircle, XCircle, Search, Filter, Shield, Zap, Trash2, Sliders, Lock
+  ShieldCheck, LogOut, Building, Users, Activity, FileText, AlertTriangle,
+  RefreshCw, Search, Filter, Shield, Zap, Trash2, Sliders, CheckCircle, XCircle
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -132,37 +132,37 @@ export const AdminDashboard: React.FC = () => {
   });
 
   return (
-    <div className="min-h-screen bg-[#080606] text-red-100 font-mono select-none flex flex-col">
+    <div className="min-h-screen bg-[#09090B] text-[#FAFAFA] font-mono select-none flex flex-col">
       {/* Top Security Operations Bar */}
-      <header className="bg-[#100B0B] border-b border-red-950/60 px-6 py-4 flex flex-col sm:flex-row justify-between items-center gap-4 shadow-xl">
+      <header className="bg-[#18181B] border-b border-[#27272A] px-6 py-4 flex flex-col sm:flex-row justify-between items-center gap-4 shadow-xl">
         <div className="flex items-center space-x-3">
-          <div className="w-9 h-9 rounded-sm bg-red-950/80 border border-red-800/40 flex items-center justify-center text-red-500">
-            <ShieldAlert className="w-5 h-5" />
+          <div className="w-9 h-9 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center text-white">
+            <ShieldCheck className="w-5 h-5 text-white" />
           </div>
           <div>
             <div className="flex items-center space-x-2">
-              <h1 className="text-sm font-bold tracking-wider text-white uppercase">VendorOS Super Admin</h1>
-              <span className="text-[9px] uppercase font-bold tracking-widest text-red-400 bg-red-950/60 border border-red-900/40 px-2 py-0.5 rounded-sm">
-                Restricted Core Surface
+              <h1 className="text-sm font-bold tracking-wider text-white uppercase font-display">VendorOS Super Admin</h1>
+              <span className="text-[9px] uppercase font-bold tracking-widest text-zinc-300 bg-white/10 border border-white/20 px-2 py-0.5 rounded-full">
+                Core Console Surface
               </span>
             </div>
-            <p className="text-[10px] text-red-400/60 font-mono">
-              Authenticated as: <strong className="text-red-300">{admin?.email}</strong>
+            <p className="text-[10px] text-[#A1A1AA] font-mono">
+              Authenticated as: <strong className="text-white">{admin?.email}</strong>
             </p>
           </div>
         </div>
 
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-3">
           <button
             onClick={() => setRefreshTrigger(prev => prev + 1)}
-            className="flex items-center space-x-1.5 px-3 py-1.5 bg-[#170E0E] hover:bg-[#221313] border border-red-950 text-red-300 rounded-sm text-[10px] uppercase font-bold tracking-wider transition-all cursor-pointer"
+            className="flex items-center space-x-1.5 px-3 py-1.5 bg-[#09090B] hover:bg-zinc-800 border border-[#27272A] text-[#FAFAFA] rounded-lg text-[10px] uppercase font-bold tracking-wider transition-all cursor-pointer"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${loadingData ? 'animate-spin' : ''}`} />
             <span>Refresh</span>
           </button>
           <button
             onClick={logout}
-            className="flex items-center space-x-1.5 px-3 py-1.5 bg-red-950 hover:bg-red-900 border border-red-800/50 text-red-200 rounded-sm text-[10px] uppercase font-bold tracking-wider transition-all cursor-pointer"
+            className="flex items-center space-x-1.5 px-3 py-1.5 bg-zinc-800 hover:bg-zinc-700 border border-zinc-600 text-white rounded-lg text-[10px] uppercase font-bold tracking-wider transition-all cursor-pointer"
           >
             <LogOut className="w-3.5 h-3.5" />
             <span>Terminate Admin Session</span>
@@ -171,8 +171,8 @@ export const AdminDashboard: React.FC = () => {
       </header>
 
       {/* Navigation Sub-Tabs */}
-      <div className="bg-[#0A0707] border-b border-red-950/40 px-6">
-        <div className="flex space-x-1 overflow-x-auto no-scrollbar">
+      <div className="bg-[#121215] border-b border-[#27272A] px-6">
+        <div className="flex space-x-2 py-2 overflow-x-auto no-scrollbar">
           {[
             { id: 'overview', label: 'Platform Overview', icon: Activity },
             { id: 'companies', label: `Companies (${companies.length})`, icon: Building },
@@ -185,10 +185,10 @@ export const AdminDashboard: React.FC = () => {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as any)}
-                className={`flex items-center space-x-2 px-5 py-3.5 text-xs font-bold uppercase tracking-wider border-b-2 transition-all cursor-pointer ${
+                className={`flex items-center space-x-2 px-4 py-2 text-xs font-bold uppercase tracking-wider rounded-lg transition-all cursor-pointer ${
                   isActive
-                    ? 'border-red-600 text-white bg-red-950/30'
-                    : 'border-transparent text-red-400/60 hover:text-red-300 hover:bg-red-950/10'
+                    ? 'bg-[#FAFAFA] text-[#09090B] shadow-md'
+                    : 'text-[#A1A1AA] hover:text-white hover:bg-zinc-800/50'
                 }`}
               >
                 <Icon className="w-4 h-4" />
@@ -207,49 +207,49 @@ export const AdminDashboard: React.FC = () => {
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
             {/* KPI Cards */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              <div className="bg-[#100B0B] border border-red-950/60 p-5 rounded-sm">
-                <span className="text-[10px] text-red-500 uppercase tracking-widest block font-bold">Total Tenants</span>
-                <span className="text-3xl font-bold text-white mt-1 block">{stats?.totalCompanies ?? 0}</span>
-                <span className="text-[10px] text-red-400/60 mt-2 block font-mono">Multi-tenant registered companies</span>
+              <div className="bg-[#18181B] border border-[#27272A] p-5 rounded-xl">
+                <span className="text-[10px] text-[#A1A1AA] uppercase tracking-widest block font-bold">Total Tenants</span>
+                <span className="text-3xl font-bold text-[#FAFAFA] mt-1 block font-display">{stats?.totalCompanies ?? 0}</span>
+                <span className="text-[10px] text-[#71717A] mt-2 block font-mono">Multi-tenant registered companies</span>
               </div>
 
-              <div className="bg-[#100B0B] border border-red-950/60 p-5 rounded-sm">
-                <span className="text-[10px] text-red-500 uppercase tracking-widest block font-bold">Status Ratio</span>
+              <div className="bg-[#18181B] border border-[#27272A] p-5 rounded-xl">
+                <span className="text-[10px] text-[#A1A1AA] uppercase tracking-widest block font-bold">Status Ratio</span>
                 <div className="flex items-baseline space-x-3 mt-1">
-                  <span className="text-2xl font-bold text-emerald-400">{stats?.activeCompanies ?? 0} <span className="text-[10px] text-emerald-600 uppercase font-mono">Active</span></span>
-                  <span className="text-2xl font-bold text-red-500">{stats?.suspendedCompanies ?? 0} <span className="text-[10px] text-red-700 uppercase font-mono">Suspended</span></span>
+                  <span className="text-2xl font-bold text-emerald-400">{stats?.activeCompanies ?? 0} <span className="text-[10px] text-emerald-500 uppercase font-mono">Active</span></span>
+                  <span className="text-2xl font-bold text-zinc-400">{stats?.suspendedCompanies ?? 0} <span className="text-[10px] text-zinc-500 uppercase font-mono">Suspended</span></span>
                 </div>
-                <span className="text-[10px] text-red-400/60 mt-2 block font-mono">Access isolation status</span>
+                <span className="text-[10px] text-[#71717A] mt-2 block font-mono">Access isolation status</span>
               </div>
 
-              <div className="bg-[#100B0B] border border-red-950/60 p-5 rounded-sm">
-                <span className="text-[10px] text-red-500 uppercase tracking-widest block font-bold">Tier Distribution</span>
+              <div className="bg-[#18181B] border border-[#27272A] p-5 rounded-xl">
+                <span className="text-[10px] text-[#A1A1AA] uppercase tracking-widest block font-bold">Tier Distribution</span>
                 <div className="flex items-center space-x-2 mt-2 text-xs font-bold font-mono">
-                  <span className="px-2 py-0.5 bg-slate-900 border border-slate-700 text-slate-300 rounded-sm">Free: {stats?.tierBreakdown?.free ?? 0}</span>
-                  <span className="px-2 py-0.5 bg-amber-950/80 border border-amber-800 text-amber-300 rounded-sm">Growth: {stats?.tierBreakdown?.growth ?? 0}</span>
-                  <span className="px-2 py-0.5 bg-purple-950/80 border border-purple-800 text-purple-300 rounded-sm">Scale: {stats?.tierBreakdown?.scale ?? 0}</span>
+                  <span className="px-2 py-0.5 bg-zinc-800 border border-zinc-700 text-zinc-200 rounded">Free: {stats?.tierBreakdown?.free ?? 0}</span>
+                  <span className="px-2 py-0.5 bg-amber-500/10 border border-amber-500/30 text-amber-300 rounded">Growth: {stats?.tierBreakdown?.growth ?? 0}</span>
+                  <span className="px-2 py-0.5 bg-purple-500/10 border border-purple-500/30 text-purple-300 rounded">Scale: {stats?.tierBreakdown?.scale ?? 0}</span>
                 </div>
-                <span className="text-[10px] text-red-400/60 mt-2 block font-mono">
+                <span className="text-[10px] text-[#71717A] mt-2 block font-mono">
                   Manual Overrides: <strong className="text-amber-400">{stats?.manualOverrideCount ?? 0}</strong>
                 </span>
               </div>
 
-              <div className="bg-[#100B0B] border border-red-950/60 p-5 rounded-sm">
-                <span className="text-[10px] text-red-500 uppercase tracking-widest block font-bold">Global Directory Users</span>
-                <span className="text-3xl font-bold text-white mt-1 block">{stats?.users?.total ?? 0}</span>
-                <span className="text-[10px] text-red-400/60 mt-2 block font-mono">
+              <div className="bg-[#18181B] border border-[#27272A] p-5 rounded-xl">
+                <span className="text-[10px] text-[#A1A1AA] uppercase tracking-widest block font-bold">Global Directory Users</span>
+                <span className="text-3xl font-bold text-[#FAFAFA] mt-1 block font-display">{stats?.users?.total ?? 0}</span>
+                <span className="text-[10px] text-[#71717A] mt-2 block font-mono">
                   Owners ({stats?.users?.owners ?? 0}) • Managers ({stats?.users?.managers ?? 0}) • Techs ({stats?.users?.workers ?? 0})
                 </span>
               </div>
             </div>
 
             {/* Quick Action Info Box */}
-            <div className="bg-[#140D0D] border border-red-900/50 p-6 rounded-sm space-y-3">
-              <h3 className="text-sm font-bold uppercase tracking-wider text-red-400 flex items-center">
-                <Shield className="w-4 h-4 mr-2 text-red-500" />
+            <div className="bg-[#18181B] border border-[#27272A] p-6 rounded-xl space-y-3">
+              <h3 className="text-sm font-bold uppercase tracking-wider text-white flex items-center">
+                <Shield className="w-4 h-4 mr-2 text-[#FAFAFA]" />
                 Super Admin Security & System Governance Policy
               </h3>
-              <p className="text-xs text-red-300/80 leading-relaxed font-mono">
+              <p className="text-xs text-[#A1A1AA] leading-relaxed font-mono">
                 Manual subscription changes override Razorpay billing state. A manual override blocks Razorpay webhooks from altering effective company tier until cleared.
                 Company suspensions instantly revoke authorization tokens for all users belonging to that company across the entire platform.
               </p>
@@ -261,24 +261,24 @@ export const AdminDashboard: React.FC = () => {
         {activeTab === 'companies' && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
             {/* Search & Filter Bar */}
-            <div className="bg-[#100B0B] border border-red-950/60 p-4 rounded-sm flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div className="bg-[#18181B] border border-[#27272A] p-4 rounded-xl flex flex-col sm:flex-row justify-between items-center gap-4">
               <div className="relative w-full sm:w-80">
-                <Search className="w-4 h-4 text-red-500/60 absolute left-3 top-2.5" />
+                <Search className="w-4 h-4 text-[#71717A] absolute left-3 top-2.5" />
                 <input
                   type="text"
                   placeholder="Search company or owner..."
                   value={companySearch}
                   onChange={(e) => setCompanySearch(e.target.value)}
-                  className="w-full pl-9 pr-3 py-1.5 bg-[#0A0707] border border-red-950 text-white placeholder-red-950 text-xs rounded-sm focus:outline-none focus:border-red-600"
+                  className="w-full pl-9 pr-3 py-1.5 bg-[#09090B] border border-[#27272A] text-white placeholder-[#52525B] text-xs rounded-lg focus:outline-none focus:border-[#A1A1AA]"
                 />
               </div>
 
               <div className="flex items-center space-x-3 w-full sm:w-auto">
-                <Filter className="w-4 h-4 text-red-500/60" />
+                <Filter className="w-4 h-4 text-[#71717A]" />
                 <select
                   value={companyStatusFilter}
                   onChange={(e) => setCompanyStatusFilter(e.target.value)}
-                  className="bg-[#0A0707] border border-red-950 text-red-200 text-xs py-1.5 px-3 rounded-sm focus:outline-none focus:border-red-600 font-mono"
+                  className="bg-[#09090B] border border-[#27272A] text-white text-xs py-1.5 px-3 rounded-lg focus:outline-none focus:border-[#A1A1AA] font-mono"
                 >
                   <option value="all">All Statuses</option>
                   <option value="active">Active Only</option>
@@ -288,11 +288,11 @@ export const AdminDashboard: React.FC = () => {
             </div>
 
             {/* Companies Table */}
-            <div className="bg-[#100B0B] border border-red-950/60 rounded-sm overflow-hidden">
+            <div className="bg-[#18181B] border border-[#27272A] rounded-xl overflow-hidden shadow-lg">
               <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse font-mono text-xs">
                   <thead>
-                    <tr className="bg-[#170E0E] text-red-400 text-[10px] uppercase tracking-widest border-b border-red-950">
+                    <tr className="bg-[#121215] text-[#A1A1AA] text-[10px] uppercase tracking-widest border-b border-[#27272A]">
                       <th className="px-6 py-3.5">Company Name</th>
                       <th className="px-6 py-3.5">Owner Details</th>
                       <th className="px-6 py-3.5">Status</th>
@@ -301,42 +301,42 @@ export const AdminDashboard: React.FC = () => {
                       <th className="px-6 py-3.5 text-right">Actions</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-red-950/40">
+                  <tbody className="divide-y divide-[#27272A]">
                     {filteredCompanies.map(c => {
                       const isSuspended = c.status === 'suspended';
                       const isOverride = c.subscription?.manualOverride?.active;
                       return (
-                        <tr key={c._id} className="hover:bg-red-950/20 transition-colors">
-                          <td className="px-6 py-4 font-bold text-white">
+                        <tr key={c._id} className="hover:bg-[#27272A]/40 transition-colors">
+                          <td className="px-6 py-4 font-bold text-[#FAFAFA]">
                             <span>{c.companyName}</span>
-                            <span className="block text-[9px] text-red-500/60 mt-0.5">ID: {c._id}</span>
+                            <span className="block text-[9px] text-[#71717A] mt-0.5">ID: {c._id}</span>
                           </td>
-                          <td className="px-6 py-4 text-red-300">
+                          <td className="px-6 py-4 text-[#A1A1AA]">
                             {c.owner ? (
                               <div>
-                                <span className="font-bold text-white block">{c.owner.name}</span>
-                                <span className="text-[10px] text-red-400/70 block">{c.owner.email}</span>
+                                <span className="font-bold text-[#FAFAFA] block">{c.owner.name}</span>
+                                <span className="text-[10px] text-[#71717A] block">{c.owner.email}</span>
                               </div>
                             ) : (
-                              <span className="text-red-700 italic">No Owner</span>
+                              <span className="text-zinc-600 italic">No Owner</span>
                             )}
                           </td>
                           <td className="px-6 py-4">
-                            <span className={`inline-flex items-center px-2 py-0.5 rounded-sm text-[10px] font-bold uppercase tracking-wider border ${
+                            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider border ${
                               isSuspended
-                                ? 'bg-red-950 text-red-400 border-red-800'
-                                : 'bg-emerald-950 text-emerald-400 border-emerald-800'
+                                ? 'bg-zinc-800 text-zinc-400 border-zinc-700'
+                                : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30'
                             }`}>
                               {isSuspended ? 'SUSPENDED' : 'ACTIVE'}
                             </span>
                           </td>
                           <td className="px-6 py-4 font-bold uppercase">
-                            <span className={`px-2.5 py-1 rounded-sm text-[10px] border ${
+                            <span className={`px-2.5 py-1 rounded text-[10px] border ${
                               c.subscription?.tier === 'scale'
-                                ? 'bg-purple-950 text-purple-300 border-purple-800'
+                                ? 'bg-purple-500/10 text-purple-300 border-purple-500/30'
                                 : c.subscription?.tier === 'growth'
-                                ? 'bg-amber-950 text-amber-300 border-amber-800'
-                                : 'bg-slate-900 text-slate-300 border-slate-700'
+                                ? 'bg-amber-500/10 text-amber-300 border-amber-500/30'
+                                : 'bg-zinc-800 text-zinc-300 border-zinc-700'
                             }`}>
                               {c.subscription?.tier || 'free'}
                             </span>
@@ -344,18 +344,18 @@ export const AdminDashboard: React.FC = () => {
                           <td className="px-6 py-4">
                             {isOverride ? (
                               <div className="flex flex-col items-start space-y-1">
-                                <span className="px-2 py-0.5 bg-amber-950 border border-amber-800 text-amber-300 text-[9px] font-bold uppercase tracking-wider rounded-sm">
+                                <span className="px-2 py-0.5 bg-amber-500/10 border border-amber-500/30 text-amber-300 text-[9px] font-bold uppercase tracking-wider rounded">
                                   MANUAL OVERRIDE
                                 </span>
                                 <button
                                   onClick={() => handleClearOverride(c._id)}
-                                  className="text-[9px] text-red-400 hover:text-white underline cursor-pointer"
+                                  className="text-[9px] text-[#A1A1AA] hover:text-white underline cursor-pointer"
                                 >
                                   Clear Override
                                 </button>
                               </div>
                             ) : (
-                              <span className="text-[10px] text-red-500/50 uppercase">Webhook Driven</span>
+                              <span className="text-[10px] text-[#71717A] uppercase">Webhook Driven</span>
                             )}
                           </td>
                           <td className="px-6 py-4 text-right space-x-2">
@@ -364,16 +364,16 @@ export const AdminDashboard: React.FC = () => {
                                 setOverrideModalCompany(c);
                                 setSelectedTier(c.subscription?.tier || 'growth');
                               }}
-                              className="px-2.5 py-1 bg-[#1A1010] hover:bg-[#2A1515] border border-red-950 text-red-300 text-[10px] uppercase font-bold tracking-wider rounded-sm transition-all cursor-pointer"
+                              className="px-3 py-1 bg-white hover:bg-zinc-200 text-[#09090B] text-[10px] font-bold uppercase tracking-wider rounded-md transition-all cursor-pointer shadow-sm"
                             >
                               Edit Tier
                             </button>
                             <button
                               onClick={() => handleToggleSuspension(c._id)}
-                              className={`px-2.5 py-1 border text-[10px] uppercase font-bold tracking-wider rounded-sm transition-all cursor-pointer ${
+                              className={`px-3 py-1 border text-[10px] uppercase font-bold tracking-wider rounded-md transition-all cursor-pointer ${
                                 isSuspended
-                                  ? 'bg-emerald-950 hover:bg-emerald-900 border-emerald-800 text-emerald-300'
-                                  : 'bg-amber-950 hover:bg-amber-900 border-amber-800 text-amber-300'
+                                  ? 'bg-emerald-500/10 hover:bg-emerald-500/20 border-emerald-500/30 text-emerald-400'
+                                  : 'bg-zinc-800 hover:bg-zinc-700 border-zinc-700 text-zinc-300'
                               }`}
                             >
                               {isSuspended ? 'Unsuspend' : 'Suspend'}
@@ -383,7 +383,7 @@ export const AdminDashboard: React.FC = () => {
                                 setDeleteModalCompany(c);
                                 setConfirmDeleteName('');
                               }}
-                              className="px-2.5 py-1 bg-red-950 hover:bg-red-900 border border-red-800 text-red-300 text-[10px] uppercase font-bold tracking-wider rounded-sm transition-all cursor-pointer"
+                              className="px-3 py-1 bg-red-950/40 hover:bg-red-900/60 border border-red-800/40 text-red-300 text-[10px] uppercase font-bold tracking-wider rounded-md transition-all cursor-pointer"
                             >
                               Delete
                             </button>
@@ -401,22 +401,22 @@ export const AdminDashboard: React.FC = () => {
         {/* USERS DIRECTORY TAB */}
         {activeTab === 'users' && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
-            <div className="bg-[#100B0B] border border-red-950/60 p-4 rounded-sm flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div className="bg-[#18181B] border border-[#27272A] p-4 rounded-xl flex flex-col sm:flex-row justify-between items-center gap-4">
               <div className="relative w-full sm:w-80">
-                <Search className="w-4 h-4 text-red-500/60 absolute left-3 top-2.5" />
+                <Search className="w-4 h-4 text-[#71717A] absolute left-3 top-2.5" />
                 <input
                   type="text"
                   placeholder="Search user by name, email, or company..."
                   value={userSearch}
                   onChange={(e) => setUserSearch(e.target.value)}
-                  className="w-full pl-9 pr-3 py-1.5 bg-[#0A0707] border border-red-950 text-white placeholder-red-950 text-xs rounded-sm focus:outline-none focus:border-red-600"
+                  className="w-full pl-9 pr-3 py-1.5 bg-[#09090B] border border-[#27272A] text-white placeholder-[#52525B] text-xs rounded-lg focus:outline-none focus:border-[#A1A1AA]"
                 />
               </div>
 
               <select
                 value={userRoleFilter}
                 onChange={(e) => setUserRoleFilter(e.target.value)}
-                className="bg-[#0A0707] border border-red-950 text-red-200 text-xs py-1.5 px-3 rounded-sm focus:outline-none focus:border-red-600 font-mono"
+                className="bg-[#09090B] border border-[#27272A] text-white text-xs py-1.5 px-3 rounded-lg focus:outline-none focus:border-[#A1A1AA] font-mono"
               >
                 <option value="all">All Roles</option>
                 <option value="owner">Owners</option>
@@ -426,11 +426,11 @@ export const AdminDashboard: React.FC = () => {
               </select>
             </div>
 
-            <div className="bg-[#100B0B] border border-red-950/60 rounded-sm overflow-hidden">
+            <div className="bg-[#18181B] border border-[#27272A] rounded-xl overflow-hidden shadow-lg">
               <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse font-mono text-xs">
                   <thead>
-                    <tr className="bg-[#170E0E] text-red-400 text-[10px] uppercase tracking-widest border-b border-red-950">
+                    <tr className="bg-[#121215] text-[#A1A1AA] text-[10px] uppercase tracking-widest border-b border-[#27272A]">
                       <th className="px-6 py-3.5">User Name & Email</th>
                       <th className="px-6 py-3.5">Role</th>
                       <th className="px-6 py-3.5">Associated Company</th>
@@ -438,27 +438,27 @@ export const AdminDashboard: React.FC = () => {
                       <th className="px-6 py-3.5">Created At</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-red-950/40">
+                  <tbody className="divide-y divide-[#27272A]">
                     {filteredUsers.map(u => (
-                      <tr key={u._id} className="hover:bg-red-950/20 transition-colors">
+                      <tr key={u._id} className="hover:bg-[#27272A]/40 transition-colors">
                         <td className="px-6 py-4">
-                          <span className="font-bold text-white block">{u.name}</span>
-                          <span className="text-[10px] text-red-400/70 block">{u.email}</span>
+                          <span className="font-bold text-[#FAFAFA] block">{u.name}</span>
+                          <span className="text-[10px] text-[#71717A] block">{u.email}</span>
                         </td>
                         <td className="px-6 py-4">
-                          <span className="px-2 py-0.5 bg-red-950/80 border border-red-900 text-red-300 text-[10px] font-bold uppercase tracking-wider rounded-sm">
+                          <span className="px-2.5 py-0.5 bg-zinc-800 border border-zinc-700 text-zinc-300 text-[10px] font-bold uppercase tracking-wider rounded">
                             {u.role}
                           </span>
                         </td>
-                        <td className="px-6 py-4 text-red-300">
+                        <td className="px-6 py-4 text-[#A1A1AA]">
                           {u.company ? (
                             <span className="font-bold text-white">{u.company.companyName}</span>
                           ) : (
-                            <span className="text-red-700 italic">No Company</span>
+                            <span className="text-zinc-600 italic">No Company</span>
                           )}
                         </td>
-                        <td className="px-6 py-4 text-red-400/80 font-mono">{u.phone || 'N/A'}</td>
-                        <td className="px-6 py-4 text-[10px] text-red-500/70 font-mono">
+                        <td className="px-6 py-4 text-[#71717A] font-mono">{u.phone || 'N/A'}</td>
+                        <td className="px-6 py-4 text-[10px] text-[#71717A] font-mono">
                           {new Date(u.createdAt).toLocaleDateString()}
                         </td>
                       </tr>
@@ -473,18 +473,18 @@ export const AdminDashboard: React.FC = () => {
         {/* IMMUTABLE AUDIT LOGS TAB */}
         {activeTab === 'audit' && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
-            <div className="bg-[#140D0D] border border-red-900/50 p-4 rounded-sm flex items-center space-x-3 text-xs text-red-300">
-              <Shield className="w-5 h-5 text-red-500 flex-shrink-0" />
+            <div className="bg-[#18181B] border border-[#27272A] p-4 rounded-xl flex items-center space-x-3 text-xs text-[#A1A1AA]">
+              <Shield className="w-5 h-5 text-[#FAFAFA] flex-shrink-0" />
               <p className="text-[11px] font-mono leading-relaxed">
                 <strong>Immutable Audit Log Trail</strong>: Every single admin action is permanently recorded. These logs cannot be edited or deleted by any API route or portal control.
               </p>
             </div>
 
-            <div className="bg-[#100B0B] border border-red-950/60 rounded-sm overflow-hidden">
+            <div className="bg-[#18181B] border border-[#27272A] rounded-xl overflow-hidden shadow-lg">
               <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse font-mono text-xs">
                   <thead>
-                    <tr className="bg-[#170E0E] text-red-400 text-[10px] uppercase tracking-widest border-b border-red-950">
+                    <tr className="bg-[#121215] text-[#A1A1AA] text-[10px] uppercase tracking-widest border-b border-[#27272A]">
                       <th className="px-6 py-3.5">Timestamp</th>
                       <th className="px-6 py-3.5">Action Executed</th>
                       <th className="px-6 py-3.5">Target</th>
@@ -492,28 +492,28 @@ export const AdminDashboard: React.FC = () => {
                       <th className="px-6 py-3.5">Details</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-red-950/40">
+                  <tbody className="divide-y divide-[#27272A]">
                     {auditLogs.map(log => (
-                      <tr key={log._id} className="hover:bg-red-950/20 transition-colors">
-                        <td className="px-6 py-4 text-[10px] text-red-400/80 font-mono">
+                      <tr key={log._id} className="hover:bg-[#27272A]/40 transition-colors">
+                        <td className="px-6 py-4 text-[10px] text-[#71717A] font-mono">
                           {new Date(log.timestamp).toLocaleString()}
                         </td>
                         <td className="px-6 py-4 font-bold">
-                          <span className={`px-2 py-0.5 rounded-sm text-[9px] uppercase tracking-wider border ${
+                          <span className={`px-2.5 py-0.5 rounded text-[9px] uppercase tracking-wider border ${
                             log.action.includes('SUCCESS') || log.action.includes('UNSUSPEND')
-                              ? 'bg-emerald-950 text-emerald-300 border-emerald-800'
+                              ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30'
                               : log.action.includes('FAILED') || log.action.includes('LOCKOUT') || log.action.includes('DELETE') || log.action.includes('SUSPEND')
-                              ? 'bg-red-950 text-red-300 border-red-800'
-                              : 'bg-amber-950 text-amber-300 border-amber-800'
+                              ? 'bg-red-950/40 text-red-300 border-red-800/40'
+                              : 'bg-amber-500/10 text-amber-300 border-amber-500/30'
                           }`}>
                             {log.action}
                           </span>
                         </td>
-                        <td className="px-6 py-4 font-bold text-white">
+                        <td className="px-6 py-4 font-bold text-[#FAFAFA]">
                           {log.targetName || log.targetId || 'System'}
                         </td>
-                        <td className="px-6 py-4 text-red-400/70 font-mono text-[11px]">{log.ipAddress}</td>
-                        <td className="px-6 py-4 text-[10px] text-red-300/80 font-mono">
+                        <td className="px-6 py-4 text-[#71717A] font-mono text-[11px]">{log.ipAddress}</td>
+                        <td className="px-6 py-4 text-[10px] text-[#A1A1AA] font-mono">
                           <pre className="whitespace-pre-wrap max-w-xs overflow-hidden">
                             {JSON.stringify(log.details || {})}
                           </pre>
@@ -532,26 +532,26 @@ export const AdminDashboard: React.FC = () => {
       <AnimatePresence>
         {overrideModalCompany && (
           <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-xs flex items-center justify-center p-4">
-            <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }} className="bg-[#100B0B] border border-red-900/60 rounded-sm max-w-md w-full p-6 space-y-4">
-              <h3 className="text-sm font-bold uppercase tracking-wider text-white flex items-center">
-                <Sliders className="w-4 h-4 mr-2 text-amber-500" />
+            <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }} className="bg-[#18181B] border border-[#27272A] rounded-xl max-w-md w-full p-6 space-y-4 shadow-2xl">
+              <h3 className="text-sm font-bold uppercase tracking-wider text-[#FAFAFA] flex items-center">
+                <Sliders className="w-4 h-4 mr-2 text-amber-400" />
                 Manual Subscription Override
               </h3>
-              <p className="text-xs text-red-300/70 font-mono">
+              <p className="text-xs text-[#A1A1AA] font-mono">
                 Target: <strong className="text-white">{overrideModalCompany.companyName}</strong>
               </p>
 
               {actionError && (
-                <div className="text-xs text-red-400 bg-red-950 p-2 rounded border border-red-800">{actionError}</div>
+                <div className="text-xs text-red-400 bg-red-950/40 p-2 rounded border border-red-800/40">{actionError}</div>
               )}
 
               <form onSubmit={handleApplyOverride} className="space-y-4 font-mono">
                 <div>
-                  <label className="block text-[10px] text-red-400 uppercase tracking-widest mb-1.5 font-bold">Select Tier</label>
+                  <label className="block text-[10px] text-[#A1A1AA] uppercase tracking-widest mb-1.5 font-bold">Select Tier</label>
                   <select
                     value={selectedTier}
                     onChange={(e) => setSelectedTier(e.target.value as any)}
-                    className="w-full bg-[#0A0707] border border-red-950 text-white text-xs p-2 rounded-sm focus:outline-none focus:border-red-600"
+                    className="w-full bg-[#09090B] border border-[#27272A] text-white text-xs p-2.5 rounded-lg focus:outline-none focus:border-[#A1A1AA]"
                   >
                     <option value="free">Free Tier</option>
                     <option value="growth">Growth Tier</option>
@@ -559,18 +559,18 @@ export const AdminDashboard: React.FC = () => {
                   </select>
                 </div>
 
-                <div className="pt-4 border-t border-red-950/40 flex justify-end space-x-3">
+                <div className="pt-4 border-t border-[#27272A] flex justify-end space-x-3">
                   <button
                     type="button"
                     onClick={() => setOverrideModalCompany(null)}
-                    className="px-4 py-2 bg-transparent hover:bg-red-950/40 text-red-400 text-xs font-bold uppercase tracking-wider rounded-sm cursor-pointer"
+                    className="px-4 py-2 bg-transparent hover:bg-zinc-800 text-[#A1A1AA] text-xs font-bold uppercase tracking-wider rounded-lg cursor-pointer"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
                     disabled={isSubmittingAction}
-                    className="px-4 py-2 bg-amber-950 hover:bg-amber-900 border border-amber-800 text-amber-200 text-xs font-bold uppercase tracking-wider rounded-sm cursor-pointer disabled:opacity-50"
+                    className="px-4 py-2 bg-white hover:bg-zinc-200 text-[#09090B] text-xs font-bold uppercase tracking-wider rounded-lg cursor-pointer disabled:opacity-50 shadow-md"
                   >
                     {isSubmittingAction ? 'Applying...' : 'Apply Manual Override'}
                   </button>
@@ -585,22 +585,22 @@ export const AdminDashboard: React.FC = () => {
       <AnimatePresence>
         {deleteModalCompany && (
           <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-xs flex items-center justify-center p-4">
-            <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }} className="bg-[#140808] border border-red-600/80 rounded-sm max-w-md w-full p-6 space-y-4">
-              <h3 className="text-sm font-bold uppercase tracking-wider text-red-500 flex items-center">
-                <Trash2 className="w-4 h-4 mr-2 text-red-500" />
+            <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }} className="bg-[#18181B] border border-[#27272A] rounded-xl max-w-md w-full p-6 space-y-4 shadow-2xl">
+              <h3 className="text-sm font-bold uppercase tracking-wider text-red-400 flex items-center">
+                <Trash2 className="w-4 h-4 mr-2 text-red-400" />
                 Permanent Company Deletion
               </h3>
-              <p className="text-xs text-red-300/80 font-mono leading-relaxed">
+              <p className="text-xs text-[#A1A1AA] font-mono leading-relaxed">
                 Warning: This action is permanent and irreversible. This will delete <strong className="text-white">{deleteModalCompany.companyName}</strong> and all associated user records.
               </p>
 
               {actionError && (
-                <div className="text-xs text-red-400 bg-red-950 p-2 rounded border border-red-800">{actionError}</div>
+                <div className="text-xs text-red-400 bg-red-950/40 p-2 rounded border border-red-800/40">{actionError}</div>
               )}
 
               <form onSubmit={handleDeleteCompany} className="space-y-4 font-mono">
                 <div>
-                  <label className="block text-[10px] text-red-400 uppercase tracking-widest mb-1 font-bold">
+                  <label className="block text-[10px] text-[#A1A1AA] uppercase tracking-widest mb-1 font-bold">
                     Type exact company name to confirm: <span className="text-white underline">{deleteModalCompany.companyName}</span>
                   </label>
                   <input
@@ -609,22 +609,22 @@ export const AdminDashboard: React.FC = () => {
                     value={confirmDeleteName}
                     onChange={(e) => setConfirmDeleteName(e.target.value)}
                     placeholder={deleteModalCompany.companyName}
-                    className="w-full bg-[#0A0707] border border-red-950 text-white text-xs p-2 rounded-sm focus:outline-none focus:border-red-600"
+                    className="w-full bg-[#09090B] border border-[#27272A] text-white text-xs p-2.5 rounded-lg focus:outline-none focus:border-[#A1A1AA]"
                   />
                 </div>
 
-                <div className="pt-4 border-t border-red-950/40 flex justify-end space-x-3">
+                <div className="pt-4 border-t border-[#27272A] flex justify-end space-x-3">
                   <button
                     type="button"
                     onClick={() => setDeleteModalCompany(null)}
-                    className="px-4 py-2 bg-transparent hover:bg-red-950/40 text-red-400 text-xs font-bold uppercase tracking-wider rounded-sm cursor-pointer"
+                    className="px-4 py-2 bg-transparent hover:bg-zinc-800 text-[#A1A1AA] text-xs font-bold uppercase tracking-wider rounded-lg cursor-pointer"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
                     disabled={isSubmittingAction || confirmDeleteName.trim().toLowerCase() !== deleteModalCompany.companyName.trim().toLowerCase()}
-                    className="px-4 py-2 bg-red-950 hover:bg-red-900 border border-red-700 text-red-200 text-xs font-bold uppercase tracking-wider rounded-sm cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
+                    className="px-4 py-2 bg-red-950/80 hover:bg-red-900 border border-red-800/60 text-red-200 text-xs font-bold uppercase tracking-wider rounded-lg cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
                   >
                     {isSubmittingAction ? 'Deleting...' : 'Confirm Permanent Delete'}
                   </button>

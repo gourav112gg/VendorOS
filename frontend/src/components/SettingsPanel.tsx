@@ -1467,6 +1467,11 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ initialTab = 'prof
                     <Zap className="w-4 h-4 text-amber-400 fill-amber-400/20" />
                     {currentSub.tier} Edition
                   </span>
+                  {currentSub.manualOverride?.active && (
+                    <span className="inline-flex items-center px-2 py-0.5 rounded-sm text-[8px] font-mono font-bold uppercase tracking-widest text-amber-400 bg-amber-950/40 border border-amber-900/50 mt-1">
+                      ⚡ MANUAL OVERRIDE (SUPER ADMIN)
+                    </span>
+                  )}
                 </div>
 
                 <div className="space-y-1">

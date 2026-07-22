@@ -2,10 +2,11 @@ const User = require("../models/User");
 
 const getProfile = async (req, res) => {
   try {
+    const user = await User.findById(req.user._id).populate("company");
     return res.status(200).json({
       success: true,
       message: "Profile fetched successfully",
-      user: req.user,
+      user: user || req.user,
     });
   } catch (error) {
     console.error(error);
