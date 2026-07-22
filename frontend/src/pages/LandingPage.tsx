@@ -1,15 +1,17 @@
 import React from "react";
 import { Navbar } from "../components/landing/Navbar";
-import { Hero } from "../components/landing/Hero";
-import { OperationsOverview } from "../components/landing/OperationsOverview";
-import { CopilotGrid } from "../components/landing/CopilotGrid";
-import { BuiltOnStrip } from "../components/landing/BuiltOnStrip";
-import { Footer } from "../components/landing/Footer";
+import { HeroSection } from "../components/landing/HeroSection";
+import { AppIntegrationSection } from "../components/landing/AppIntegrationSection";
+import { AutomationHubSection } from "../components/landing/AutomationHubSection";
+import { BentoGridSection } from "../components/landing/BentoGridSection";
+import { PricingSection } from "../components/landing/PricingSection";
+import { LogoCloudSection } from "../components/landing/LogoCloudSection";
+import { FooterSection } from "../components/landing/FooterSection";
 
 interface LandingPageProps {
   onNavigateToLogin: () => void;
   onNavigateToSignUp: () => void;
-  onNavigateToPublic: () => void;
+  onNavigateToPublic?: () => void;
 }
 
 export const LandingPage: React.FC<LandingPageProps> = ({
@@ -18,28 +20,34 @@ export const LandingPage: React.FC<LandingPageProps> = ({
   onNavigateToPublic,
 }) => {
   return (
-    <div className="min-h-screen bg-[#0A0F1F] text-white font-sans selection:bg-indigo-500/30 selection:text-white">
-      {/* Navigation Floating Pill Bar */}
+    <div id="top" className="min-h-screen bg-[#09090B] text-white font-sans selection:bg-neutral-800 selection:text-white">
+      {/* 1. Floating Top Navbar */}
       <Navbar
         onNavigateToLogin={onNavigateToLogin}
         onNavigateToSignUp={onNavigateToSignUp}
         onNavigateToPublic={onNavigateToPublic}
       />
 
-      {/* Hero Section */}
-      <Hero onGetStarted={onNavigateToSignUp} />
+      {/* 2. Hero Section (Dark Canvas) */}
+      <HeroSection onGetStarted={onNavigateToSignUp} />
 
-      {/* Operations Overview Section */}
-      <OperationsOverview />
+      {/* 3. App Integration Dual Showcase Section (Light Slate Canvas) */}
+      <AppIntegrationSection />
 
-      {/* AI Operations Copilot 3-Card Grid */}
-      <CopilotGrid />
+      {/* 4. Interactive Automation Node Network Section (Light Slate Canvas) */}
+      <AutomationHubSection />
 
-      {/* Technology Attribution Strip */}
-      <BuiltOnStrip />
+      {/* 5. Feature Bento Grid Section (Light Slate Canvas) */}
+      <BentoGridSection />
 
-      {/* Footer */}
-      <Footer />
+      {/* 6. Glassmorphism Pricing Section (Substituting News & Articles) */}
+      <PricingSection onSelectPlan={() => onNavigateToSignUp()} />
+
+      {/* 7. Integration Logo Cloud Section (Light Slate Canvas) */}
+      <LogoCloudSection />
+
+      {/* 8. Footer Section (Dark Rounded Card Container) */}
+      <FooterSection />
     </div>
   );
 };
