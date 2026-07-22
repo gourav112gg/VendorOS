@@ -1,110 +1,96 @@
 import React from "react";
-import { ArrowUp, Play, Youtube } from "lucide-react";
+import { motion } from "motion/react";
+import { ArrowUpRight } from "lucide-react";
 
 export const FooterSection: React.FC = () => {
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
-
   return (
-    <footer className="relative min-h-screen flex flex-col justify-center py-16 bg-[#E8E8E8] text-white">
-      <div className="max-w-5xl mx-auto px-4">
-        {/* Dark Rounded Container */}
-        <div className="relative bg-[#09090B] border border-[#27272A] rounded-3xl p-8 sm:p-12 shadow-2xl overflow-hidden font-mono">
-          {/* Giant Stylized Watermark Logo in Corner */}
-          <div className="absolute -right-8 -top-8 text-[180px] font-bold text-white/5 pointer-events-none select-none leading-none">
-            ✕
-          </div>
+    <footer className="relative min-h-screen flex flex-col justify-between pt-16 pb-6 bg-[#000000] text-white overflow-hidden border-t border-neutral-900 font-mono">
+      {/* Top Header Columns Container matching Codezen layout */}
+      <div className="max-w-7xl mx-auto px-6 w-full pt-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-12 text-xs tracking-wider">
+          {/* Column 1: IDENTIFICATION */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: false, amount: 0.25 }}
+            transition={{ duration: 0.5 }}
+            className="space-y-4"
+          >
+            <span className="text-neutral-500 font-bold block text-[10px] uppercase tracking-widest border-b border-neutral-800 pb-2">
+              IDENTIFICATION
+            </span>
+            <div className="space-y-1">
+              <span className="text-white font-bold text-sm block">VENDOROS</span>
+              <p className="text-neutral-400">INTELLIGENT FIELD OPERATIONS PLATFORM</p>
+              <p className="text-neutral-500">ENTERPRISE DISPATCH ECOSYSTEM</p>
+            </div>
+          </motion.div>
 
-          {/* Top Internal Navigation Header */}
-          <div className="border-b border-[#222222] pb-6 mb-10">
-            <div className="flex flex-wrap items-center gap-6 text-sm font-bold text-neutral-200">
-              <a href="#top" className="hover:text-white transition-colors">
-                Home
+          {/* Column 2: CHANNELS */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: false, amount: 0.25 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+            className="space-y-4"
+          >
+            <span className="text-neutral-500 font-bold block text-[10px] uppercase tracking-widest border-b border-neutral-800 pb-2">
+              CHANNELS
+            </span>
+            <div className="space-y-2 text-neutral-300">
+              <a href="mailto:sales@vendoros.com" className="flex items-center space-x-1 hover:text-white transition-colors">
+                <span>EMAIL</span>
+                <ArrowUpRight className="w-3.5 h-3.5 text-neutral-500" />
               </a>
-              <span>•</span>
-              <a href="#features" className="hover:text-white transition-colors">
-                Features
+              <a href="#top" className="flex items-center space-x-1 hover:text-white transition-colors">
+                <span>LINKEDIN</span>
+                <ArrowUpRight className="w-3.5 h-3.5 text-neutral-500" />
               </a>
-              <span>•</span>
-              <a href="#automation" className="hover:text-white transition-colors">
-                Clients
-              </a>
-              <span>•</span>
-              <a href="#bento" className="hover:text-white transition-colors">
-                How it Works
-              </a>
-              <span>•</span>
-              <a href="#pricing" className="hover:text-white transition-colors">
-                Testimonials
+              <a href="#top" className="flex items-center space-x-1 hover:text-white transition-colors">
+                <span>GITHUB</span>
+                <ArrowUpRight className="w-3.5 h-3.5 text-neutral-500" />
               </a>
             </div>
-          </div>
+          </motion.div>
 
-          {/* 3-Column Footer Links Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12 text-xs text-neutral-400">
-            {/* Column 1: Contact & Address */}
-            <div className="space-y-2">
-              <span className="text-white font-bold block mb-1">VendorOS Inc.</span>
-              <p>1234 Operational Parkway, Suite 400</p>
-              <p>San Francisco, CA 94107</p>
-              <p className="text-neutral-300">sales@vendoros.com</p>
+          {/* Column 3: COLOPHON */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: false, amount: 0.25 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="space-y-4"
+          >
+            <span className="text-neutral-500 font-bold block text-[10px] uppercase tracking-widest border-b border-neutral-800 pb-2">
+              COLOPHON
+            </span>
+            <div className="space-y-1 text-neutral-400">
+              <p>COMMUNITY: 10,000+ ENTERPRISES / 100+ TEAMS</p>
+              <p>DOMAINS: DISPATCH / RISK AI / INVENTORY</p>
+              <p>FOCUS: AUTOMATION / SCALABILITY / AI</p>
+              <p className="text-white font-bold pt-1">2026</p>
             </div>
-
-            {/* Column 2: Navigation */}
-            <div className="space-y-2">
-              <span className="text-white font-bold block mb-1">Platform</span>
-              <a href="#features" className="block hover:text-white transition-colors">
-                Customer Stories
-              </a>
-              <a href="#automation" className="block hover:text-white transition-colors">
-                Integrations
-              </a>
-              <a href="#bento" className="block hover:text-white transition-colors">
-                Frameworks & API
-              </a>
-            </div>
-
-            {/* Column 3: Legal & Support */}
-            <div className="space-y-2">
-              <span className="text-white font-bold block mb-1">Resources</span>
-              <a href="#pricing" className="block hover:text-white transition-colors">
-                FAQ & Knowledge Base
-              </a>
-              <a href="#pricing" className="block hover:text-white transition-colors">
-                Help Center
-              </a>
-              <a href="#pricing" className="block hover:text-white transition-colors">
-                Security & Compliance
-              </a>
-            </div>
-          </div>
-
-          {/* Bottom Bar */}
-          <div className="pt-6 border-t border-[#222222] flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-neutral-500">
-            {/* Logo & Social Icons */}
-            <div className="flex items-center space-x-4">
-              <div className="w-6 h-6 rounded-full bg-white text-black font-bold flex items-center justify-center text-xs">
-                ✕
-              </div>
-              <span>VendorOS Social Media</span>
-            </div>
-
-            {/* Back to top */}
-            <button
-              onClick={scrollToTop}
-              className="flex items-center space-x-1 hover:text-white transition-colors cursor-pointer"
-            >
-              <span>Back to top</span>
-              <ArrowUp className="w-3.5 h-3.5" />
-            </button>
-
-            {/* Copyright */}
-            <div>
-              © 2026 VendorOS Inc. All rights reserved.
-            </div>
-          </div>
+          </motion.div>
         </div>
+      </div>
+
+      {/* Giant Full-Width Display Typography: VENDOROS (Codezen Style) */}
+      <div className="w-full text-center overflow-hidden my-auto pt-12 select-none">
+        <motion.h1
+          initial={{ opacity: 0, y: 60 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: false, amount: 0.25 }}
+          transition={{ duration: 0.8 }}
+          className="text-[100px] sm:text-[180px] md:text-[240px] font-black tracking-tighter leading-none text-white uppercase text-center filter drop-shadow-2xl select-none"
+        >
+          VENDOROS
+        </motion.h1>
+      </div>
+
+      {/* Bottom Legal Bar */}
+      <div className="max-w-7xl mx-auto px-6 w-full flex flex-col sm:flex-row items-center justify-between text-[10px] text-neutral-500 border-t border-neutral-900 pt-4">
+        <span>© 2026 VENDOROS INC. ALL RIGHTS RESERVED.</span>
+        <span>INTELLIGENT FIELD OPERATIONS PLATFORM</span>
       </div>
     </footer>
   );

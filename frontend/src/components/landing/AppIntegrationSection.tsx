@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { motion } from "motion/react";
-import { ArrowLeftRight, Clock, Layers, Sparkles } from "lucide-react";
+import { ArrowLeftRight, Clock, Layers } from "lucide-react";
 
 export const AppIntegrationSection: React.FC = () => {
   const [val1, setVal1] = useState("1.0812");
@@ -12,13 +12,13 @@ export const AppIntegrationSection: React.FC = () => {
   };
 
   return (
-    <section id="features" className="relative min-h-screen flex flex-col justify-center py-24 bg-[#E3E3E3] text-black">
-      <div className="max-w-5xl mx-auto px-4 text-center">
+    <section id="features" className="relative h-screen min-h-screen flex flex-col justify-center py-16 bg-[#E3E3E3] text-black overflow-hidden">
+      <div className="max-w-5xl mx-auto px-4 text-center w-full">
         {/* Header */}
         <motion.h2
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          viewport={{ once: false, amount: 0.25 }}
           transition={{ duration: 0.6 }}
           className="text-3xl sm:text-5xl font-mono font-bold tracking-tight mb-4 text-neutral-900"
         >
@@ -26,11 +26,11 @@ export const AppIntegrationSection: React.FC = () => {
         </motion.h2>
 
         <motion.p
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          viewport={{ once: false, amount: 0.25 }}
           transition={{ duration: 0.6, delay: 0.1 }}
-          className="text-xs sm:text-sm font-mono text-neutral-600 max-w-2xl mx-auto mb-16"
+          className="text-xs sm:text-sm font-mono text-neutral-600 max-w-2xl mx-auto mb-12"
         >
           Streamline your work order dispatching, invoicing, and real-time operational risk evaluation directly from your device.
         </motion.p>
@@ -39,9 +39,9 @@ export const AppIntegrationSection: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-left">
           {/* Left Card — Time Saving Automation */}
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            initial={{ opacity: 0, y: 50, scale: 0.94 }}
+            whileInView={{ opacity: 1, y: 0, scale: 1 }}
+            viewport={{ once: false, amount: 0.25 }}
             transition={{ duration: 0.6 }}
             className="bg-white border border-neutral-300 rounded-3xl p-6 sm:p-8 shadow-xl flex flex-col justify-between"
           >
@@ -85,10 +85,10 @@ export const AppIntegrationSection: React.FC = () => {
 
           {/* Right Card — All-in-One Field Solution */}
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.1 }}
+            initial={{ opacity: 0, y: 50, scale: 0.94 }}
+            whileInView={{ opacity: 1, y: 0, scale: 1 }}
+            viewport={{ once: false, amount: 0.25 }}
+            transition={{ duration: 0.6, delay: 0.15 }}
             className="bg-white border border-neutral-300 rounded-3xl p-6 sm:p-8 shadow-xl flex flex-col justify-between"
           >
             <div>
