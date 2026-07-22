@@ -12,7 +12,7 @@ export const AppIntegrationSection: React.FC = () => {
   };
 
   return (
-    <section id="features" className="py-24 bg-[#E3E3E3] text-black">
+    <section id="features" className="relative min-h-screen flex flex-col justify-center py-24 bg-[#E3E3E3] text-black">
       <div className="max-w-5xl mx-auto px-4 text-center">
         {/* Header */}
         <motion.h2

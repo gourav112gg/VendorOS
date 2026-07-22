@@ -6,7 +6,7 @@ export const AutomationHubSection: React.FC = () => {
   const [activeTab, setActiveTab] = useState<"performance" | "automation" | "status">("automation");
 
   return (
-    <section id="automation" className="py-24 bg-[#E8E8E8] text-black border-t border-neutral-300">
+    <section id="automation" className="relative min-h-screen flex flex-col justify-center py-24 bg-[#E8E8E8] text-black border-t border-neutral-300">
       <div className="max-w-5xl mx-auto px-4">
         {/* 3-Column Interactive Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-center">

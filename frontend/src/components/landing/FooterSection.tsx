@@ -7,7 +7,7 @@ export const FooterSection: React.FC = () => {
   };
 
   return (
-    <footer className="py-16 bg-[#E8E8E8] text-white">
+    <footer className="relative min-h-screen flex flex-col justify-center py-16 bg-[#E8E8E8] text-white">
       <div className="max-w-5xl mx-auto px-4">
         {/* Dark Rounded Container */}
         <div className="relative bg-[#09090B] border border-[#27272A] rounded-3xl p-8 sm:p-12 shadow-2xl overflow-hidden font-mono">

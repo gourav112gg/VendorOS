@@ -4,7 +4,7 @@ import { ArrowUpRight, Clock, Lock, ShieldCheck, Smartphone } from "lucide-react
 
 export const BentoGridSection: React.FC = () => {
   return (
-    <section id="bento" className="py-24 bg-[#E8E8E8] text-black border-t border-neutral-300">
+    <section id="bento" className="relative min-h-screen flex flex-col justify-center py-24 bg-[#E8E8E8] text-black border-t border-neutral-300">
       <div className="max-w-5xl mx-auto px-4">
         {/* 3-Column Bento Grid Container */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
