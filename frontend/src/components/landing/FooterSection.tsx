@@ -4,16 +4,16 @@ import { ArrowUpRight } from "lucide-react";
 
 export const FooterSection: React.FC = () => {
   return (
-    <footer className="relative min-h-screen flex flex-col justify-between pt-16 pb-6 bg-[#000000] text-white overflow-hidden border-t border-neutral-900 font-mono">
+    <footer className="relative h-screen min-h-screen flex flex-col justify-between pt-12 pb-6 bg-[#000000] text-white overflow-hidden border-t border-neutral-900 font-mono">
       {/* Top Header Columns Container matching Codezen layout */}
-      <div className="max-w-7xl mx-auto px-6 w-full pt-8">
+      <div className="max-w-7xl mx-auto px-6 w-full pt-6">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12 text-xs tracking-wider">
           {/* Column 1: IDENTIFICATION */}
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: false, amount: 0.25 }}
-            transition={{ duration: 0.5 }}
+            initial={{ opacity: 0, y: 40, scale: 0.95 }}
+            whileInView={{ opacity: 1, y: 0, scale: 1 }}
+            viewport={{ once: false, amount: 0.2 }}
+            transition={{ duration: 0.6 }}
             className="space-y-4"
           >
             <span className="text-neutral-500 font-bold block text-[10px] uppercase tracking-widest border-b border-neutral-800 pb-2">
@@ -28,10 +28,10 @@ export const FooterSection: React.FC = () => {
 
           {/* Column 2: CHANNELS */}
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: false, amount: 0.25 }}
-            transition={{ duration: 0.5, delay: 0.1 }}
+            initial={{ opacity: 0, y: 40, scale: 0.95 }}
+            whileInView={{ opacity: 1, y: 0, scale: 1 }}
+            viewport={{ once: false, amount: 0.2 }}
+            transition={{ duration: 0.6, delay: 0.1 }}
             className="space-y-4"
           >
             <span className="text-neutral-500 font-bold block text-[10px] uppercase tracking-widest border-b border-neutral-800 pb-2">
@@ -53,21 +53,22 @@ export const FooterSection: React.FC = () => {
             </div>
           </motion.div>
 
-          {/* Column 3: COLOPHON */}
+          {/* Column 3: CORE PLATFORM (Replacing COLOPHON with Project Content) */}
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: false, amount: 0.25 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
+            initial={{ opacity: 0, y: 40, scale: 0.95 }}
+            whileInView={{ opacity: 1, y: 0, scale: 1 }}
+            viewport={{ once: false, amount: 0.2 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
             className="space-y-4"
           >
             <span className="text-neutral-500 font-bold block text-[10px] uppercase tracking-widest border-b border-neutral-800 pb-2">
-              COLOPHON
+              CORE PLATFORM
             </span>
             <div className="space-y-1 text-neutral-400">
-              <p>COMMUNITY: 10,000+ ENTERPRISES / 100+ TEAMS</p>
-              <p>DOMAINS: DISPATCH / RISK AI / INVENTORY</p>
-              <p>FOCUS: AUTOMATION / SCALABILITY / AI</p>
+              <p>REAL-TIME DISPATCH ENGINE</p>
+              <p>AI RISK COPILOT & DIAGNOSTICS</p>
+              <p>INVENTORY & FLEET TRACKING</p>
+              <p>MULTI-TENANT VENDOR PORTAL</p>
               <p className="text-white font-bold pt-1">2026</p>
             </div>
           </motion.div>
@@ -75,12 +76,12 @@ export const FooterSection: React.FC = () => {
       </div>
 
       {/* Giant Full-Width Display Typography: VENDOROS (Codezen Style) */}
-      <div className="w-full text-center overflow-hidden my-auto pt-12 select-none">
+      <div className="w-full text-center overflow-hidden my-auto pt-8 select-none">
         <motion.h1
-          initial={{ opacity: 0, y: 60 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: false, amount: 0.25 }}
-          transition={{ duration: 0.8 }}
+          initial={{ opacity: 0, y: 70, scale: 0.92 }}
+          whileInView={{ opacity: 1, y: 0, scale: 1 }}
+          viewport={{ once: false, amount: 0.2 }}
+          transition={{ duration: 0.8, delay: 0.1 }}
           className="text-[100px] sm:text-[180px] md:text-[240px] font-black tracking-tighter leading-none text-white uppercase text-center filter drop-shadow-2xl select-none"
         >
           VENDOROS
@@ -88,10 +89,16 @@ export const FooterSection: React.FC = () => {
       </div>
 
       {/* Bottom Legal Bar */}
-      <div className="max-w-7xl mx-auto px-6 w-full flex flex-col sm:flex-row items-center justify-between text-[10px] text-neutral-500 border-t border-neutral-900 pt-4">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: false, amount: 0.2 }}
+        transition={{ duration: 0.5, delay: 0.3 }}
+        className="max-w-7xl mx-auto px-6 w-full flex flex-col sm:flex-row items-center justify-between text-[10px] text-neutral-500 border-t border-neutral-900 pt-4"
+      >
         <span>© 2026 VENDOROS INC. ALL RIGHTS RESERVED.</span>
         <span>INTELLIGENT FIELD OPERATIONS PLATFORM</span>
-      </div>
+      </motion.div>
     </footer>
   );
 };
