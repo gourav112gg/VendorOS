@@ -390,7 +390,7 @@ export const ThemeManager: React.FC = () => {
       mode === "light"
         ? `
       .bg-\\[\\#E5E5E5\\] { background-color: ${colors.bgSecondary} !important; color: ${colors.textPrimary} !important; }
-      header, nav { background-color: ${colors.bgCard} !important; border-color: ${colors.border} !important; }
+      header:not(.landing-header), nav:not(.landing-nav) { background-color: ${colors.bgCard} !important; border-color: ${colors.border} !important; }
       .hover\\:bg-\\[\\#0A0A0A\\]:hover, .hover\\:bg-\\[\\#111111\\]:hover, .hover\\:bg-\\[\\#1A1A1A\\]:hover { background-color: ${colors.bgSecondary} !important; }
       input, select, textarea { color: ${colors.textPrimary} !important; background-color: ${colors.bgCard} !important; border-color: ${colors.border} !important; }
       ::selection { background: ${colors.accent}33; color: ${colors.textPrimary}; }
