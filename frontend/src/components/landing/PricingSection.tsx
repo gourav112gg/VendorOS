@@ -17,9 +17,9 @@ export const PricingSection: React.FC<PricingSectionProps> = ({ onSelectPlan }) 
 
   return (
     <section id="pricing" className="relative min-h-screen flex flex-col justify-center py-28 bg-[#000000] text-white overflow-hidden">
-      {/* Giant Backdrop Text: Pricing (Positioned directly behind the glassmorphism cards) */}
+      {/* Giant Backdrop Text: Pricing (Positioned directly centered behind the glassmorphism cards) */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
-        <span className="text-[140px] sm:text-[220px] md:text-[280px] font-display font-extrabold text-white/30 tracking-tighter select-none leading-none opacity-90 filter drop-shadow-2xl">
+        <span className="text-[clamp(120px,22vw,360px)] font-display font-extrabold text-white/40 tracking-tighter select-none leading-none opacity-100 filter drop-shadow-2xl">
           Pricing
         </span>
       </div>
@@ -29,11 +29,11 @@ export const PricingSection: React.FC<PricingSectionProps> = ({ onSelectPlan }) 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch pt-12 mb-12">
           {/* Card 1 — Free Plan */}
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            initial={{ opacity: 0, y: 40, scale: 0.94 }}
+            whileInView={{ opacity: 1, y: 0, scale: 1 }}
+            viewport={{ once: false, amount: 0.2 }}
             transition={{ duration: 0.5 }}
-            className="bg-white/[0.03] backdrop-blur-2xl border border-white/15 rounded-3xl p-8 flex flex-col justify-between shadow-[0_16px_40px_rgba(0,0,0,0.6)] hover:bg-white/[0.06] hover:border-white/30 transition-all"
+            className="bg-white/[0.04] backdrop-blur-3xl border border-white/20 rounded-3xl p-8 flex flex-col justify-between shadow-[0_20px_50px_rgba(0,0,0,0.7)] hover:bg-white/[0.08] hover:border-white/35 transition-all"
           >
             <div>
               <span className="text-xs font-mono text-neutral-400 block mb-2 font-medium">
@@ -88,11 +88,11 @@ export const PricingSection: React.FC<PricingSectionProps> = ({ onSelectPlan }) 
 
           {/* Card 2 — Standard Plan (Featured Center Card) */}
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            initial={{ opacity: 0, y: 40, scale: 0.94 }}
+            whileInView={{ opacity: 1, y: 0, scale: 1 }}
+            viewport={{ once: false, amount: 0.2 }}
             transition={{ duration: 0.5, delay: 0.1 }}
-            className="bg-white/[0.06] backdrop-blur-2xl border border-white/25 rounded-3xl p-8 flex flex-col justify-between shadow-[0_20px_50px_rgba(0,0,0,0.8)] relative transform md:-translate-y-2 hover:bg-white/[0.09] transition-all"
+            className="bg-white/[0.08] backdrop-blur-3xl border border-white/30 rounded-3xl p-8 flex flex-col justify-between shadow-[0_25px_60px_rgba(0,0,0,0.9)] relative transform md:-translate-y-2 hover:bg-white/[0.12] transition-all"
           >
             <div>
               <span className="text-xs font-mono text-neutral-200 block mb-2 font-semibold">
@@ -147,11 +147,11 @@ export const PricingSection: React.FC<PricingSectionProps> = ({ onSelectPlan }) 
 
           {/* Card 3 — Enterprise Plan */}
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            initial={{ opacity: 0, y: 40, scale: 0.94 }}
+            whileInView={{ opacity: 1, y: 0, scale: 1 }}
+            viewport={{ once: false, amount: 0.2 }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="bg-white/[0.03] backdrop-blur-2xl border border-white/15 rounded-3xl p-8 flex flex-col justify-between shadow-[0_16px_40px_rgba(0,0,0,0.6)] hover:bg-white/[0.06] hover:border-white/30 transition-all"
+            className="bg-white/[0.04] backdrop-blur-3xl border border-white/20 rounded-3xl p-8 flex flex-col justify-between shadow-[0_20px_50px_rgba(0,0,0,0.7)] hover:bg-white/[0.08] hover:border-white/35 transition-all"
           >
             <div>
               <span className="text-xs font-mono text-neutral-400 block mb-2 font-medium">

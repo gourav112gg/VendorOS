@@ -63,33 +63,39 @@ export const AutomationHubSection: React.FC = () => {
             transition={{ duration: 0.7 }}
             className="relative py-12 flex items-center justify-center"
           >
-            {/* Connecting Outer Ring */}
-            <div className="w-64 h-64 rounded-full border border-dashed border-neutral-400 flex items-center justify-center relative">
-              {/* Radial Nodes */}
-              <div className="absolute -top-4 w-10 h-10 rounded-full bg-white border border-neutral-300 shadow-md flex items-center justify-center text-xs font-bold font-mono">
-                🐙
-              </div>
-              <div className="absolute top-10 -right-4 w-10 h-10 rounded-full bg-white border border-neutral-300 shadow-md flex items-center justify-center text-xs font-bold font-mono">
-                ❖
-              </div>
-              <div className="absolute bottom-10 -right-4 w-10 h-10 rounded-full bg-white border border-neutral-300 shadow-md flex items-center justify-center text-xs font-bold font-mono">
-                💬
-              </div>
-              <div className="absolute -bottom-4 w-10 h-10 rounded-full bg-white border border-neutral-300 shadow-md flex items-center justify-center text-xs font-bold font-mono">
-                
-              </div>
-              <div className="absolute bottom-10 -left-4 w-10 h-10 rounded-full bg-white border border-neutral-300 shadow-md flex items-center justify-center text-xs font-bold font-mono">
-                ⚡
-              </div>
-              <div className="absolute top-10 -left-4 w-10 h-10 rounded-full bg-white border border-neutral-300 shadow-md flex items-center justify-center text-xs font-bold font-mono">
-                ⚙️
-              </div>
+            {/* Rotating Outer Ring & Node Badges Container */}
+            <div className="relative flex items-center justify-center">
+              <motion.div
+                animate={{ rotate: 360 }}
+                transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
+                className="w-64 h-64 rounded-full border-2 border-dashed border-neutral-400 flex items-center justify-center relative shadow-inner"
+              >
+                {/* Radial Nodes */}
+                <div className="absolute -top-4 w-10 h-10 rounded-full bg-white border border-neutral-300 shadow-md flex items-center justify-center text-xs font-bold font-mono">
+                  🐙
+                </div>
+                <div className="absolute top-10 -right-4 w-10 h-10 rounded-full bg-white border border-neutral-300 shadow-md flex items-center justify-center text-xs font-bold font-mono">
+                  ❖
+                </div>
+                <div className="absolute bottom-10 -right-4 w-10 h-10 rounded-full bg-white border border-neutral-300 shadow-md flex items-center justify-center text-xs font-bold font-mono">
+                  💬
+                </div>
+                <div className="absolute -bottom-4 w-10 h-10 rounded-full bg-white border border-neutral-300 shadow-md flex items-center justify-center text-xs font-bold font-mono">
+                  
+                </div>
+                <div className="absolute bottom-10 -left-4 w-10 h-10 rounded-full bg-white border border-neutral-300 shadow-md flex items-center justify-center text-xs font-bold font-mono">
+                  ⚡
+                </div>
+                <div className="absolute top-10 -left-4 w-10 h-10 rounded-full bg-white border border-neutral-300 shadow-md flex items-center justify-center text-xs font-bold font-mono">
+                  ⚙️
+                </div>
+              </motion.div>
 
-              {/* Center Automation Pill */}
+              {/* Fixed Upright Center Automation Pill */}
               <motion.div
                 animate={{ scale: [1, 1.05, 1] }}
                 transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-                className="bg-black text-white border border-neutral-700 px-6 py-2.5 rounded-full font-mono text-xs font-bold shadow-2xl flex items-center gap-2 z-10"
+                className="absolute bg-black text-white border border-neutral-700 px-6 py-2.5 rounded-full font-mono text-xs font-bold shadow-2xl flex items-center gap-2 z-10"
               >
                 <span>&lt; Automation &gt;</span>
               </motion.div>

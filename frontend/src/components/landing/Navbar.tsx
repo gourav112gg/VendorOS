@@ -45,8 +45,8 @@ export const Navbar: React.FC<NavbarProps> = ({
       transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
       className="landing-header fixed inset-x-0 top-4 z-[200] max-w-5xl mx-auto px-4"
     >
-      {/* Heavy Frosted Glassmorphism Floating Pill Bar */}
-      <nav className="landing-nav bg-black/60 backdrop-blur-2xl border border-white/20 rounded-full px-5 py-2.5 shadow-[0_8px_32px_0_rgba(0,0,0,0.5)] flex items-center justify-between text-white">
+      {/* Heavy Ultra-Frosted Glassmorphism Floating Pill Bar */}
+      <nav className="landing-nav bg-black/40 backdrop-blur-3xl border border-white/25 rounded-full px-5 py-2.5 shadow-[0_16px_40px_rgba(0,0,0,0.6)] ring-1 ring-white/10 flex items-center justify-between text-white">
         {/* Brand Identity */}
         <a href="#top" className="flex items-center space-x-2.5 group">
           <div className="w-7 h-7 rounded-full bg-white flex items-center justify-center text-black font-mono text-sm font-extrabold shadow-md group-hover:scale-105 transition-transform">

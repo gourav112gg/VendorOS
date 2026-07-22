@@ -75,14 +75,14 @@ export const FooterSection: React.FC = () => {
         </div>
       </div>
 
-      {/* Giant Full-Width Display Typography: VENDOROS (Codezen Style) */}
-      <div className="w-full text-center overflow-hidden my-auto pt-8 select-none">
+      {/* Edge-to-Edge Display Typography: VENDOROS (Codezen Style) */}
+      <div className="w-full text-center overflow-hidden my-auto py-4 select-none px-0">
         <motion.h1
-          initial={{ opacity: 0, y: 70, scale: 0.92 }}
+          initial={{ opacity: 0, y: 60, scale: 0.95 }}
           whileInView={{ opacity: 1, y: 0, scale: 1 }}
           viewport={{ once: false, amount: 0.2 }}
           transition={{ duration: 0.8, delay: 0.1 }}
-          className="text-[100px] sm:text-[180px] md:text-[240px] font-black tracking-tighter leading-none text-white uppercase text-center filter drop-shadow-2xl select-none"
+          className="text-[clamp(60px,18.5vw,340px)] font-black tracking-tighter leading-none text-white uppercase text-center filter drop-shadow-2xl select-none block w-full px-0 mx-0 whitespace-nowrap"
         >
           VENDOROS
         </motion.h1>
