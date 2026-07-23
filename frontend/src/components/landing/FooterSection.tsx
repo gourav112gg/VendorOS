@@ -1,12 +1,27 @@
-import React from "react";
-import { motion } from "motion/react";
+import React, { useRef } from "react";
+import { motion, useScroll, useTransform } from "motion/react";
 import { ArrowUpRight } from "lucide-react";
 
 export const FooterSection: React.FC = () => {
+  const footerRef = useRef<HTMLElement>(null);
+
+  const { scrollYProgress } = useScroll({
+    target: footerRef,
+    offset: ["start end", "end end"],
+  });
+
+  // Uniform scaling with low horizontal stretch as user scrolls to footer bottom
+  const textScale = useTransform(scrollYProgress, [0, 0.65, 1], [0.72, 1.0, 1.03]);
+  const textScaleX = useTransform(scrollYProgress, [0, 0.65, 1], [0.72, 1.0, 1.04]);
+  const textOpacity = useTransform(scrollYProgress, [0, 0.25, 1], [0.3, 1, 1]);
+
   return (
-    <footer className="relative min-h-screen md:h-screen flex flex-col justify-between pt-10 md:pt-12 pb-6 bg-[#000000] text-white overflow-hidden border-t border-neutral-900 font-mono">
+    <footer
+      ref={footerRef}
+      className="relative min-h-screen md:h-screen flex flex-col justify-between pt-10 md:pt-12 pb-6 bg-[#000000] text-white overflow-hidden border-t border-neutral-900 font-mono"
+    >
       {/* Top Header Columns Container matching Codezen layout */}
-      <div className="max-w-7xl mx-auto px-6 w-full pt-6">
+      <div className="max-w-7xl mx-auto px-6 w-full pt-6 relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12 text-xs tracking-wider">
           {/* Column 1: IDENTIFICATION */}
           <motion.div
@@ -38,7 +53,10 @@ export const FooterSection: React.FC = () => {
               CHANNELS
             </span>
             <div className="space-y-2 text-neutral-300">
-              <a href="mailto:sales@vendoros.com" className="flex items-center space-x-1 hover:text-white transition-colors">
+              <a
+                href="mailto:sales@vendoros.com"
+                className="flex items-center space-x-1 hover:text-white transition-colors"
+              >
                 <span>EMAIL</span>
                 <ArrowUpRight className="w-3.5 h-3.5 text-neutral-500" />
               </a>
@@ -63,7 +81,7 @@ export const FooterSection: React.FC = () => {
             </div>
           </motion.div>
 
-          {/* Column 3: CORE PLATFORM (Replacing COLOPHON with Project Content) */}
+          {/* Column 3: CORE PLATFORM */}
           <motion.div
             initial={{ opacity: 0, y: 40, scale: 0.95 }}
             whileInView={{ opacity: 1, y: 0, scale: 1 }}
@@ -85,14 +103,15 @@ export const FooterSection: React.FC = () => {
         </div>
       </div>
 
-      {/* Edge-to-Edge Display Typography: VENDOROS (Codezen Style) */}
-      <div className="w-full text-center overflow-hidden my-auto py-4 select-none px-0">
+      {/* Scroll-Driven Scaling Edge-to-Edge Sticky Typography: VENDOROS */}
+      <div className="sticky top-1/4 my-auto w-full text-center overflow-hidden py-4 select-none px-0 z-20">
         <motion.h1
-          initial={{ opacity: 0, y: 60, scale: 0.95 }}
-          whileInView={{ opacity: 1, y: 0, scale: 1 }}
-          viewport={{ once: false, amount: 0.2 }}
-          transition={{ duration: 0.8, delay: 0.1 }}
-          className="text-[clamp(60px,18.5vw,340px)] font-black tracking-tighter leading-none text-white uppercase text-center filter drop-shadow-2xl select-none block w-full px-0 mx-0 whitespace-nowrap"
+          style={{
+            scale: textScale,
+            scaleX: textScaleX,
+            opacity: textOpacity,
+          }}
+          className="text-[clamp(60px,18.5vw,340px)] font-black tracking-tighter leading-none text-white uppercase text-center filter drop-shadow-2xl select-none block w-full px-0 mx-0 whitespace-nowrap origin-center"
         >
           VENDOROS
         </motion.h1>
@@ -104,7 +123,7 @@ export const FooterSection: React.FC = () => {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: false, amount: 0.2 }}
         transition={{ duration: 0.5, delay: 0.3 }}
-        className="max-w-7xl mx-auto px-6 w-full flex flex-col sm:flex-row items-center justify-between text-[10px] text-neutral-500 border-t border-neutral-900 pt-4"
+        className="max-w-7xl mx-auto px-6 w-full flex flex-col sm:flex-row items-center justify-between text-[10px] text-neutral-500 border-t border-neutral-900 pt-4 relative z-30 bg-black"
       >
         <span>© 2026 VENDOROS INC. ALL RIGHTS RESERVED.</span>
         <span>INTELLIGENT FIELD OPERATIONS PLATFORM</span>

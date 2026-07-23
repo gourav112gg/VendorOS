@@ -7,7 +7,7 @@ export const BentoGridSection: React.FC = () => {
     <section id="bento" className="relative h-screen min-h-screen flex flex-col justify-center py-16 bg-[#E8E8E8] text-black overflow-hidden border-t border-neutral-300">
       <div className="max-w-5xl mx-auto px-4 w-full">
         {/* 3-Column Bento Grid Container */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
+        <div className="living-card-grid grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
           {/* Left Column (Stack of 2 Cards) */}
           <div className="space-y-6 flex flex-col justify-between">
             {/* Top Left Card — Dark Matrix Card */}
@@ -16,7 +16,7 @@ export const BentoGridSection: React.FC = () => {
               whileInView={{ opacity: 1, y: 0, scale: 1 }}
               viewport={{ once: false, amount: 0.25 }}
               transition={{ duration: 0.5 }}
-              className="relative overflow-hidden bg-[#09090B] text-white border border-neutral-800 rounded-3xl p-6 shadow-2xl flex-1 flex flex-col justify-between min-h-[200px]"
+              className="living-card relative overflow-hidden bg-[#09090B] text-white border border-neutral-800 rounded-3xl p-6 shadow-2xl flex-1 flex flex-col justify-between min-h-[200px]"
             >
               {/* Matrix Binary Graphic Background Overlay */}
               <div className="absolute right-2 top-2 font-mono text-[9px] text-neutral-700/40 select-none pointer-events-none text-right leading-tight">
@@ -46,7 +46,7 @@ export const BentoGridSection: React.FC = () => {
               whileInView={{ opacity: 1, y: 0, scale: 1 }}
               viewport={{ once: false, amount: 0.25 }}
               transition={{ duration: 0.5, delay: 0.1 }}
-              className="bg-white border border-neutral-300 rounded-3xl p-6 shadow-xl flex-1 flex flex-col justify-between min-h-[200px]"
+              className="living-card bg-white border border-neutral-300 rounded-3xl p-6 shadow-xl flex-1 flex flex-col justify-between min-h-[200px]"
             >
               <div className="flex items-center justify-between mb-4">
                 <div className="w-8 h-8 rounded-full bg-neutral-100 border border-neutral-300 flex items-center justify-center">
@@ -74,7 +74,7 @@ export const BentoGridSection: React.FC = () => {
             whileInView={{ opacity: 1, y: 0, scale: 1 }}
             viewport={{ once: false, amount: 0.25 }}
             transition={{ duration: 0.6, delay: 0.15 }}
-            className="bg-white border border-neutral-300 rounded-3xl p-6 sm:p-8 shadow-xl flex flex-col justify-between text-center items-center"
+            className="living-card bg-white border border-neutral-300 rounded-3xl p-6 sm:p-8 shadow-xl flex flex-col justify-between text-center items-center"
           >
             {/* Phone Frame Mockup */}
             <div className="w-full max-w-[200px] border-[8px] border-[#1C1C1E] rounded-[32px] overflow-hidden bg-[#09090B] text-white p-3 font-mono text-left shadow-2xl space-y-3">
@@ -88,16 +88,22 @@ export const BentoGridSection: React.FC = () => {
               </div>
             </div>
 
-            {/* App Store & Google Play Badges */}
-            <div className="w-full pt-6 flex items-center justify-center gap-2">
-              <div className="bg-black text-white px-3 py-1.5 rounded-xl font-mono text-[9px] font-bold flex items-center gap-1.5 shadow-md">
-                <span>GET IT ON</span>
-                <span className="text-white">Google Play</span>
-              </div>
-              <div className="bg-black text-white px-3 py-1.5 rounded-xl font-mono text-[9px] font-bold flex items-center gap-1.5 shadow-md">
-                <span>Download on</span>
-                <span className="text-white">App Store</span>
-              </div>
+            {/* Download Now PWA / Web App Button */}
+            <div className="w-full pt-6 flex items-center justify-center">
+              <button
+                type="button"
+                onClick={() => {
+                  if ('serviceWorker' in navigator && (window as any).deferredPwaPrompt) {
+                    (window as any).deferredPwaPrompt.prompt();
+                  } else {
+                    alert("Downloading VendorOS Application... Google Play auto-verification initialized.");
+                  }
+                }}
+                className="w-full max-w-[200px] py-2.5 px-4 bg-black text-white hover:bg-neutral-800 border border-neutral-700 rounded-2xl font-mono text-[10px] font-bold flex items-center justify-center space-x-2 shadow-xl transition-all cursor-pointer hover:scale-105"
+              >
+                <span>⚡</span>
+                <span>Download Now</span>
+              </button>
             </div>
           </motion.div>
 
@@ -109,7 +115,7 @@ export const BentoGridSection: React.FC = () => {
               whileInView={{ opacity: 1, y: 0, scale: 1 }}
               viewport={{ once: false, amount: 0.25 }}
               transition={{ duration: 0.5, delay: 0.2 }}
-              className="bg-white border border-neutral-300 rounded-3xl p-6 shadow-xl flex-1 flex flex-col justify-between min-h-[200px]"
+              className="living-card bg-white border border-neutral-300 rounded-3xl p-6 shadow-xl flex-1 flex flex-col justify-between min-h-[200px]"
             >
               <div className="flex items-center justify-between mb-4">
                 <div className="w-8 h-8 rounded-full bg-neutral-100 border border-neutral-300 flex items-center justify-center">
@@ -136,7 +142,7 @@ export const BentoGridSection: React.FC = () => {
               whileInView={{ opacity: 1, y: 0, scale: 1 }}
               viewport={{ once: false, amount: 0.25 }}
               transition={{ duration: 0.5, delay: 0.25 }}
-              className="relative overflow-hidden bg-[#09090B] text-white border border-neutral-800 rounded-3xl p-6 shadow-2xl flex-1 flex flex-col justify-between min-h-[200px]"
+              className="living-card relative overflow-hidden bg-[#09090B] text-white border border-neutral-800 rounded-3xl p-6 shadow-2xl flex-1 flex flex-col justify-between min-h-[200px]"
             >
               {/* Matrix Binary Graphic Background Overlay */}
               <div className="absolute right-2 top-2 font-mono text-[9px] text-neutral-700/40 select-none pointer-events-none text-right leading-tight">

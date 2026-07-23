@@ -26,14 +26,14 @@ export const PricingSection: React.FC<PricingSectionProps> = ({ onSelectPlan }) 
 
       <div className="relative max-w-6xl mx-auto px-4 z-10">
         {/* 3 Glassmorphism Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch pt-12 mb-12">
+        <div className="living-card-grid grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch pt-12 mb-12">
           {/* Card 1 — Free Plan */}
           <motion.div
             initial={{ opacity: 0, y: 40, scale: 0.94 }}
             whileInView={{ opacity: 1, y: 0, scale: 1 }}
             viewport={{ once: false, amount: 0.2 }}
             transition={{ duration: 0.5 }}
-            className="bg-white/[0.04] backdrop-blur-3xl border border-white/20 rounded-3xl p-8 flex flex-col justify-between shadow-[0_20px_50px_rgba(0,0,0,0.7)] hover:bg-white/[0.08] hover:border-white/35 transition-all"
+            className="living-card bg-white/[0.04] backdrop-blur-3xl border border-white/20 rounded-3xl p-8 flex flex-col justify-between shadow-[0_20px_50px_rgba(0,0,0,0.7)] hover:bg-white/[0.08] hover:border-white/35 transition-all"
           >
             <div>
               <span className="text-xs font-mono text-neutral-400 block mb-2 font-medium">
@@ -92,7 +92,7 @@ export const PricingSection: React.FC<PricingSectionProps> = ({ onSelectPlan }) 
             whileInView={{ opacity: 1, y: 0, scale: 1 }}
             viewport={{ once: false, amount: 0.2 }}
             transition={{ duration: 0.5, delay: 0.1 }}
-            className="bg-white/[0.08] backdrop-blur-3xl border border-white/30 rounded-3xl p-8 flex flex-col justify-between shadow-[0_25px_60px_rgba(0,0,0,0.9)] relative transform md:-translate-y-2 hover:bg-white/[0.12] transition-all"
+            className="living-card bg-white/[0.08] backdrop-blur-3xl border border-white/30 rounded-3xl p-8 flex flex-col justify-between shadow-[0_25px_60px_rgba(0,0,0,0.9)] relative transform md:-translate-y-2 hover:bg-white/[0.12] transition-all"
           >
             <div>
               <span className="text-xs font-mono text-neutral-200 block mb-2 font-semibold">
@@ -151,7 +151,7 @@ export const PricingSection: React.FC<PricingSectionProps> = ({ onSelectPlan }) 
             whileInView={{ opacity: 1, y: 0, scale: 1 }}
             viewport={{ once: false, amount: 0.2 }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="bg-white/[0.04] backdrop-blur-3xl border border-white/20 rounded-3xl p-8 flex flex-col justify-between shadow-[0_20px_50px_rgba(0,0,0,0.7)] hover:bg-white/[0.08] hover:border-white/35 transition-all"
+            className="living-card bg-white/[0.04] backdrop-blur-3xl border border-white/20 rounded-3xl p-8 flex flex-col justify-between shadow-[0_20px_50px_rgba(0,0,0,0.7)] hover:bg-white/[0.08] hover:border-white/35 transition-all"
           >
             <div>
               <span className="text-xs font-mono text-neutral-400 block mb-2 font-medium">

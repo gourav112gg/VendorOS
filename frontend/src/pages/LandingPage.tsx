@@ -20,6 +20,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
   onNavigateToSignUp,
   onNavigateToPublic,
 }) => {
+  // Lenis smooth scroll initialization
   useEffect(() => {
     const lenis = new Lenis({
       duration: 1.2,
@@ -37,6 +38,34 @@ export const LandingPage: React.FC<LandingPageProps> = ({
     return () => {
       lenis.destroy();
     };
+  }, []);
+
+  // Intersection Observer for 50% entrance queueing & 66.67% (2/3) full animation triggering
+  useEffect(() => {
+    const sections = Array.from(document.querySelectorAll<HTMLElement>("section, footer"));
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          const ratio = entry.intersectionRatio;
+          const target = entry.target as HTMLElement;
+
+          if (ratio >= 0.5) {
+            target.classList.add("section-entrance-queued");
+          }
+          if (ratio >= 0.667) {
+            target.classList.add("section-animation-active");
+          }
+        });
+      },
+      {
+        threshold: [0.5, 0.667],
+      }
+    );
+
+    sections.forEach((sec) => observer.observe(sec));
+
+    return () => observer.disconnect();
   }, []);
 
   return (

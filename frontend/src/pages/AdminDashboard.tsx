@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSuperAdmin } from '../context/AdminContext';
 import adminApi from '../services/adminApi';
+import dbStore from '../services/store';
 import {
   ShieldCheck, LogOut, Building, Users, Activity, FileText, AlertTriangle,
   RefreshCw, Search, Filter, Shield, Zap, Trash2, Sliders, CheckCircle, XCircle
@@ -435,34 +436,58 @@ export const AdminDashboard: React.FC = () => {
                       <th className="px-6 py-3.5">Role</th>
                       <th className="px-6 py-3.5">Associated Company</th>
                       <th className="px-6 py-3.5">Phone</th>
-                      <th className="px-6 py-3.5">Created At</th>
+                      <th className="px-6 py-3.5">Status</th>
+                      <th className="px-6 py-3.5 text-right">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-[#27272A]">
-                    {filteredUsers.map(u => (
-                      <tr key={u._id} className="hover:bg-[#27272A]/40 transition-colors">
-                        <td className="px-6 py-4">
-                          <span className="font-bold text-[#FAFAFA] block">{u.name}</span>
-                          <span className="text-[10px] text-[#71717A] block">{u.email}</span>
-                        </td>
-                        <td className="px-6 py-4">
-                          <span className="px-2.5 py-0.5 bg-zinc-800 border border-zinc-700 text-zinc-300 text-[10px] font-bold uppercase tracking-wider rounded">
-                            {u.role}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4 text-[#A1A1AA]">
-                          {u.company ? (
-                            <span className="font-bold text-white">{u.company.companyName}</span>
-                          ) : (
-                            <span className="text-zinc-600 italic">No Company</span>
-                          )}
-                        </td>
-                        <td className="px-6 py-4 text-[#71717A] font-mono">{u.phone || 'N/A'}</td>
-                        <td className="px-6 py-4 text-[10px] text-[#71717A] font-mono">
-                          {new Date(u.createdAt).toLocaleDateString()}
-                        </td>
-                      </tr>
-                    ))}
+                    {filteredUsers.map(u => {
+                      const isLocked = u.failedAttempts >= 5 || u.accountStatus === 'disabled' || (u.lockoutUntil && new Date(u.lockoutUntil) > new Date());
+                      return (
+                        <tr key={u._id} className="hover:bg-[#27272A]/40 transition-colors">
+                          <td className="px-6 py-4">
+                            <span className="font-bold text-[#FAFAFA] block">{u.name}</span>
+                            <span className="text-[10px] text-[#71717A] block">{u.email}</span>
+                          </td>
+                          <td className="px-6 py-4">
+                            <span className="px-2.5 py-0.5 bg-zinc-800 border border-zinc-700 text-zinc-300 text-[10px] font-bold uppercase tracking-wider rounded">
+                              {u.role}
+                            </span>
+                          </td>
+                          <td className="px-6 py-4 text-[#A1A1AA]">
+                            {u.company ? (
+                              <span className="font-bold text-white">{u.company.companyName}</span>
+                            ) : (
+                              <span className="text-zinc-600 italic">No Company</span>
+                            )}
+                          </td>
+                          <td className="px-6 py-4 text-[#71717A] font-mono">{u.phone || 'N/A'}</td>
+                          <td className="px-6 py-4">
+                            <span className={`px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider border ${
+                              isLocked
+                                ? 'bg-red-950/40 text-red-400 border-red-800/40'
+                                : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30'
+                            }`}>
+                              {isLocked ? 'DISABLED (LOCKOUT)' : 'ACTIVE'}
+                            </span>
+                          </td>
+                          <td className="px-6 py-4 text-right">
+                            <button
+                              onClick={() => {
+                                if (confirm(`Re-enable and unlock account access for ${u.name}?`)) {
+                                  dbStore.clearUserLockout(u._id || u.id || u.email);
+                                  setRefreshTrigger(prev => prev + 1);
+                                  alert(`Account for ${u.name} has been unlocked and re-enabled successfully.`);
+                                }
+                              }}
+                              className="px-3 py-1 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 text-[10px] font-bold uppercase tracking-wider rounded-md transition-all cursor-pointer shadow-sm"
+                            >
+                              Unlock / Re-Enable
+                            </button>
+                          </td>
+                        </tr>
+                      );
+                    })}
                   </tbody>
                 </table>
               </div>

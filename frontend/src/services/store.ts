@@ -1317,6 +1317,24 @@ class SimulatedStore {
 
     this.save();
   }
+
+  public clearUserLockout(userIdOrEmail: string): void {
+    const userIndex = this.state.users.findIndex(
+      u => u.id === userIdOrEmail || u.email.toLowerCase() === userIdOrEmail.toLowerCase()
+    );
+    if (userIndex >= 0) {
+      const u = this.state.users[userIndex] as any;
+      u.failedAttempts = 0;
+      u.lockoutUntil = null;
+      u.accountStatus = 'active';
+      this.save();
+    }
+    // Also re-activate session if needed
+    if (!this.state.activeSessions.includes(userIdOrEmail)) {
+      this.state.activeSessions.push(userIdOrEmail);
+    }
+    this.save();
+  }
 }
 
 export const dbStore = new SimulatedStore();
