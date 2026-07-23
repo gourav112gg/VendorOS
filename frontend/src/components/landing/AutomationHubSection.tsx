@@ -6,7 +6,7 @@ export const AutomationHubSection: React.FC = () => {
   const [activeTab, setActiveTab] = useState<"performance" | "automation" | "status">("automation");
 
   return (
-    <section id="automation" className="relative h-screen min-h-screen flex flex-col justify-center py-16 bg-[#E8E8E8] text-black overflow-hidden border-t border-neutral-300">
+    <section id="automation" className="relative min-h-screen lg:h-screen flex flex-col justify-center py-12 lg:py-16 bg-[#E8E8E8] text-black overflow-hidden border-t border-neutral-300">
       <div className="max-w-5xl mx-auto px-4 w-full">
         {/* 3-Column Interactive Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-center">
@@ -61,14 +61,14 @@ export const AutomationHubSection: React.FC = () => {
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: false, amount: 0.25 }}
             transition={{ duration: 0.7 }}
-            className="relative py-12 flex items-center justify-center"
+            className="relative py-8 lg:py-12 flex items-center justify-center"
           >
             {/* Rotating Outer Ring & Node Badges Container */}
             <div className="relative flex items-center justify-center">
               <motion.div
                 animate={{ rotate: 360 }}
                 transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-                className="w-64 h-64 rounded-full border-2 border-dashed border-neutral-400 flex items-center justify-center relative shadow-inner"
+                className="w-52 h-52 sm:w-64 sm:h-64 rounded-full border-2 border-dashed border-neutral-400 flex items-center justify-center relative shadow-inner"
               >
                 {/* Radial Nodes */}
                 <div className="absolute -top-4 w-10 h-10 rounded-full bg-white border border-neutral-300 shadow-md flex items-center justify-center text-xs font-bold font-mono">

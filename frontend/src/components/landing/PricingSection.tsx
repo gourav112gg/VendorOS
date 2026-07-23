@@ -19,7 +19,7 @@ export const PricingSection: React.FC<PricingSectionProps> = ({ onSelectPlan }) 
     <section id="pricing" className="relative min-h-screen flex flex-col justify-center py-28 bg-[#000000] text-white overflow-hidden">
       {/* Giant Backdrop Text: Pricing (Positioned directly centered behind the glassmorphism cards) */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
-        <span className="text-[clamp(120px,22vw,360px)] font-display font-extrabold text-white/40 tracking-tighter select-none leading-none opacity-100 filter drop-shadow-2xl">
+        <span className="text-[clamp(70px,18vw,360px)] font-display font-extrabold text-white/40 tracking-tighter select-none leading-none opacity-100 filter drop-shadow-2xl">
           Pricing
         </span>
       </div>

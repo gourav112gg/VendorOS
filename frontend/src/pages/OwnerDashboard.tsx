@@ -1134,7 +1134,7 @@ export const OwnerDashboard: React.FC = () => {
                     />
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-[10px] font-mono text-[#666666] uppercase tracking-wider mb-1">Customer Name *</label>
                       <input
@@ -1159,7 +1159,7 @@ export const OwnerDashboard: React.FC = () => {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-[10px] font-mono text-[#666666] uppercase tracking-wider mb-1">Service Address *</label>
                       <input

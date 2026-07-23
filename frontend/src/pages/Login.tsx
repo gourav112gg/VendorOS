@@ -106,7 +106,7 @@ export const Login: React.FC<LoginProps> = ({
         initial={{ opacity: 0, scale: 0.96, y: 15 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-        className="relative max-w-4xl w-full h-[620px] max-h-[90vh] bg-white rounded-3xl overflow-hidden shadow-[0_25px_60px_rgba(0,0,0,0.35)] border border-white/50 flex flex-col md:flex-row z-10"
+        className="relative max-w-4xl w-full min-h-[540px] md:h-[620px] max-h-[92vh] bg-white rounded-3xl overflow-hidden shadow-[0_25px_60px_rgba(0,0,0,0.35)] border border-white/50 flex flex-col md:flex-row z-10"
       >
         {/* Left Form Panel */}
         <div className="w-full md:w-1/2 h-full p-6 sm:p-8 bg-white flex flex-col justify-between overflow-y-auto">

@@ -4,7 +4,7 @@ import { ArrowUpRight } from "lucide-react";
 
 export const FooterSection: React.FC = () => {
   return (
-    <footer className="relative h-screen min-h-screen flex flex-col justify-between pt-12 pb-6 bg-[#000000] text-white overflow-hidden border-t border-neutral-900 font-mono">
+    <footer className="relative min-h-screen md:h-screen flex flex-col justify-between pt-10 md:pt-12 pb-6 bg-[#000000] text-white overflow-hidden border-t border-neutral-900 font-mono">
       {/* Top Header Columns Container matching Codezen layout */}
       <div className="max-w-7xl mx-auto px-6 w-full pt-6">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12 text-xs tracking-wider">
