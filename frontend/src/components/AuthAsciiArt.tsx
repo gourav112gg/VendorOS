@@ -54,10 +54,18 @@ export const AuthAsciiArt: React.FC<AuthAsciiArtProps> = ({
     let animationFrameId: number;
     let time = 0;
 
+    const updateCanvasDimensions = () => {
+      if (!canvas.parentElement) return;
+      const rect = canvas.parentElement.getBoundingClientRect();
+      canvas.width = rect.width || 500;
+      canvas.height = rect.height || 620;
+    };
+    updateCanvasDimensions();
+
     const render = () => {
       time += 0.02;
-      const width = (canvas.width = canvas.parentElement?.clientWidth || 500);
-      const height = (canvas.height = canvas.parentElement?.clientHeight || 650);
+      const width = canvas.width;
+      const height = canvas.height;
 
       // Clean White Background
       ctx.fillStyle = "#FFFFFF";
@@ -131,7 +139,7 @@ export const AuthAsciiArt: React.FC<AuthAsciiArtProps> = ({
     render();
 
     const handleResize = () => {
-      render();
+      updateCanvasDimensions();
     };
 
     window.addEventListener("resize", handleResize);

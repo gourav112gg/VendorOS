@@ -52,6 +52,8 @@ const SuperAdminPortalApp: React.FC = () => {
   );
 };
 
+import Lenis from "lenis";
+
 const MainLayout: React.FC = () => {
   if (window.location.pathname.startsWith('/super-admin')) {
     return <SuperAdminPortalApp />;
@@ -64,6 +66,25 @@ const MainLayout: React.FC = () => {
   const [showShortcutsHelp, setShowShortcutsHelp] = useState(false);
   const [toastMsg, setToastMsg] = useState<string | null>(null);
   const toastTimeoutRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    const lenis = new Lenis({
+      duration: 1.2,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      smoothWheel: true,
+      wheelMultiplier: 1.0,
+    });
+
+    function raf(time: number) {
+      lenis.raf(time);
+      requestAnimationFrame(raf);
+    }
+    requestAnimationFrame(raf);
+
+    return () => {
+      lenis.destroy();
+    };
+  }, []);
 
   useEffect(() => {
     if (!user) return;

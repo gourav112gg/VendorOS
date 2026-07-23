@@ -69,11 +69,18 @@ export const Login: React.FC<LoginProps> = ({
     }
   };
 
-  const handlePrepopulate = (presetEmail: string, role: "owner" | "vendor" | "customer") => {
+  const handlePrepopulateAndSubmit = async (presetEmail: string, role: "owner" | "vendor" | "customer") => {
     setEmail(presetEmail);
     setPassword("password123");
     setRoleType(role);
     setError("");
+    setLoading(true);
+    try {
+      await login(presetEmail, "password123", role);
+    } catch (err: any) {
+      setError(sanitizeErrorMessage(err.message || "Login failed."));
+      setLoading(false);
+    }
   };
 
   return (
@@ -99,10 +106,10 @@ export const Login: React.FC<LoginProps> = ({
         initial={{ opacity: 0, scale: 0.96, y: 15 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-        className="relative max-w-4xl w-full bg-white rounded-3xl overflow-hidden shadow-[0_25px_60px_rgba(0,0,0,0.35)] border border-white/50 flex flex-col md:flex-row z-10"
+        className="relative max-w-4xl w-full h-[620px] max-h-[90vh] bg-white rounded-3xl overflow-hidden shadow-[0_25px_60px_rgba(0,0,0,0.35)] border border-white/50 flex flex-col md:flex-row z-10"
       >
         {/* Left Form Panel */}
-        <div className="w-full md:w-1/2 p-8 sm:p-10 md:p-12 bg-white flex flex-col justify-between">
+        <div className="w-full md:w-1/2 h-full p-6 sm:p-8 bg-white flex flex-col justify-between overflow-y-auto">
           <div>
             {/* Top Brand Identity Lightning Icon */}
             <div className="mb-6 flex items-center justify-between">
@@ -254,29 +261,29 @@ export const Login: React.FC<LoginProps> = ({
             </form>
 
             {/* Quick Demo Prepopulate Pill Bar */}
-            <div className="mt-5 pt-4 border-t border-neutral-100 text-center">
-              <span className="text-[10px] font-mono text-neutral-400 block mb-2">
-                Quick Demo Presets:
+            <div className="mt-4 pt-3 border-t border-neutral-100 text-center">
+              <span className="text-[10px] font-mono text-neutral-400 block mb-1.5">
+                Quick 1-Click Demo Login:
               </span>
               <div className="flex flex-wrap justify-center gap-1.5">
                 <button
                   type="button"
-                  onClick={() => handlePrepopulate("saransh@gargops.com", "owner")}
-                  className="px-2.5 py-1 bg-neutral-100 hover:bg-neutral-200 rounded-full text-[10px] font-mono text-neutral-700 transition-colors"
+                  onClick={() => handlePrepopulateAndSubmit("saransh@gargops.com", "owner")}
+                  className="px-3 py-1 bg-neutral-100 hover:bg-neutral-900 hover:text-white rounded-full text-[10px] font-mono font-bold text-neutral-800 transition-colors shadow-sm cursor-pointer"
                 >
                   Owner
                 </button>
                 <button
                   type="button"
-                  onClick={() => handlePrepopulate("amit@gargops.com", "vendor")}
-                  className="px-2.5 py-1 bg-neutral-100 hover:bg-neutral-200 rounded-full text-[10px] font-mono text-neutral-700 transition-colors"
+                  onClick={() => handlePrepopulateAndSubmit("amit@gargops.com", "vendor")}
+                  className="px-3 py-1 bg-neutral-100 hover:bg-neutral-900 hover:text-white rounded-full text-[10px] font-mono font-bold text-neutral-800 transition-colors shadow-sm cursor-pointer"
                 >
                   Vendor
                 </button>
                 <button
                   type="button"
-                  onClick={() => handlePrepopulate("dave@apex.com", "customer")}
-                  className="px-2.5 py-1 bg-neutral-100 hover:bg-neutral-200 rounded-full text-[10px] font-mono text-neutral-700 transition-colors"
+                  onClick={() => handlePrepopulateAndSubmit("dave@apex.com", "customer")}
+                  className="px-3 py-1 bg-neutral-100 hover:bg-neutral-900 hover:text-white rounded-full text-[10px] font-mono font-bold text-neutral-800 transition-colors shadow-sm cursor-pointer"
                 >
                   Customer
                 </button>
@@ -285,7 +292,7 @@ export const Login: React.FC<LoginProps> = ({
           </div>
 
           {/* Bottom Nav / Subtext */}
-          <div className="mt-6 pt-4 border-t border-neutral-100 text-center space-y-3 font-mono text-xs">
+          <div className="mt-4 pt-3 border-t border-neutral-100 text-center space-y-2 font-mono text-xs">
             <div className="text-neutral-500">
               Don't have an account?{" "}
               <button
@@ -307,7 +314,7 @@ export const Login: React.FC<LoginProps> = ({
         </div>
 
         {/* Right Graphic Panel (Animated ASCII Art Matrix) */}
-        <div className="hidden md:block w-1/2 relative bg-white border-l border-neutral-200">
+        <div className="hidden md:block w-1/2 h-full relative bg-white border-l border-neutral-200 overflow-hidden">
           <AuthAsciiArt variant="matrix" />
         </div>
       </motion.div>

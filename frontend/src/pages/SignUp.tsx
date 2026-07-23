@@ -198,14 +198,14 @@ export const SignUp: React.FC<SignUpProps> = ({
         initial={{ opacity: 0, scale: 0.96, y: 15 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-        className="relative max-w-4xl w-full bg-white rounded-3xl overflow-hidden shadow-[0_25px_60px_rgba(0,0,0,0.35)] border border-white/50 flex flex-col md:flex-row z-10"
+        className="relative max-w-4xl w-full h-[620px] max-h-[90vh] bg-white rounded-3xl overflow-hidden shadow-[0_25px_60px_rgba(0,0,0,0.35)] border border-white/50 flex flex-col md:flex-row z-10"
       >
         {/* Left Form Panel */}
-        <div className="w-full md:w-1/2 p-8 sm:p-10 md:p-12 bg-white flex flex-col justify-between max-h-[90vh] overflow-y-auto">
+        <div className="w-full md:w-1/2 h-full p-5 sm:p-6 bg-white flex flex-col justify-between overflow-y-auto scrollbar-none">
           <div>
             {/* Top Brand Identity Icon */}
-            <div className="mb-6 flex items-center justify-between">
-              <div className="w-8 h-8 rounded-lg bg-black text-white flex items-center justify-center text-sm font-bold shadow-md">
+            <div className="mb-3 flex items-center justify-between">
+              <div className="w-7 h-7 rounded-lg bg-black text-white flex items-center justify-center text-xs font-bold shadow-md">
                 ⚡
               </div>
               <span className="text-[10px] font-mono font-bold tracking-widest text-neutral-400 uppercase">
@@ -214,19 +214,19 @@ export const SignUp: React.FC<SignUpProps> = ({
             </div>
 
             {/* Title & Subtitle */}
-            <h1 className="text-3xl font-display font-bold text-black tracking-tight mb-1">
+            <h1 className="text-2xl font-display font-bold text-black tracking-tight mb-0.5">
               Create Account
             </h1>
-            <p className="text-xs font-mono text-neutral-500 mb-6">
+            <p className="text-[11px] font-mono text-neutral-500 mb-3">
               Join VendorOS to streamline your work
             </p>
 
             {/* 3-Way Segmented Role Selection Pill Bar */}
-            <div className="bg-neutral-100 p-1 rounded-full flex items-center mb-6 font-mono text-[10px] sm:text-[11px] border border-neutral-200">
+            <div className="bg-neutral-100 p-0.5 rounded-full flex items-center mb-3 font-mono text-[10px] sm:text-[11px] border border-neutral-200">
               <button
                 type="button"
                 onClick={() => setSignUpMode("owner")}
-                className={`flex-1 py-1.5 rounded-full font-bold transition-all ${
+                className={`flex-1 py-1 rounded-full font-bold transition-all ${
                   signUpMode === "owner"
                     ? "bg-black text-white shadow-md"
                     : "text-neutral-600 hover:text-black"
@@ -237,7 +237,7 @@ export const SignUp: React.FC<SignUpProps> = ({
               <button
                 type="button"
                 onClick={() => setSignUpMode("employee")}
-                className={`flex-1 py-1.5 rounded-full font-bold transition-all ${
+                className={`flex-1 py-1 rounded-full font-bold transition-all ${
                   signUpMode === "employee"
                     ? "bg-black text-white shadow-md"
                     : "text-neutral-600 hover:text-black"
@@ -248,7 +248,7 @@ export const SignUp: React.FC<SignUpProps> = ({
               <button
                 type="button"
                 onClick={() => setSignUpMode("customer")}
-                className={`flex-1 py-1.5 rounded-full font-bold transition-all ${
+                className={`flex-1 py-1 rounded-full font-bold transition-all ${
                   signUpMode === "customer"
                     ? "bg-black text-white shadow-md"
                     : "text-neutral-600 hover:text-black"
@@ -263,7 +263,7 @@ export const SignUp: React.FC<SignUpProps> = ({
               type="button"
               onClick={handleGoogleSignUp}
               disabled={loading}
-              className="w-full py-2.5 px-4 bg-white hover:bg-neutral-50 border border-neutral-300 rounded-full text-xs font-mono text-neutral-800 flex items-center justify-center space-x-2 transition-all shadow-sm cursor-pointer hover:border-neutral-400 mb-4"
+              className="w-full py-1.5 px-4 bg-white hover:bg-neutral-50 border border-neutral-300 rounded-full text-xs font-mono text-neutral-800 flex items-center justify-center space-x-2 transition-all shadow-sm cursor-pointer hover:border-neutral-400 mb-2.5"
             >
               <svg className="w-4 h-4" viewBox="0 0 24 24">
                 <path
@@ -471,7 +471,7 @@ export const SignUp: React.FC<SignUpProps> = ({
           </div>
 
           {/* Bottom Nav / Subtext */}
-          <div className="mt-6 pt-4 border-t border-neutral-100 text-center space-y-3 font-mono text-xs">
+          <div className="mt-3 pt-2 border-t border-neutral-100 text-center space-y-1 font-mono text-xs">
             <div className="text-neutral-500">
               Already have an account?{" "}
               <button
@@ -493,7 +493,7 @@ export const SignUp: React.FC<SignUpProps> = ({
         </div>
 
         {/* Right Graphic Panel (Animated ASCII Art Landscape) */}
-        <div className="hidden md:block w-1/2 relative bg-white border-l border-neutral-200">
+        <div className="hidden md:block w-1/2 h-full relative bg-white border-l border-neutral-200 overflow-hidden">
           <AuthAsciiArt variant="landscape" />
         </div>
       </motion.div>
