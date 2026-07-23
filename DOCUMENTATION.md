@@ -1,6 +1,6 @@
-# VendorOS — Comprehensive System Documentation
+# <img src="./frontend/public/vendoros-logo.png" alt="VendorOS Logo" width="36" height="36" style="vertical-align: middle; display: inline-block;" /> VendorOS — Comprehensive System Documentation
 
-Welcome to the VendorOS system documentation. This document provides an index and summary of the entire application architecture, operations workflows, database structures, and security layers.
+Welcome to the VendorOS system documentation. This document provides an index and summary of the entire application architecture, operations workflows, database structures, storytelling scroll transitions, standardized error handling ([files/errorhandling.md](file:///c:/Users/WELCOME%20JI/Desktop/vendoros/files/errorhandling.md)), and security layers.
 
 ---
 
@@ -11,7 +11,8 @@ Welcome to the VendorOS system documentation. This document provides an index an
 4. [Company Enrollment & Join Request Workflow](#4-company-enrollment--join-request-workflow)
 5. [AI Copilot & Theme Generation](#5-ai-copilot--theme-generation)
 6. [Security, Rate Limits, and Phone Sanitization](#6-security-rate-limits-and-phone-sanitization)
-7. [Directory Map & References](#7-directory-map--references)
+7. [Standardized Error Handling Strategy](#7-standardized-error-handling-strategy)
+8. [Directory Map & References](#8-directory-map--references)
 
 ---
 

@@ -4,6 +4,7 @@ import { ArrowLeft } from "lucide-react";
 import { motion } from "motion/react";
 import { AuthForestBackground } from "../components/AuthForestBackground";
 import { AuthAsciiArt } from "../components/AuthAsciiArt";
+import { VendorOSLogo } from "../components/VendorOSLogo";
 
 interface LoginProps {
   onNavigateToSignUp: () => void;
@@ -111,13 +112,11 @@ export const Login: React.FC<LoginProps> = ({
         {/* Left Form Panel */}
         <div className="w-full md:w-1/2 h-full p-6 sm:p-8 bg-white flex flex-col justify-between overflow-y-auto">
           <div>
-            {/* Top Brand Identity Lightning Icon */}
+            {/* Top Brand Identity Logo */}
             <div className="mb-6 flex items-center justify-between">
-              <div className="w-8 h-8 rounded-lg bg-black text-white flex items-center justify-center text-sm font-bold shadow-md">
-                ⚡
-              </div>
+              <VendorOSLogo size="md" textColor="text-black" />
               <span className="text-[10px] font-mono font-bold tracking-widest text-neutral-400 uppercase">
-                VendorOS Auth
+                Auth Portal
               </span>
             </div>
 

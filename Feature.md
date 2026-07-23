@@ -1,6 +1,6 @@
-# VendorOS — Feature Ticket List
+# <img src="./frontend/public/vendoros-logo.png" alt="VendorOS Logo" width="36" height="36" style="vertical-align: middle; display: inline-block;" /> VendorOS — Feature Ticket List
 
-*Each ticket: Description, What Needs to Be Built, Acceptance Criteria, Dependencies, Priority (Must-Have for Launch / Should-Have / Nice-to-Have). IDs are stable references — use them in commits/PRs (e.g., "closes VOS-7").*
+*Each ticket: Description, What Needs to Be Built, Acceptance Criteria, Dependencies, Priority (Must-Have for Launch / Should-Have / Nice-to-Have). IDs are stable references — use them in commits/PRs (e.g., "closes VOS-7"). System Error Handling specification: [files/errorhandling.md](file:///c:/Users/WELCOME%20JI/Desktop/vendoros/files/errorhandling.md).*
 
 ---
 

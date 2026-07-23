@@ -4,6 +4,7 @@ import { Globe, Menu, X as CloseIcon } from "lucide-react";
 import { useTranslation } from "../../context/LanguageContext";
 import { Language } from "../../i18n/translations";
 import { useAuth } from "../../context/AuthContext";
+import { VendorOSLogo } from "../VendorOSLogo";
 
 interface NavbarProps {
   onNavigateToLogin: () => void;
@@ -48,13 +49,8 @@ export const Navbar: React.FC<NavbarProps> = ({
       {/* Heavy Ultra-Frosted Glassmorphism Floating Pill Bar */}
       <nav className="landing-nav bg-black/40 backdrop-blur-3xl border border-white/25 rounded-full px-5 py-2.5 shadow-[0_16px_40px_rgba(0,0,0,0.6)] ring-1 ring-white/10 flex items-center justify-between text-white">
         {/* Brand Identity */}
-        <a href="#top" className="flex items-center space-x-2.5 group">
-          <div className="w-7 h-7 rounded-full bg-white flex items-center justify-center text-black font-mono text-sm font-extrabold shadow-md group-hover:scale-105 transition-transform">
-            ✕
-          </div>
-          <span className="font-mono font-bold text-sm tracking-tight text-white">
-            VendorOS
-          </span>
+        <a href="#top" className="flex items-center group hover:scale-105 transition-transform">
+          <VendorOSLogo size="md" textColor="text-white" />
         </a>
 
         {/* Center Nav Links (Desktop) */}

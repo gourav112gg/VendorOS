@@ -7,6 +7,7 @@ import { ArrowLeft, CheckCircle, XCircle, Search } from "lucide-react";
 import { motion } from "motion/react";
 import { AuthForestBackground } from "../components/AuthForestBackground";
 import { AuthAsciiArt } from "../components/AuthAsciiArt";
+import { VendorOSLogo } from "../components/VendorOSLogo";
 
 interface SignUpProps {
   onNavigateToLogin: () => void;
@@ -205,11 +206,9 @@ export const SignUp: React.FC<SignUpProps> = ({
           <div>
             {/* Top Brand Identity Icon */}
             <div className="mb-3 flex items-center justify-between">
-              <div className="w-7 h-7 rounded-lg bg-black text-white flex items-center justify-center text-xs font-bold shadow-md">
-                ⚡
-              </div>
+              <VendorOSLogo size="sm" textColor="text-black" />
               <span className="text-[10px] font-mono font-bold tracking-widest text-neutral-400 uppercase">
-                VendorOS Account
+                Portal Onboarding
               </span>
             </div>
 

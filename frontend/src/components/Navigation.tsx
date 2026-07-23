@@ -7,6 +7,7 @@ import { LogOut, Building } from "lucide-react";
 import { motion } from "motion/react";
 
 import { OfflineConnectivityMonitor } from "./OfflineConnectivityMonitor";
+import { VendorOSLogo } from "./VendorOSLogo";
 
 interface NavigationProps {
   activeTab?: string;
@@ -30,19 +31,8 @@ export const Navigation: React.FC<NavigationProps> = ({
         <div className="flex justify-between h-16">
           {/* Logo & Company Profile */}
           <div className="flex items-center space-x-3 min-w-0">
-            <motion.div
-              whileHover={{ rotate: -6, scale: 1.05 }}
-              transition={{ type: "spring", stiffness: 300, damping: 15 }}
-              className="w-9 h-9 shrink-0 bg-white flex items-center justify-center rounded-sm text-black shadow-sm"
-            >
-              <span className="font-serif italic font-semibold text-[13px] leading-none">
-                V
-              </span>
-            </motion.div>
+            <VendorOSLogo size="md" textColor="text-white" />
             <div className="min-w-0">
-              <span className="font-sans font-medium text-sm tracking-wide text-white block leading-tight">
-                VendorOS
-              </span>
               <span className="text-[10px] font-mono font-medium flex items-center space-x-1.5 mt-0.5">
                 <span className="bg-[#1A1A1A] text-[#888888] px-1.5 py-0.5 rounded-xs text-[9px] font-mono uppercase tracking-widest border border-[#222222]">
                   {user.role}
