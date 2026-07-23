@@ -44,6 +44,8 @@ export const InvoicesTab: React.FC<InvoicesTabProps> = ({
   const [isGstToggle, setIsGstToggle] = useState(false);
   const [selectedOrderId, setSelectedOrderId] = useState("");
   const [invoiceError, setInvoiceError] = useState("");
+  const [attachmentFile, setAttachmentFile] = useState<File | null>(null);
+  const [attachmentName, setAttachmentName] = useState("");
 
   // Reminder simulation states
   const [sendingReminder, setSendingReminder] = useState(false);
@@ -62,42 +64,28 @@ export const InvoicesTab: React.FC<InvoicesTabProps> = ({
     e.preventDefault();
     setInvoiceError("");
 
-    if (!customerName.trim()) {
-      setInvoiceError("Customer name is required.");
-      return;
-    }
-    if (baseAmount <= 0) {
-      setInvoiceError("Amount must be greater than zero.");
+    if (!customerName.trim() || baseAmount <= 0) {
+      setInvoiceError("Please provide a valid customer name and base amount.");
       return;
     }
 
-    if (isGstToggle && !isGstEnabled) {
-      setInvoiceError("GST-aware invoicing is gated under Growth/Scale tiers.");
-      return;
-    }
+    const calculatedCgst = isGstToggle && isGstEnabled ? baseAmount * 0.09 : 0;
+    const calculatedSgst = isGstToggle && isGstEnabled ? baseAmount * 0.09 : 0;
+    const total = baseAmount + calculatedCgst + calculatedSgst;
 
-    let cgst = 0;
-    let sgst = 0;
-    let totalAmount = baseAmount;
-    let invoiceNum = `INV-${company.name.substring(0, 4).toUpperCase()}-${Date.now().toString().slice(-4)}`;
-
-    if (isGstToggle && isGstEnabled) {
-      cgst = Number((baseAmount * 0.09).toFixed(2)); // 9% CGST
-      sgst = Number((baseAmount * 0.09).toFixed(2)); // 9% SGST
-      totalAmount = baseAmount + cgst + sgst;
-    }
-
-    dbStore.addInvoice({
+    dbStore.createInvoice({
       companyId: company.id,
-      orderId: selectedOrderId || undefined,
-      customerName: customerName.trim(),
+      orderId: selectedOrderId || "manual_intake",
+      customerName,
       baseAmount,
-      cgst,
-      sgst,
+      cgst: calculatedCgst,
+      sgst: calculatedSgst,
       igst: 0,
-      totalAmount,
-      invoiceNumber: invoiceNum,
+      totalAmount: total,
+      invoiceNumber: `INV-${Date.now().toString().slice(-6)}`,
       status: "Unpaid",
+      attachmentName: attachmentName || undefined,
+      attachmentUrl: attachmentFile ? URL.createObjectURL(attachmentFile) : undefined,
     });
 
     // Record activity log
@@ -108,6 +96,8 @@ export const InvoicesTab: React.FC<InvoicesTabProps> = ({
     setBaseAmount(0);
     setIsGstToggle(false);
     setSelectedOrderId("");
+    setAttachmentFile(null);
+    setAttachmentName("");
     setShowCreateModal(false);
   };
 
@@ -488,21 +478,26 @@ export const InvoicesTab: React.FC<InvoicesTabProps> = ({
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-[9px] font-mono text-[#555555] uppercase tracking-widest">
-                    Optional: Link to Order
+                  <label className="text-[9px] font-mono text-[#555555] uppercase tracking-widest block">
+                    Attach PDF / Word Bill File (Optional)
                   </label>
-                  <select
-                    value={selectedOrderId}
-                    onChange={(e) => setSelectedOrderId(e.target.value)}
-                    className="w-full px-4 py-2.5 rounded-sm border border-[#222222] bg-[#0A0A0A] text-white text-xs font-mono focus:outline-none focus:border-[#444444]"
-                  >
-                    <option value="">-- No order link --</option>
-                    {orders.map((o) => (
-                      <option key={o.id} value={o.id}>
-                        [{o.id}] {o.title}
-                      </option>
-                    ))}
-                  </select>
+                  <input
+                    type="file"
+                    accept=".pdf,.doc,.docx"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        setAttachmentFile(file);
+                        setAttachmentName(file.name);
+                      }
+                    }}
+                    className="w-full px-3 py-2 rounded-sm border border-[#222222] bg-[#0A0A0A] text-white text-xs font-mono file:mr-3 file:py-1 file:px-2.5 file:rounded-sm file:border-0 file:text-[10px] file:font-mono file:bg-white file:text-black hover:file:bg-neutral-200 cursor-pointer"
+                  />
+                  {attachmentName && (
+                    <span className="text-[10px] text-emerald-400 font-mono block">
+                      ✓ Attachment selected: {attachmentName}
+                    </span>
+                  )}
                 </div>
 
                 {/* GST TIER CHECK */}

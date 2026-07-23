@@ -6,6 +6,8 @@ import { LanguageSwitcher } from "./LanguageSwitcher";
 import { LogOut, Building } from "lucide-react";
 import { motion } from "motion/react";
 
+import { OfflineConnectivityMonitor } from "./OfflineConnectivityMonitor";
+
 interface NavigationProps {
   activeTab?: string;
   setActiveTab?: (tab: string) => void;
@@ -93,8 +95,9 @@ export const Navigation: React.FC<NavigationProps> = ({
           )}
 
           {/* User Profile & Actions */}
-          <div className="flex items-center space-x-4">
-            {/* Multi-Language Switcher (positioned to the left of User Profile) */}
+          <div className="flex items-center space-x-3">
+            <OfflineConnectivityMonitor />
+            {/* Multi-Language Switcher */}
             <LanguageSwitcher />
 
             <div className="text-right hidden sm:block">

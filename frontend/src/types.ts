@@ -151,6 +151,8 @@ export interface GstInvoice {
   totalAmount: number;
   invoiceNumber: string;
   status: "Paid" | "Unpaid";
+  attachmentName?: string;
+  attachmentUrl?: string;
   createdAt: string;
 }
 

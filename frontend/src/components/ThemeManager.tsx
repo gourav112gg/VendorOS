@@ -177,7 +177,20 @@ const selAll = (classNames: string[]) => classNames.map(sel).join(", ");
 export const ThemeManager: React.FC = () => {
   const { preferences } = useAuth();
 
-  const mode = preferences.themeMode || "dark";
+  const [systemIsDark, setSystemIsDark] = React.useState(
+    () => typeof window !== "undefined" && window.matchMedia("(prefers-color-scheme: dark)").matches
+  );
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+    const handleChange = (e: MediaQueryListEvent) => setSystemIsDark(e.matches);
+    mediaQuery.addEventListener("change", handleChange);
+    return () => mediaQuery.removeEventListener("change", handleChange);
+  }, []);
+
+  const rawMode = preferences.themeMode || "dark";
+  const mode = rawMode === "system" ? (systemIsDark ? "dark" : "light") : rawMode;
   const theme = preferences.themeName || "slate";
 
   useEffect(() => {

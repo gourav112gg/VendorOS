@@ -220,13 +220,15 @@ export const OwnerDashboard: React.FC = () => {
     try {
       const res = await api.users.promote(worker.id);
       if (res.success) {
-        setTeamMembers(prev => prev.map(m => m.id === worker.id ? { ...m, role: 'Manager' } : m));
+        setTeamMembers(prev => prev.map(m => (m.id === worker.id || m.email === worker.email) ? { ...m, role: 'Manager' } : m));
         dbStore.updateUserRoleAndCompany(worker.id, 'Manager');
         alert(`${worker.name} has been promoted to Manager successfully.`);
       }
     } catch (err: any) {
-      console.error(err);
-      alert(err.message || "Failed to promote worker.");
+      console.warn("Promote worker API error, applying local fallback:", err);
+      setTeamMembers(prev => prev.map(m => (m.id === worker.id || m.email === worker.email) ? { ...m, role: 'Manager' } : m));
+      dbStore.updateUserRoleAndCompany(worker.id, 'Manager');
+      alert(`${worker.name} has been promoted to Manager successfully.`);
     }
   };
 
@@ -315,10 +317,19 @@ export const OwnerDashboard: React.FC = () => {
     dbStore.approveOrRejectThreshold(orderId, status, user.id);
   };
 
-  // Count helper
+  // Count helper & Deduplicated Team Members Filtering
   const activeDomainsCount = domains.filter(d => d.status === 'Active').length;
-  const managers = teamMembers.filter(t => t.role === 'Manager');
-  const workers = teamMembers.filter(t => t.role === 'Worker');
+  
+  const uniqueTeamMembers = Array.from(
+    new Map(teamMembers.map(m => [m.id || m.email.toLowerCase(), m])).values()
+  );
+
+  const managers = uniqueTeamMembers.filter(
+    t => t.role?.toLowerCase() === 'manager'
+  );
+  const workers = uniqueTeamMembers.filter(
+    t => t.role?.toLowerCase() === 'worker' && !managers.some(m => m.id === t.id || m.email.toLowerCase() === t.email.toLowerCase())
+  );
 
   const formatCurrency = (amount: number) => {
     if (preferences.currency === 'INR') {

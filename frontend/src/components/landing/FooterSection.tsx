@@ -42,11 +42,21 @@ export const FooterSection: React.FC = () => {
                 <span>EMAIL</span>
                 <ArrowUpRight className="w-3.5 h-3.5 text-neutral-500" />
               </a>
-              <a href="#top" className="flex items-center space-x-1 hover:text-white transition-colors">
+              <a
+                href="https://www.linkedin.com/in/gourav-garg-418926304/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center space-x-1 hover:text-white transition-colors"
+              >
                 <span>LINKEDIN</span>
                 <ArrowUpRight className="w-3.5 h-3.5 text-neutral-500" />
               </a>
-              <a href="#top" className="flex items-center space-x-1 hover:text-white transition-colors">
+              <a
+                href="https://github.com/gourav112gg/VendorOS"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center space-x-1 hover:text-white transition-colors"
+              >
                 <span>GITHUB</span>
                 <ArrowUpRight className="w-3.5 h-3.5 text-neutral-500" />
               </a>
