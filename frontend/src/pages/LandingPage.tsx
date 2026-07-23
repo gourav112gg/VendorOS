@@ -1,5 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import Lenis from "lenis";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Navbar } from "../components/landing/Navbar";
 import { HeroSection } from "../components/landing/HeroSection";
 import { AppIntegrationSection } from "../components/landing/AppIntegrationSection";
@@ -8,6 +10,8 @@ import { BentoGridSection } from "../components/landing/BentoGridSection";
 import { PricingSection } from "../components/landing/PricingSection";
 import { LogoCloudSection } from "../components/landing/LogoCloudSection";
 import { FooterSection } from "../components/landing/FooterSection";
+
+gsap.registerPlugin(ScrollTrigger);
 
 interface LandingPageProps {
   onNavigateToLogin: () => void;
@@ -22,84 +26,37 @@ export const LandingPage: React.FC<LandingPageProps> = ({
 }) => {
   const lenisRef = useRef<Lenis | null>(null);
 
-  // Lenis smooth scroll initialization with reduced motion check
+  // Initialize Lenis + GSAP ScrollTrigger Global Synchronization on window & documentElement
   useEffect(() => {
     const isReducedMotion =
       typeof window !== "undefined" &&
       window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-    if (isReducedMotion) return; // Skip Lenis smooth scroll if user prefers reduced motion
+    if (isReducedMotion) return; // Disable smooth scroll & pinning loop when reduced motion is preferred
 
     const lenis = new Lenis({
-      duration: 1.2,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      wrapper: window,
+      content: document.documentElement,
+      lerp: 0.1,
       smoothWheel: true,
-      wheelMultiplier: 1.0,
     });
 
     lenisRef.current = lenis;
 
-    function raf(time: number) {
-      lenis.raf(time);
-      requestAnimationFrame(raf);
-    }
-    requestAnimationFrame(raf);
+    // Sync Lenis scroll updates with GSAP ScrollTrigger
+    lenis.on("scroll", ScrollTrigger.update);
+
+    const updateTicker = (time: number) => {
+      lenis.raf(time * 1000);
+    };
+
+    gsap.ticker.add(updateTicker);
+    gsap.ticker.lagSmoothing(0);
 
     return () => {
+      gsap.ticker.remove(updateTicker);
       lenis.destroy();
       lenisRef.current = null;
-    };
-  }, []);
-
-  // Intersection Observer for 50% entrance queueing & 66.67% (2/3) velocity-gated animation triggering
-  useEffect(() => {
-    const sections = Array.from(
-      document.querySelectorAll<HTMLElement>("section, footer")
-    );
-    const debounceTimers = new Map<HTMLElement, NodeJS.Timeout>();
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          const ratio = entry.intersectionRatio;
-          const target = entry.target as HTMLElement;
-
-          // 50% Scroll Threshold: Queue Section Entrance
-          if (ratio >= 0.5) {
-            target.classList.add("section-entrance-queued");
-          }
-
-          // 66.67% (2/3) Scroll Threshold: Velocity-Gated Full Timeline Activation
-          if (ratio >= 0.667) {
-            const currentVelocity = Math.abs(
-              lenisRef.current?.velocity || 0
-            );
-
-            // If user is scrolling rapidly (velocity > 2), debounce 150ms to prevent rushed/skipped timelines
-            if (currentVelocity > 2) {
-              if (debounceTimers.has(target)) {
-                clearTimeout(debounceTimers.get(target)!);
-              }
-              const timer = setTimeout(() => {
-                target.classList.add("section-animation-active");
-              }, 150);
-              debounceTimers.set(target, timer);
-            } else {
-              target.classList.add("section-animation-active");
-            }
-          }
-        });
-      },
-      {
-        threshold: [0.5, 0.667],
-      }
-    );
-
-    sections.forEach((sec) => observer.observe(sec));
-
-    return () => {
-      observer.disconnect();
-      debounceTimers.forEach((timer) => clearTimeout(timer));
     };
   }, []);
 
@@ -115,25 +72,25 @@ export const LandingPage: React.FC<LandingPageProps> = ({
         onNavigateToPublic={onNavigateToPublic}
       />
 
-      {/* 2. Hero Section (Dark Canvas) */}
+      {/* 2. Hero Section (Dark Canvas) — Budget: +=100% */}
       <HeroSection onGetStarted={onNavigateToSignUp} />
 
-      {/* 3. App Integration Dual Showcase Section (Light Slate Canvas) */}
+      {/* 3. App Integration Dual Showcase Section — Budget: +=150% */}
       <AppIntegrationSection />
 
-      {/* 4. Interactive Automation Node Network Section (Light Slate Canvas) */}
+      {/* 4. Interactive Automation Node Network Section — Budget: +=150% */}
       <AutomationHubSection />
 
-      {/* 5. Feature Bento Grid Section (Light Slate Canvas) */}
+      {/* 5. Feature Bento Grid Section — Budget: +=100% */}
       <BentoGridSection />
 
-      {/* 6. Glassmorphism Pricing Section (Substituting News & Articles) */}
+      {/* 6. Glassmorphism Pricing Section — Budget: +=120% */}
       <PricingSection onSelectPlan={() => onNavigateToSignUp()} />
 
-      {/* 7. Integration Logo Cloud Section (Light Slate Canvas) */}
+      {/* 7. Integration Logo Cloud Section */}
       <LogoCloudSection />
 
-      {/* 8. Footer Section (Dark Rounded Card Container) */}
+      {/* 8. Footer Section (NO PIN — Sticky Edge-to-Edge VENDOROS Scale) */}
       <FooterSection />
     </div>
   );
