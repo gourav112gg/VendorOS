@@ -1,24 +1,37 @@
 import React, { useRef } from "react";
-import { motion, useScroll, useTransform } from "motion/react";
+import { motion, useScroll, useTransform, useReducedMotion } from "motion/react";
 import { ArrowUpRight } from "lucide-react";
 
 export const FooterSection: React.FC = () => {
   const footerRef = useRef<HTMLElement>(null);
+  const shouldReduceMotion = useReducedMotion();
 
   const { scrollYProgress } = useScroll({
     target: footerRef,
     offset: ["start end", "end end"],
   });
 
-  // Uniform scaling with low horizontal stretch as user scrolls to footer bottom
-  const textScale = useTransform(scrollYProgress, [0, 0.65, 1], [0.72, 1.0, 1.03]);
-  const textScaleX = useTransform(scrollYProgress, [0, 0.65, 1], [0.72, 1.0, 1.04]);
-  const textOpacity = useTransform(scrollYProgress, [0, 0.25, 1], [0.3, 1, 1]);
+  // Proportional font expansion with max 1.01 elasticity limit to prevent letterform distortion
+  const textScale = useTransform(
+    scrollYProgress,
+    [0, 0.65, 1],
+    [0.75, 1.0, 1.0]
+  );
+  const textScaleX = useTransform(
+    scrollYProgress,
+    [0, 0.65, 1],
+    [0.75, 1.0, 1.01]
+  );
+  const textOpacity = useTransform(
+    scrollYProgress,
+    [0, 0.25, 1],
+    [0.4, 1, 1]
+  );
 
   return (
     <footer
       ref={footerRef}
-      className="relative min-h-screen md:h-screen flex flex-col justify-between pt-10 md:pt-12 pb-6 bg-[#000000] text-white overflow-hidden border-t border-neutral-900 font-mono"
+      className="relative min-h-screen md:h-screen flex flex-col justify-between pt-10 md:pt-12 pb-6 bg-[#000000] text-white overflow-visible border-t border-neutral-900 font-mono"
     >
       {/* Top Header Columns Container matching Codezen layout */}
       <div className="max-w-7xl mx-auto px-6 w-full pt-6 relative z-10">
@@ -103,15 +116,19 @@ export const FooterSection: React.FC = () => {
         </div>
       </div>
 
-      {/* Scroll-Driven Scaling Edge-to-Edge Sticky Typography: VENDOROS */}
-      <div className="sticky top-1/4 my-auto w-full text-center overflow-hidden py-4 select-none px-0 z-20">
+      {/* Scroll-Driven Edge-to-Edge Sticky Typography: VENDOROS (Pinned at max scale) */}
+      <div className="sticky top-1/4 my-auto w-full text-center overflow-visible py-4 select-none px-0 z-20">
         <motion.h1
-          style={{
-            scale: textScale,
-            scaleX: textScaleX,
-            opacity: textOpacity,
-          }}
-          className="text-[clamp(60px,18.5vw,340px)] font-black tracking-tighter leading-none text-white uppercase text-center filter drop-shadow-2xl select-none block w-full px-0 mx-0 whitespace-nowrap origin-center"
+          style={
+            shouldReduceMotion
+              ? {}
+              : {
+                  scale: textScale,
+                  scaleX: textScaleX,
+                  opacity: textOpacity,
+                }
+          }
+          className="vendoros-text text-[clamp(60px,18.5vw,340px)] font-black tracking-tighter leading-none text-white uppercase text-center filter drop-shadow-2xl select-none block w-full px-0 mx-0 whitespace-nowrap origin-center"
         >
           VENDOROS
         </motion.h1>

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import Lenis from "lenis";
 import { Navbar } from "../components/landing/Navbar";
 import { HeroSection } from "../components/landing/HeroSection";
@@ -20,14 +20,24 @@ export const LandingPage: React.FC<LandingPageProps> = ({
   onNavigateToSignUp,
   onNavigateToPublic,
 }) => {
-  // Lenis smooth scroll initialization
+  const lenisRef = useRef<Lenis | null>(null);
+
+  // Lenis smooth scroll initialization with reduced motion check
   useEffect(() => {
+    const isReducedMotion =
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    if (isReducedMotion) return; // Skip Lenis smooth scroll if user prefers reduced motion
+
     const lenis = new Lenis({
       duration: 1.2,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       smoothWheel: true,
       wheelMultiplier: 1.0,
     });
+
+    lenisRef.current = lenis;
 
     function raf(time: number) {
       lenis.raf(time);
@@ -37,12 +47,16 @@ export const LandingPage: React.FC<LandingPageProps> = ({
 
     return () => {
       lenis.destroy();
+      lenisRef.current = null;
     };
   }, []);
 
-  // Intersection Observer for 50% entrance queueing & 66.67% (2/3) full animation triggering
+  // Intersection Observer for 50% entrance queueing & 66.67% (2/3) velocity-gated animation triggering
   useEffect(() => {
-    const sections = Array.from(document.querySelectorAll<HTMLElement>("section, footer"));
+    const sections = Array.from(
+      document.querySelectorAll<HTMLElement>("section, footer")
+    );
+    const debounceTimers = new Map<HTMLElement, NodeJS.Timeout>();
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -50,11 +64,29 @@ export const LandingPage: React.FC<LandingPageProps> = ({
           const ratio = entry.intersectionRatio;
           const target = entry.target as HTMLElement;
 
+          // 50% Scroll Threshold: Queue Section Entrance
           if (ratio >= 0.5) {
             target.classList.add("section-entrance-queued");
           }
+
+          // 66.67% (2/3) Scroll Threshold: Velocity-Gated Full Timeline Activation
           if (ratio >= 0.667) {
-            target.classList.add("section-animation-active");
+            const currentVelocity = Math.abs(
+              lenisRef.current?.velocity || 0
+            );
+
+            // If user is scrolling rapidly (velocity > 2), debounce 150ms to prevent rushed/skipped timelines
+            if (currentVelocity > 2) {
+              if (debounceTimers.has(target)) {
+                clearTimeout(debounceTimers.get(target)!);
+              }
+              const timer = setTimeout(() => {
+                target.classList.add("section-animation-active");
+              }, 150);
+              debounceTimers.set(target, timer);
+            } else {
+              target.classList.add("section-animation-active");
+            }
           }
         });
       },
@@ -65,11 +97,17 @@ export const LandingPage: React.FC<LandingPageProps> = ({
 
     sections.forEach((sec) => observer.observe(sec));
 
-    return () => observer.disconnect();
+    return () => {
+      observer.disconnect();
+      debounceTimers.forEach((timer) => clearTimeout(timer));
+    };
   }, []);
 
   return (
-    <div id="top" className="min-h-screen bg-[#09090B] text-white font-sans selection:bg-neutral-800 selection:text-white">
+    <div
+      id="top"
+      className="min-h-screen bg-[#09090B] text-white font-sans selection:bg-neutral-800 selection:text-white"
+    >
       {/* 1. Floating Top Navbar */}
       <Navbar
         onNavigateToLogin={onNavigateToLogin}
