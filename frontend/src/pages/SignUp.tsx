@@ -6,7 +6,7 @@ import api from "../services/api";
 import { ArrowLeft, CheckCircle, XCircle, Search } from "lucide-react";
 import { motion } from "motion/react";
 import { AuthForestBackground } from "../components/AuthForestBackground";
-import { AuthHalftoneArtwork } from "../components/AuthHalftoneArtwork";
+import { AuthAsciiArt } from "../components/AuthAsciiArt";
 
 interface SignUpProps {
   onNavigateToLogin: () => void;
@@ -492,9 +492,9 @@ export const SignUp: React.FC<SignUpProps> = ({
           </div>
         </div>
 
-        {/* Right Graphic Panel (Architectural Landscape Halftone Dither Art) */}
+        {/* Right Graphic Panel (Animated ASCII Art Landscape) */}
         <div className="hidden md:block w-1/2 relative bg-white border-l border-neutral-200">
-          <AuthHalftoneArtwork variant="landscape" />
+          <AuthAsciiArt variant="landscape" />
         </div>
       </motion.div>
     </div>
