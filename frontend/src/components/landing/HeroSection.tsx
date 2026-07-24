@@ -16,19 +16,12 @@ interface HeroSectionProps {
   onGetStarted: () => void;
 }
 
-const CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+-=";
-
 export const HeroSection: React.FC<HeroSectionProps> = ({ onGetStarted }) => {
   const sectionRef = useRef<HTMLElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
   const [progress, setProgress] = useState(1);
   const [mousePos, setMousePos] = useState({ x: 75, y: 30 });
   const [isReducedMotion, setIsReducedMotion] = useState(false);
-
-  // Scramble Text State for Headline
-  const targetHeadline = "Unlock the Future of Operations.";
-  const [scrambledText, setScrambledText] = useState(targetHeadline);
-  const [hasScrambled, setHasScrambled] = useState(false);
 
   // GSAP ScrollTrigger Pinning (100vh budget, 1:1 scrub)
   useEffect(() => {
@@ -51,53 +44,14 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onGetStarted }) => {
         scrub: true,
         anticipatePin: 1,
         invalidateOnRefresh: true,
-        onUpdate: (self) => {
-          setProgress(self.progress);
-          if (self.progress > 0.05 && !hasScrambled) {
-            triggerScramble();
-            setHasScrambled(true);
-          }
-        },
+        onUpdate: (self) => setProgress(self.progress),
       });
     }, sectionRef);
 
     return () => ctx.revert();
-  }, [hasScrambled]);
-
-  // Scramble Text Animation Function
-  const triggerScramble = () => {
-    let iteration = 0;
-    const interval = setInterval(() => {
-      setScrambledText(
-        targetHeadline
-          .split("")
-          .map((char, index) => {
-            if (char === " " || char === ".") return char;
-            if (index < iteration) {
-              return targetHeadline[index];
-            }
-            return CHARS[Math.floor(Math.random() * CHARS.length)];
-          })
-          .join("")
-      );
-
-      if (iteration >= targetHeadline.length) {
-        clearInterval(interval);
-        setScrambledText(targetHeadline);
-      }
-      iteration += 1 / 2;
-    }, 30);
-  };
-
-  // Initial Scramble on Mount
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      triggerScramble();
-    }, 400);
-    return () => clearTimeout(timer);
   }, []);
 
-  // Mouse Position tracking for living interactive milky-white diffuse glow
+  // Mouse Position tracking for living interactive diffuse glow
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!cardRef.current || isReducedMotion) return;
     const rect = cardRef.current.getBoundingClientRect();
@@ -109,13 +63,13 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onGetStarted }) => {
   return (
     <section
       ref={sectionRef}
-      className="relative min-h-[100dvh] md:h-screen flex flex-col justify-center items-center bg-[#050505] text-white pt-20 pb-4 overflow-hidden font-sans"
+      className="relative min-h-[100dvh] md:h-screen flex flex-col justify-center items-center bg-[#000000] text-white pt-20 pb-4 overflow-hidden font-sans"
     >
       {/* Inset Framed Hero Card Container */}
       <div
         ref={cardRef}
         onMouseMove={handleMouseMove}
-        className="relative w-[94vw] max-w-7xl h-[86vh] min-h-[620px] bg-[#050507] border border-white/10 rounded-[28px] sm:rounded-[36px] md:rounded-[44px] overflow-hidden shadow-[0_30px_100px_rgba(0,0,0,0.9)] flex flex-col justify-center p-6 sm:p-10 text-center select-none"
+        className="relative w-[94vw] max-w-7xl h-[86vh] min-h-[620px] bg-[#000000] border border-white/10 rounded-[28px] sm:rounded-[36px] md:rounded-[44px] overflow-hidden shadow-[0_30px_100px_rgba(0,0,0,0.95)] flex flex-col justify-center p-6 sm:p-10 text-center select-none"
       >
         {/* Static Atmospheric Milky-White Light Patch (Reference Match) */}
         <div
@@ -138,82 +92,102 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onGetStarted }) => {
           />
         )}
 
-        {/* SVG Powering Up & Powering Down Energy Connector Lines Layer */}
+        {/* SVG Connector Lines Layer (Terminates at Nodes with Continuous Power Glow) */}
         <svg className="absolute inset-0 w-full h-full pointer-events-none z-10 hidden md:block">
-          {/* Base Path: Top-Left (Owner) */}
+          {/* Path 1: Top-Left (Owner) - Terminates at Owner Node */}
           <path
-            d="M 0 110 L 180 110 Q 280 110 440 230"
+            d="M 0 110 H 260"
             fill="none"
-            stroke="rgba(255, 255, 255, 0.1)"
+            stroke="rgba(255, 255, 255, 0.15)"
             strokeWidth="1.5"
+            strokeDasharray="6 6"
           />
-          {/* Animated Energy Pulse: Top-Left */}
           <motion.path
-            d="M 0 110 L 180 110 Q 280 110 440 230"
+            d="M 0 110 H 260"
             fill="none"
-            stroke="rgba(255, 255, 255, 0.7)"
+            stroke="rgba(255, 255, 255, 0.9)"
             strokeWidth="2"
-            strokeDasharray="14 28"
-            animate={isReducedMotion ? {} : { strokeDashoffset: [0, -120] }}
-            transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+            strokeDasharray="10 20"
+            style={{ filter: "drop-shadow(0 0 8px rgba(255, 255, 255, 0.85))" }}
+            animate={
+              isReducedMotion
+                ? {}
+                : { strokeDashoffset: [0, -120], opacity: [0.35, 1, 0.35] }
+            }
+            transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut" }}
           />
 
-          {/* Base Path: Top-Right (Customer) */}
+          {/* Path 2: Top-Right (Customer) - Terminates at Customer Node */}
           <path
-            d="M 1280 110 L 1100 110 Q 1000 110 840 230"
+            d="M 1280 110 H 1020"
             fill="none"
-            stroke="rgba(255, 255, 255, 0.1)"
+            stroke="rgba(255, 255, 255, 0.15)"
             strokeWidth="1.5"
+            strokeDasharray="6 6"
           />
-          {/* Animated Energy Pulse: Top-Right */}
           <motion.path
-            d="M 1280 110 L 1100 110 Q 1000 110 840 230"
+            d="M 1280 110 H 1020"
             fill="none"
-            stroke="rgba(255, 255, 255, 0.7)"
+            stroke="rgba(255, 255, 255, 0.9)"
             strokeWidth="2"
-            strokeDasharray="14 28"
-            animate={isReducedMotion ? {} : { strokeDashoffset: [0, 120] }}
-            transition={{ duration: 3.2, repeat: Infinity, ease: "linear" }}
+            strokeDasharray="10 20"
+            style={{ filter: "drop-shadow(0 0 8px rgba(255, 255, 255, 0.85))" }}
+            animate={
+              isReducedMotion
+                ? {}
+                : { strokeDashoffset: [0, 120], opacity: [0.35, 1, 0.35] }
+            }
+            transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
           />
 
-          {/* Base Path: Bottom-Left (Manager) */}
+          {/* Path 3: Bottom-Left (Manager) - Terminates at Manager Node */}
           <path
-            d="M 0 510 L 180 510 Q 280 510 440 390"
+            d="M 0 510 H 260"
             fill="none"
-            stroke="rgba(255, 255, 255, 0.1)"
+            stroke="rgba(255, 255, 255, 0.15)"
             strokeWidth="1.5"
+            strokeDasharray="6 6"
           />
-          {/* Animated Energy Pulse: Bottom-Left */}
           <motion.path
-            d="M 0 510 L 180 510 Q 280 510 440 390"
+            d="M 0 510 H 260"
             fill="none"
-            stroke="rgba(255, 255, 255, 0.7)"
+            stroke="rgba(255, 255, 255, 0.9)"
             strokeWidth="2"
-            strokeDasharray="14 28"
-            animate={isReducedMotion ? {} : { strokeDashoffset: [0, -120] }}
-            transition={{ duration: 2.8, repeat: Infinity, ease: "linear" }}
+            strokeDasharray="10 20"
+            style={{ filter: "drop-shadow(0 0 8px rgba(255, 255, 255, 0.85))" }}
+            animate={
+              isReducedMotion
+                ? {}
+                : { strokeDashoffset: [0, -120], opacity: [0.35, 1, 0.35] }
+            }
+            transition={{ duration: 2.0, repeat: Infinity, ease: "easeInOut" }}
           />
 
-          {/* Base Path: Bottom-Right (Driver) */}
+          {/* Path 4: Bottom-Right (Driver) - Terminates at Driver Node */}
           <path
-            d="M 1280 510 L 1100 510 Q 1000 510 840 390"
+            d="M 1280 510 H 1020"
             fill="none"
-            stroke="rgba(255, 255, 255, 0.1)"
+            stroke="rgba(255, 255, 255, 0.15)"
             strokeWidth="1.5"
+            strokeDasharray="6 6"
           />
-          {/* Animated Energy Pulse: Bottom-Right */}
           <motion.path
-            d="M 1280 510 L 1100 510 Q 1000 510 840 390"
+            d="M 1280 510 H 1020"
             fill="none"
-            stroke="rgba(255, 255, 255, 0.7)"
+            stroke="rgba(255, 255, 255, 0.9)"
             strokeWidth="2"
-            strokeDasharray="14 28"
-            animate={isReducedMotion ? {} : { strokeDashoffset: [0, 120] }}
-            transition={{ duration: 3.5, repeat: Infinity, ease: "linear" }}
+            strokeDasharray="10 20"
+            style={{ filter: "drop-shadow(0 0 8px rgba(255, 255, 255, 0.85))" }}
+            animate={
+              isReducedMotion
+                ? {}
+                : { strokeDashoffset: [0, 120], opacity: [0.35, 1, 0.35] }
+            }
+            transition={{ duration: 2.7, repeat: Infinity, ease: "easeInOut" }}
           />
         </svg>
 
-        {/* SHIFTED NODE 1: Owner (Shifted onto Upper-Left SVG Curve Circle) */}
+        {/* NODE 1: Owner (SVG Line Ends Here) */}
         <motion.div
           style={{
             opacity: Math.min(1, progress * 2.5),
@@ -236,7 +210,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onGetStarted }) => {
           </div>
         </motion.div>
 
-        {/* SHIFTED NODE 2: Customer (Shifted onto Upper-Right SVG Curve Circle - Share Icon Removed) */}
+        {/* NODE 2: Customer (SVG Line Ends Here) */}
         <motion.div
           style={{
             opacity: Math.min(1, progress * 2.5),
@@ -256,7 +230,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onGetStarted }) => {
           </div>
         </motion.div>
 
-        {/* SHIFTED NODE 3: Manager (Shifted onto Lower-Left SVG Curve Circle) */}
+        {/* NODE 3: Manager (SVG Line Ends Here) */}
         <motion.div
           style={{
             opacity: Math.min(1, Math.max(0, (progress - 0.2) * 2.5)),
@@ -276,7 +250,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onGetStarted }) => {
           </div>
         </motion.div>
 
-        {/* SHIFTED NODE 4: Driver (Shifted onto Lower-Right SVG Curve Circle) */}
+        {/* NODE 4: Driver (SVG Line Ends Here) */}
         <motion.div
           style={{
             opacity: Math.min(1, Math.max(0, (progress - 0.2) * 2.5)),
@@ -325,15 +299,16 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onGetStarted }) => {
             <span>See VendorOS in action →</span>
           </motion.div>
 
-          {/* Large Centered Stark White Headline with Scramble Text Animation */}
+          {/* Large Centered Stark Pure White Headline (No Scramble Decoding Text) */}
           <motion.h1
             style={{
               opacity: Math.min(1, progress * 2),
               transform: `translateY(${(1 - Math.min(1, progress * 2)) * 30}px)`,
             }}
-            className="text-4xl sm:text-6xl md:text-7xl font-display font-extrabold tracking-tight text-white leading-[1.06] mb-6 max-w-4xl mx-auto drop-shadow-md font-mono"
+            className="text-4xl sm:text-6xl md:text-7xl font-display font-extrabold tracking-tight text-white leading-[1.06] mb-6 max-w-4xl mx-auto drop-shadow-lg"
           >
-            {scrambledText}
+            Unlock the Future <br className="hidden sm:inline" />
+            of Operations.
           </motion.h1>
 
           {/* Centered Subcopy */}
@@ -396,8 +371,6 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onGetStarted }) => {
             />
           </motion.div>
         </div>
-
-        {/* BOTTOM FOOTER BAR HAS BEEN ENTIRELY REMOVED AS REQUESTED */}
       </div>
     </section>
   );
