@@ -1,11 +1,11 @@
 const { handleChatQuery } = require("../services/chatbot.service");
 const { transcribeAudio } = require("../services/groqTranscribe.service");
 const { clearHistory } = require("../utils/chatMemory");
+const ChatSession = require("../models/ChatSession");
+const { decrypt } = require("../utils/encryption");
 
 /**
  * POST /api/chatbot/query
- * body: { message: "where is my order" }
- * Works for ANY logged-in role.
  */
 async function submitChatQuery(req, res) {
   try {
@@ -29,9 +29,6 @@ async function submitChatQuery(req, res) {
 
 /**
  * POST /api/chatbot/voice-query
- * multipart/form-data body: { audio: <file> }
- * Transcribes the spoken question (reusing the same Whisper service as the
- * voice-update feature), then runs it through the exact same chatbot pipeline.
  */
 async function submitVoiceChatQuery(req, res) {
   try {
@@ -62,11 +59,80 @@ async function submitVoiceChatQuery(req, res) {
 
 /**
  * DELETE /api/chatbot/history
- * Clears this user's remembered conversation (e.g. "start a new chat" button).
+ * Starts a brand-new conversation immediately (like clicking "New Chat").
+ * Past conversations are NOT deleted — they remain visible via /sessions.
  */
 async function clearChatHistory(req, res) {
-  clearHistory(req.user._id);
-  return res.status(200).json({ success: true, message: "Conversation history cleared." });
+  await clearHistory(req.user._id);
+  return res.status(200).json({ success: true, message: "Started a new conversation." });
 }
 
-module.exports = { submitChatQuery, submitVoiceChatQuery, clearChatHistory };
+/**
+ * GET /api/chatbot/sessions
+ * Lists this user's past conversations (sidebar-style) — title, last updated,
+ * message count. Strictly scoped to req.user._id, so nobody can list or read
+ * another user's conversations.
+ */
+async function listChatSessions(req, res) {
+  try {
+    const sessions = await ChatSession.find({ user: req.user._id })
+      .select("title createdAt updatedAt messages")
+      .sort({ updatedAt: -1 });
+
+    return res.status(200).json({
+      success: true,
+      sessions: sessions.map((s) => ({
+        id: s._id,
+        title: s.title,
+        messageCount: s.messages.length,
+        createdAt: s.createdAt,
+        updatedAt: s.updatedAt,
+      })),
+    });
+  } catch (error) {
+    console.error("Listing chat sessions failed:", error);
+    return res.status(500).json({ success: false, message: "Server Error" });
+  }
+}
+
+/**
+ * GET /api/chatbot/sessions/:sessionId
+ * Opens one past conversation, decrypted just for this response. Ownership
+ * is checked via the { _id, user: req.user._id } query — a session that
+ * belongs to someone else simply won't be found (404), never leaked.
+ */
+async function getChatSession(req, res) {
+  try {
+    const session = await ChatSession.findOne({
+      _id: req.params.sessionId,
+      user: req.user._id,
+    });
+
+    if (!session) {
+      return res.status(404).json({ success: false, message: "Conversation not found." });
+    }
+
+    const messages = session.messages.map((m) => ({
+      role: m.role,
+      content: decrypt({
+        encryptedContent: m.encryptedContent,
+        iv: m.iv,
+        authTag: m.authTag,
+      }),
+      timestamp: m.timestamp,
+    }));
+
+    return res.status(200).json({ success: true, title: session.title, messages });
+  } catch (error) {
+    console.error("Opening chat session failed:", error);
+    return res.status(500).json({ success: false, message: "Server Error" });
+  }
+}
+
+module.exports = {
+  submitChatQuery,
+  submitVoiceChatQuery,
+  clearChatHistory,
+  listChatSessions,
+  getChatSession,
+};

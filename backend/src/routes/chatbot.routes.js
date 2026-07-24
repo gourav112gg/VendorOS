@@ -7,6 +7,8 @@ const {
   submitChatQuery,
   submitVoiceChatQuery,
   clearChatHistory,
+  listChatSessions,
+  getChatSession,
 } = require("../controllers/chatbot.controller");
 
 const upload = multer({
@@ -17,10 +19,16 @@ const upload = multer({
 // POST /api/chatbot/query — type a question (any logged-in role)
 router.post("/query", protect, submitChatQuery);
 
-// POST /api/chatbot/voice-query — speak a question instead (any logged-in role)
+// POST /api/chatbot/voice-query — speak a question instead
 router.post("/voice-query", protect, upload.single("audio"), submitVoiceChatQuery);
 
-// DELETE /api/chatbot/history — clear remembered conversation for this user
+// DELETE /api/chatbot/history — start a new conversation (old one stays saved)
 router.delete("/history", protect, clearChatHistory);
+
+// GET /api/chatbot/sessions — list this user's past conversations
+router.get("/sessions", protect, listChatSessions);
+
+// GET /api/chatbot/sessions/:sessionId — open one past conversation
+router.get("/sessions/:sessionId", protect, getChatSession);
 
 module.exports = router;
