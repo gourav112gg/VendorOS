@@ -3,6 +3,7 @@ import { motion } from "motion/react";
 import { Check } from "lucide-react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { NumberRoll } from "./NumberRoll";
 
 interface PricingSectionProps {
   onSelectPlan?: (tier: string) => void;
@@ -134,7 +135,17 @@ export const PricingSection: React.FC<PricingSectionProps> = ({ onSelectPlan }) 
                 Standard Plan
               </span>
               <div className="text-4xl font-display font-bold text-white mb-8 drop-shadow">
-                {isYearly ? "$9.99/m" : "$12.99/m"}
+                {isYearly ? (
+                  <>
+                    <NumberRoll value={9.99} prefix="$" decimals={2} />
+                    <span className="text-xs font-normal">/m</span>
+                  </>
+                ) : (
+                  <>
+                    <NumberRoll value={12.99} prefix="$" decimals={2} />
+                    <span className="text-xs font-normal">/m</span>
+                  </>
+                )}
               </div>
 
               {/* Feature List */}

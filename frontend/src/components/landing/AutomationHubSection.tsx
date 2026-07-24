@@ -160,6 +160,20 @@ export const AutomationHubSection: React.FC = () => {
                 <p className="text-xs text-neutral-600 leading-relaxed">
                   Real-time telemetry algorithms evaluate technician dispatch velocity and job completion rates with predictive risk scoring.
                 </p>
+                <div className="pt-2 space-y-2">
+                  <div className="flex justify-between text-[10px] text-neutral-500 font-bold">
+                    <span>Dispatch Velocity</span>
+                    <span>94.8%</span>
+                  </div>
+                  <div className="w-full h-2 bg-neutral-100 rounded-full overflow-hidden border border-neutral-200">
+                    <motion.div
+                      initial={{ width: 0 }}
+                      animate={{ width: "94.8%" }}
+                      transition={{ duration: 1.2, ease: "easeOut" }}
+                      className="h-full bg-black rounded-full"
+                    />
+                  </div>
+                </div>
               </div>
             )}
 

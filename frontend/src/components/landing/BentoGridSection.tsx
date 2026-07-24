@@ -3,6 +3,7 @@ import { motion } from "motion/react";
 import { ArrowUpRight, Clock, Lock, ShieldCheck } from "lucide-react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { NumberRoll } from "./NumberRoll";
 
 export const BentoGridSection: React.FC = () => {
   const sectionRef = useRef<HTMLElement>(null);
@@ -118,11 +119,11 @@ export const BentoGridSection: React.FC = () => {
             <div className="w-full max-w-[200px] border-[8px] border-[#1C1C1E] rounded-[32px] overflow-hidden bg-[#09090B] text-white p-3 font-mono text-left shadow-2xl space-y-3">
               <div className="text-[9px] text-neutral-400 border-b border-neutral-800 pb-1 flex justify-between">
                 <span>Onboarding</span>
-                <span className="text-emerald-400 font-bold">1.0812</span>
+                <span className="text-emerald-400 font-bold"><NumberRoll value={1.0812} decimals={4} /></span>
               </div>
               <div className="bg-[#121215] border border-neutral-800 rounded-lg p-2 space-y-1">
                 <span className="text-[10px] font-bold block text-white">VendorOS Dispatch</span>
-                <span className="text-[8px] text-neutral-400 block">$2,542 active volume</span>
+                <span className="text-[8px] text-neutral-400 block"><NumberRoll value={2542} prefix="$" suffix=" active volume" /></span>
               </div>
             </div>
 
