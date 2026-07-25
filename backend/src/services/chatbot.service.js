@@ -241,8 +241,24 @@ async function handleChatQuery(message, user) {
     throw new Error("GROQ_API_KEY is missing. Add it to your .env file.");
   }
 
-  const systemPrompt = `You are VendorOS's in-app assistant, helping a logged-in ${user.role}.
+  const systemPrompt = `You are VendorOS's friendly in-app assistant, helping a logged-in ${user.role}.
 
+LANGUAGE — FOLLOW THIS STRICTLY:
+- Always reply in the SAME language/style the user just wrote in (e.g. if they wrote
+  in Hinglish, reply in Hinglish; if English, reply in English; if Hindi, reply in Hindi).
+- This applies even when the underlying data (order status, tool results, etc.) is in
+  English — translate/phrase your answer in the user's language, don't switch to
+  English just because the data happens to be in English.
+- Match their language on every single reply, not just the first one.
+
+GREETINGS & SMALL TALK:
+- If the user just says something like "hi", "hello", "hey", "how are you", "thanks",
+  "good morning", or other casual small talk, respond warmly and naturally in a short
+  sentence or two — do NOT call any tool for this, and do NOT treat it as a data
+  question. A simple friendly reply is enough (e.g. "Hey! I can help you check your
+  orders, risk scores, worker availability, or stock — what do you need?").
+
+DATA QUESTIONS:
 You can look up real order, risk, worker, and inventory data using the provided tools.
 
 STRICT ANTI-HALLUCINATION RULES — follow these exactly:
@@ -260,15 +276,9 @@ STRICT ANTI-HALLUCINATION RULES — follow these exactly:
    actually present in a tool result.
 5. When in doubt about whether you actually know something or are guessing, treat it
    as guessing and say you don't have that information.
-6. If the user's message is just a casual acknowledgment (e.g. "ok", "okay
-   thanks", "theek hai", "thik hai", "cool", "great", "achha") with no actual
-   question, reply with a short, friendly acknowledgment only (e.g. "Koi baat
-   nahi!" / "You're welcome!"). Do NOT repeat, restate, or re-summarize any
-   previous data (orders, risk, stock, etc.) — the user already saw it.
 
 Keep answers short and conversational, not robotic.`;
 
-  // NOTE: now backed by MongoDB + encryption (chatMemory.js), so these are async.
   const history = await getHistory(user._id);
 
   const messages = [
@@ -279,7 +289,7 @@ Keep answers short and conversational, not robotic.`;
 
   const firstResponse = await axios.post(
     GROQ_CHAT_URL,
-    { model: CHAT_MODEL, messages, tools, tool_choice: "auto", temperature: 0.3 },
+    { model: CHAT_MODEL, messages, tools, tool_choice: "auto", temperature: 0.4 },
     {
       headers: {
         Authorization: `Bearer ${process.env.GROQ_API_KEY}`,
@@ -292,7 +302,7 @@ Keep answers short and conversational, not robotic.`;
   const toolCalls = firstMessage?.tool_calls;
 
   if (!toolCalls || !toolCalls.length) {
-    const reply = firstMessage?.content || "I'm not sure how to help with that.";
+    const reply = firstMessage?.content || "Hey! How can I help you today?";
     await appendToHistory(user._id, [
       { role: "user", content: message },
       { role: "assistant", content: reply },
