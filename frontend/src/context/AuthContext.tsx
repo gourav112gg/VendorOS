@@ -11,7 +11,7 @@ export interface UserPreferences {
   notifyEmail?: boolean;
   notifySMS?: boolean;
   notifyPush?: boolean;
-  themeMode: 'dark' | 'light';
+  themeMode: 'dark' | 'light' | 'system';
   themeName: 'slate' | 'sage' | 'sapphire' | 'warm' | 'tokyo' | 'custom';
   language?: 'en' | 'hi' | 'pa';
   customThemePrompt?: string;

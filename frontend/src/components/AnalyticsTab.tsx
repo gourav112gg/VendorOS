@@ -189,12 +189,12 @@ export const AnalyticsTab: React.FC<AnalyticsTabProps> = ({
                   dataKey="name"
                   stroke="#444444"
                   fontSize={10}
-                  fontClassName="font-mono"
+                  className="font-mono"
                 />
                 <YAxis
                   stroke="#444444"
                   fontSize={10}
-                  fontClassName="font-mono"
+                  className="font-mono"
                 />
                 <Tooltip
                   contentStyle={{
@@ -290,12 +290,12 @@ export const AnalyticsTab: React.FC<AnalyticsTabProps> = ({
                   dataKey="name"
                   stroke="#444444"
                   fontSize={10}
-                  fontClassName="font-mono"
+                  className="font-mono"
                 />
                 <YAxis
                   stroke="#444444"
                   fontSize={10}
-                  fontClassName="font-mono"
+                  className="font-mono"
                 />
                 <Tooltip
                   contentStyle={{
@@ -338,12 +338,12 @@ export const AnalyticsTab: React.FC<AnalyticsTabProps> = ({
                   dataKey="name"
                   stroke="#444444"
                   fontSize={10}
-                  fontClassName="font-mono"
+                  className="font-mono"
                 />
                 <YAxis
                   stroke="#444444"
                   fontSize={10}
-                  fontClassName="font-mono"
+                  className="font-mono"
                 />
                 <Tooltip
                   contentStyle={{

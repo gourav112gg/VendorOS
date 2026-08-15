@@ -320,8 +320,8 @@ export const OwnerDashboard: React.FC = () => {
   // Count helper & Deduplicated Team Members Filtering
   const activeDomainsCount = domains.filter(d => d.status === 'Active').length;
   
-  const uniqueTeamMembers = Array.from(
-    new Map(teamMembers.map(m => [m.id || m.email.toLowerCase(), m])).values()
+  const uniqueTeamMembers: UserProfile[] = Array.from(
+    new Map<string, UserProfile>(teamMembers.map(m => [m.id || m.email.toLowerCase(), m])).values()
   );
 
   const managers = uniqueTeamMembers.filter(

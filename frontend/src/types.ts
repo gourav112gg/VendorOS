@@ -6,6 +6,12 @@ export interface Subscription {
   currentPeriodEnd: string;
   razorpaySubscriptionId?: string;
   updatedAt: string;
+  manualOverride?: {
+    active?: boolean;
+    reason?: string;
+    setBy?: string;
+    setAt?: string;
+  };
 }
 
 export interface Company {
@@ -82,6 +88,9 @@ export interface ServiceOrder {
   description: string;
   customerId: string;
   customerName: string;
+  customerEmail?: string;
+  customerPhone?: string;
+  notes?: string;
   managerId?: string; // Assigned manager who builds stages
   managerName?: string;
   workerId?: string; // Primary assigned worker (legacy/summary)

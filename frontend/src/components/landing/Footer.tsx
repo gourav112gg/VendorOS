@@ -1,6 +1,6 @@
 import React from "react";
 import { motion } from "motion/react";
-import { Linkedin, Twitter, ShieldCheck } from "lucide-react";
+import { ShieldCheck } from "lucide-react";
 
 export const Footer: React.FC = () => {
   return (

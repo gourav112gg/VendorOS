@@ -311,6 +311,17 @@ const joinRequests = {
 
 const companies = {
   getAll: () => request<{ success: boolean; companies: any[] }>('GET', '/api/companies'),
+  checkAvailability: async (name: string) => {
+    try {
+      const res = await request<{ success: boolean; companies: any[] }>('GET', '/api/companies');
+      const exists = (res.companies || []).some(
+        (c) => c.name?.toLowerCase() === name.trim().toLowerCase()
+      );
+      return { available: !exists };
+    } catch {
+      return { available: true };
+    }
+  },
   updateMe: (payload: { description?: string; address?: string; minimumOrderValue?: number }) =>
     request<{ success: boolean; company: any }>('PATCH', '/api/companies/me', payload, getToken() || undefined),
 };

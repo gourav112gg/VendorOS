@@ -1203,6 +1203,10 @@ class SimulatedStore {
     return newInvoice;
   }
 
+  public createInvoice(invoice: Omit<GstInvoice, 'id' | 'createdAt'>): GstInvoice {
+    return this.addInvoice(invoice);
+  }
+
   public getTrustScores(companyId: string): TrustScoreRecord[] {
     if (!this.state.trustScoreRecords) {
       this.state.trustScoreRecords = [];

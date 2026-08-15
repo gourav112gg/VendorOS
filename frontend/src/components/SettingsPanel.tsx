@@ -11,7 +11,7 @@ import {
 import { motion, AnimatePresence } from 'motion/react';
 import dbStore from '../services/store';
 import { TIER_PRICING } from '../services/subscriptionService';
-import { Subscription, Company } from '../types';
+import { Subscription, Company, UserRole } from '../types';
 import api from '../services/api';
 
 
@@ -580,7 +580,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ initialTab = 'prof
                     <select
                       id="profile-role"
                       value={selectedRole}
-                      onChange={(e) => setSelectedRole(e.target.value)}
+                      onChange={(e) => setSelectedRole(e.target.value as UserRole)}
                       className="w-full bg-black text-xs text-white px-3 py-2.5 rounded-sm border border-[#222222] focus:outline-none focus:border-[#444444] transition-colors font-mono"
                     >
                       <option value="Worker">Worker (Technician)</option>

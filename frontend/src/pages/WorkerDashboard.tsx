@@ -785,7 +785,7 @@ export const WorkerDashboard: React.FC = () => {
                               {/* Stage controls if assigned to me */}
                               {isAssignedToMe && stg.status !== 'Completed' && (
                                 <div className="flex space-x-2 mb-3 font-mono text-[10px]">
-                                  {stg.status === 'Pending' || stg.status === 'Scheduled' || (stg.status as string) === 'Unscheduled' ? (
+                                  {stg.status === 'Pending' || (stg.status as string) === 'Scheduled' || (stg.status as string) === 'Unscheduled' ? (
                                     <button
                                       onClick={() => handleUpdateSubstageStatus(selectedOrder.id, stg.id, 'In Progress')}
                                       className="px-3 py-1 bg-blue-600 hover:bg-blue-500 text-white rounded-sm font-bold cursor-pointer transition-colors"

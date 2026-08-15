@@ -13,9 +13,28 @@ import {
 import { motion, AnimatePresence } from "motion/react";
 import { Company, ServiceOrder } from "../types";
 import { hasFeatureAccess } from "../services/subscriptionService";
+import { NoDataPlaceholder } from "./NoDataPlaceholder";
 import api from "../services/api";
 
 const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
+export interface AiCopilotTabProps {
+  company: Company;
+  orders: ServiceOrder[];
+  onNavigateToBilling?: () => void;
+}
+
+export interface CopilotResult {
+  score?: number;
+  riskScore?: number;
+  riskPercentage?: number;
+  expectedDelayDays?: number;
+  reason?: string;
+  action?: string;
+  suggestedAction?: string;
+  engine?: string;
+  source?: string;
+}
 
 export const AiCopilotTab: React.FC<AiCopilotTabProps> = ({
   company,
