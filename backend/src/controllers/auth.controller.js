@@ -6,8 +6,8 @@ const LoginAttempt = require("../models/LoginAttempt");
 const RateLimit = require("../models/RateLimit");
 
 const demoEmails = [
-  "alice@apex.com", "bob@apex.com", "charlie@apex.com", "dave@gmail.com",
-  "kaushal@gmail.com", "rahul@gmail.com", "amit@gmail.com"
+  "alice@apex.com", "bob@apex.com", "charlie@apex.com", "dave@gmail.com", "dave@apex.com",
+  "kaushal@gmail.com", "rahul@gmail.com", "amit@gmail.com", "saransh@gargops.com", "amit@gargops.com"
 ];
 
 // Helper to record failed login attempts, handle progressive delay increment, and trigger lockout

@@ -118,7 +118,8 @@ export const SignUp: React.FC<SignUpProps> = ({
     setError("");
     setLoading(true);
     try {
-      await loginWithGoogle();
+      const targetRole = signUpMode === "owner" ? "owner" : signUpMode === "employee" ? role : "customer";
+      await loginWithGoogle(targetRole);
     } catch (err: any) {
       setError(sanitizeErrorMessage(err.message || "Google Sign-Up failed."));
       setLoading(false);
@@ -148,7 +149,7 @@ export const SignUp: React.FC<SignUpProps> = ({
           setLoading(false);
           return;
         }
-        await registerOwner(email, password, name, companyName, phone);
+        await registerOwner(name.trim(), email.trim(), companyName.trim(), phone.trim(), password);
       } else if (signUpMode === "employee") {
         if (!selectedCompanyId) {
           setError("Please select a company to join.");
@@ -156,15 +157,15 @@ export const SignUp: React.FC<SignUpProps> = ({
           return;
         }
         await registerManagerOrWorker(
-          email,
-          password,
-          name,
-          role,
+          name.trim(),
+          email.trim(),
           selectedCompanyId,
-          phone
+          role,
+          phone.trim(),
+          password
         );
       } else {
-        await registerCustomer(email, password, name, phone);
+        await registerCustomer(name.trim(), email.trim(), phone.trim(), password);
       }
     } catch (err: any) {
       setError(sanitizeErrorMessage(err.message || "Registration failed."));

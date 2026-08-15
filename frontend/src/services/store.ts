@@ -65,10 +65,13 @@ const DEFAULT_STATE: DbState = {
   ],
   users: [
     { id: 'usr_alice', name: 'Alice Owner', email: 'alice@apex.com', role: 'Owner', companyId: 'comp_apex', createdAt: new Date().toISOString() },
+    { id: 'usr_saransh', name: 'Saransh Owner', email: 'saransh@gargops.com', role: 'Owner', companyId: 'comp_apex', createdAt: new Date().toISOString() },
     { id: 'usr_bob', name: 'Bob Manager', email: 'bob@apex.com', role: 'Manager', companyId: 'comp_apex', createdAt: new Date().toISOString() },
+    { id: 'usr_amit', name: 'Amit Manager', email: 'amit@gargops.com', role: 'Manager', companyId: 'comp_apex', createdAt: new Date().toISOString() },
     { id: 'usr_charlie', name: 'Charlie Worker', email: 'charlie@apex.com', role: 'Worker', companyId: 'comp_apex', createdAt: new Date().toISOString() },
     { id: 'usr_volt_owner', name: 'Victor Volt', email: 'victor@volt.com', role: 'Owner', companyId: 'comp_volt', createdAt: new Date().toISOString() },
-    { id: 'usr_customer', name: 'Dave Customer', email: 'dave@gmail.com', role: 'Customer', createdAt: new Date().toISOString() }
+    { id: 'usr_customer', name: 'Dave Customer', email: 'dave@gmail.com', role: 'Customer', createdAt: new Date().toISOString() },
+    { id: 'usr_customer_apex', name: 'Dave Customer', email: 'dave@apex.com', role: 'Customer', createdAt: new Date().toISOString() }
   ],
   domains: [
     { id: 'dom_1', companyId: 'comp_apex', name: 'Residential Plumbing', type: 'Plumbing', status: 'Active', createdAt: new Date().toISOString() },

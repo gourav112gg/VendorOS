@@ -29,6 +29,15 @@ export interface UserPreferences {
   };
 }
 
+export const normalizeRole = (role?: string): 'Owner' | 'Manager' | 'Worker' | 'Customer' => {
+  if (!role) return 'Customer';
+  const clean = role.toLowerCase().trim();
+  if (clean === 'owner') return 'Owner';
+  if (clean === 'manager') return 'Manager';
+  if (clean === 'worker') return 'Worker';
+  return 'Customer';
+};
+
 interface AuthContextType {
   user: UserProfile | null;
   company: Company | null;
@@ -40,7 +49,7 @@ interface AuthContextType {
   updateProfile: (name: string, phone?: string, role?: string, companyId?: string, email?: string) => Promise<void>;
   updateCompany: (companyDetails: { description?: string; address?: string; minimumOrderValue?: number }) => Promise<void>;
   login: (email: string, password?: string, category?: string) => Promise<UserProfile>;
-  loginWithGoogle: () => Promise<UserProfile>;
+  loginWithGoogle: (targetRole?: string) => Promise<UserProfile>;
   logout: () => void;
   registerOwner: (name: string, email: string, companyName: string, phone?: string, password?: string) => Promise<{ user: UserProfile; company: Company }>;
   registerManagerOrWorker: (name: string, email: string, companyId: string, role: 'Manager' | 'Worker', phone?: string, password?: string) => Promise<UserProfile>;
@@ -168,7 +177,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             name: res.user.name,
             email: res.user.email,
             phone: res.user.phone,
-            role: (res.user.role.charAt(0).toUpperCase() + res.user.role.slice(1)) as any,
+            role: normalizeRole(res.user.role),
             companyId: res.user.company ? (res.user.company._id || res.user.company) : undefined,
             createdAt: res.user.createdAt,
           };
@@ -285,7 +294,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           name: res.user.name,
           email: res.user.email,
           phone: res.user.phone,
-          role: res.user.role.charAt(0).toUpperCase() + res.user.role.slice(1) as any,
+          role: normalizeRole(res.user.role),
           companyId: res.user.company ? res.user.company._id : undefined,
           createdAt: res.user.createdAt,
         };
@@ -331,18 +340,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           vendor: 'Manager',
           customer: 'Customer'
         };
+        const fallbackRole = roleMap[category] || normalizeRole(category) || 'Owner';
         const fallbackUser: UserProfile = {
           id: 'usr_demo_' + Date.now(),
           name: email.split('@')[0],
           email: email,
-          role: roleMap[category] || 'Owner',
-          companyId: category === 'customer' ? undefined : 'comp_apex',
+          role: fallbackRole,
+          companyId: fallbackRole === 'Customer' ? undefined : 'comp_apex',
           createdAt: new Date().toISOString()
         };
         setUser(fallbackUser);
         const apexComp = dbStore.getCompanies()[0] || null;
-        setCompany(category === 'customer' ? null : apexComp);
-        saveSession(fallbackUser, category === 'customer' ? null : apexComp);
+        setCompany(fallbackRole === 'Customer' ? null : apexComp);
+        saveSession(fallbackUser, fallbackRole === 'Customer' ? null : apexComp);
         return fallbackUser;
       }
     }
@@ -364,7 +374,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           name: res.user.name,
           email: res.user.email,
           phone: res.user.phone,
-          role: res.user.role.charAt(0).toUpperCase() + res.user.role.slice(1) as any,
+          role: normalizeRole(res.user.role),
           companyId: res.user.company ? res.user.company._id : undefined,
           createdAt: res.user.createdAt,
         };
@@ -409,7 +419,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const loginWithGoogle = async (): Promise<UserProfile> => {
+  const loginWithGoogle = async (targetRole?: string): Promise<UserProfile> => {
     const { GoogleAuthProvider, signInWithPopup } = await import('firebase/auth');
     const { auth: firebaseAuth } = await import('../services/firebase');
     
@@ -424,11 +434,25 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     let loggedUser = allUsers.find(u => u.email.toLowerCase() === email.toLowerCase());
 
     if (!loggedUser) {
-      // Auto-register as Customer
       const displayName = result.user.displayName || 'Google User';
       const phone = result.user.phoneNumber || undefined;
-      loggedUser = dbStore.registerCustomer(displayName, email, phone);
+      const desiredRole = normalizeRole(targetRole);
+
+      if (desiredRole === 'Owner') {
+        const reg = dbStore.registerOwner(displayName, email, `${displayName}'s Enterprise`);
+        loggedUser = reg.user;
+      } else if (desiredRole === 'Manager' || desiredRole === 'Worker') {
+        const apexComp = dbStore.getCompanies()[0];
+        loggedUser = dbStore.registerManagerOrWorker(displayName, email, apexComp?.id || 'comp_apex', desiredRole);
+      } else {
+        loggedUser = dbStore.registerCustomer(displayName, email, phone);
+      }
     }
+
+    loggedUser = {
+      ...loggedUser,
+      role: normalizeRole(loggedUser.role)
+    };
 
     setUser(loggedUser);
     let companyObj: Company | null = null;
@@ -603,7 +627,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           name: res.user.name,
           email: res.user.email,
           phone: res.user.phone,
-          role: res.user.role.charAt(0).toUpperCase() + res.user.role.slice(1) as any,
+          role: normalizeRole(res.user.role),
           companyId: res.user.company ? (res.user.company._id || res.user.company) : undefined,
           createdAt: res.user.createdAt,
         };

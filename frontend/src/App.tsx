@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { AuthProvider, useAuth } from "./context/AuthContext";
+import { AuthProvider, useAuth, normalizeRole } from "./context/AuthContext";
 import { LanguageProvider, useTranslation } from "./context/LanguageContext";
 import { Navigation } from "./components/Navigation";
 import { ThemeManager } from "./components/ThemeManager";
@@ -299,7 +299,8 @@ const MainLayout: React.FC = () => {
 
   // Define dashboard rendering based on custom claims role
   const renderDashboard = () => {
-    switch (user.role) {
+    const role = normalizeRole(user.role);
+    switch (role) {
       case "Owner":
         return <OwnerDashboard />;
       case "Manager":
@@ -311,7 +312,7 @@ const MainLayout: React.FC = () => {
       default:
         return (
           <div className="p-10 text-center text-red-500 font-mono text-xs uppercase tracking-widest bg-[#111111] border border-red-950/40 rounded-sm max-w-md mx-auto my-12">
-            Unauthorized claim: Unknown security role.
+            Unauthorized claim: Unknown security role ({user.role}).
           </div>
         );
     }

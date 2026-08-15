@@ -48,7 +48,7 @@ export const Login: React.FC<LoginProps> = ({
     setError("");
     setLoading(true);
     try {
-      await loginWithGoogle();
+      await loginWithGoogle(roleType);
     } catch (err: any) {
       setError(sanitizeErrorMessage(err.message || "Google Sign-In failed."));
       setLoading(false);
