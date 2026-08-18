@@ -16,10 +16,7 @@ import {
   Package,
   CheckCircle2,
   Minimize2,
-  Trash2,
-  Radio,
   Clock,
-  ArrowRight,
   Bot
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
@@ -126,7 +123,7 @@ export const FloatingChatbot: React.FC = () => {
     }
   };
 
-  // Offline simulated fallback response generator
+  // Offline simulated fallback response generator matching origin data
   const getSimulatedReply = (query: string): string => {
     const q = query.toLowerCase();
     const role = user?.role || "Customer";
@@ -154,7 +151,7 @@ export const FloatingChatbot: React.FC = () => {
         return "Worker availability logs are only accessible to Owners and Managers.";
       }
       const users = dbStore.getUsers().filter(u => u.role === "Worker" || u.role === "Manager");
-      return `👥 **Team Availability Status**:\n` + users.map(u => `• **${u.name}** (${u.role}): 🟢 Active & Available`).join("\n");
+      return `👥 **Team Availability Status**:\n` + users.map(u => `• **${u.name}** (${u.role}): Active & Available`).join("\n");
     }
 
     if (q.includes("inventory") || q.includes("stock") || q.includes("material")) {
@@ -211,7 +208,7 @@ export const FloatingChatbot: React.FC = () => {
         };
         setMessages(prev => [...prev, assistantMsg]);
         setLoading(false);
-      }, 600);
+      }, 500);
     }
   };
 
@@ -320,7 +317,7 @@ export const FloatingChatbot: React.FC = () => {
     }
   };
 
-  // Role-specific quick action chips
+  // Role-specific quick action chips in origin monochromatic palette
   const renderQuickChips = () => {
     const role = user?.role || "Customer";
     if (role === "Owner" || role === "Manager") {
@@ -328,30 +325,30 @@ export const FloatingChatbot: React.FC = () => {
         <div className="flex flex-wrap gap-1.5 pt-2">
           <button
             onClick={() => handleSendMessage("List my recent orders and their current status")}
-            className="flex items-center space-x-1.5 px-2.5 py-1.5 bg-[#1C1D24] hover:bg-[#252733] border border-white/10 hover:border-white/20 rounded-full text-[11px] font-mono text-neutral-300 hover:text-white transition-all cursor-pointer shadow-sm"
+            className="flex items-center space-x-1.5 px-3 py-1.5 bg-[#18181B] hover:bg-[#27272A] border border-white/15 hover:border-white/30 rounded-full text-[11px] font-mono text-[#FAFAFA] transition-all cursor-pointer shadow-sm"
           >
-            <Package className="w-3 h-3 text-blue-400" />
+            <Package className="w-3 h-3 text-white" />
             <span>Recent Orders</span>
           </button>
           <button
             onClick={() => handleSendMessage("Are any technicians or workers free right now?")}
-            className="flex items-center space-x-1.5 px-2.5 py-1.5 bg-[#1C1D24] hover:bg-[#252733] border border-white/10 hover:border-white/20 rounded-full text-[11px] font-mono text-neutral-300 hover:text-white transition-all cursor-pointer shadow-sm"
+            className="flex items-center space-x-1.5 px-3 py-1.5 bg-[#18181B] hover:bg-[#27272A] border border-white/15 hover:border-white/30 rounded-full text-[11px] font-mono text-[#FAFAFA] transition-all cursor-pointer shadow-sm"
           >
-            <Users className="w-3 h-3 text-emerald-400" />
+            <Users className="w-3 h-3 text-white" />
             <span>Worker Availability</span>
           </button>
           <button
             onClick={() => handleSendMessage("Check risk scores and delay predictions")}
-            className="flex items-center space-x-1.5 px-2.5 py-1.5 bg-[#1C1D24] hover:bg-[#252733] border border-white/10 hover:border-white/20 rounded-full text-[11px] font-mono text-neutral-300 hover:text-white transition-all cursor-pointer shadow-sm"
+            className="flex items-center space-x-1.5 px-3 py-1.5 bg-[#18181B] hover:bg-[#27272A] border border-white/15 hover:border-white/30 rounded-full text-[11px] font-mono text-[#FAFAFA] transition-all cursor-pointer shadow-sm"
           >
-            <AlertTriangle className="w-3 h-3 text-amber-400" />
+            <AlertTriangle className="w-3 h-3 text-white" />
             <span>Delay Risk</span>
           </button>
           <button
             onClick={() => handleSendMessage("Check current stock and raw material inventory")}
-            className="flex items-center space-x-1.5 px-2.5 py-1.5 bg-[#1C1D24] hover:bg-[#252733] border border-white/10 hover:border-white/20 rounded-full text-[11px] font-mono text-neutral-300 hover:text-white transition-all cursor-pointer shadow-sm"
+            className="flex items-center space-x-1.5 px-3 py-1.5 bg-[#18181B] hover:bg-[#27272A] border border-white/15 hover:border-white/30 rounded-full text-[11px] font-mono text-[#FAFAFA] transition-all cursor-pointer shadow-sm"
           >
-            <Boxes className="w-3 h-3 text-purple-400" />
+            <Boxes className="w-3 h-3 text-white" />
             <span>Inventory Stock</span>
           </button>
         </div>
@@ -363,16 +360,16 @@ export const FloatingChatbot: React.FC = () => {
         <div className="flex flex-wrap gap-1.5 pt-2">
           <button
             onClick={() => handleSendMessage("What tasks and orders are assigned to me today?")}
-            className="flex items-center space-x-1.5 px-2.5 py-1.5 bg-[#1C1D24] hover:bg-[#252733] border border-white/10 hover:border-white/20 rounded-full text-[11px] font-mono text-neutral-300 hover:text-white transition-all cursor-pointer shadow-sm"
+            className="flex items-center space-x-1.5 px-3 py-1.5 bg-[#18181B] hover:bg-[#27272A] border border-white/15 hover:border-white/30 rounded-full text-[11px] font-mono text-[#FAFAFA] transition-all cursor-pointer shadow-sm"
           >
-            <CheckCircle2 className="w-3 h-3 text-emerald-400" />
+            <CheckCircle2 className="w-3 h-3 text-white" />
             <span>My Assigned Tasks</span>
           </button>
           <button
             onClick={() => handleSendMessage("Which checklist items are still pending completion?")}
-            className="flex items-center space-x-1.5 px-2.5 py-1.5 bg-[#1C1D24] hover:bg-[#252733] border border-white/10 hover:border-white/20 rounded-full text-[11px] font-mono text-neutral-300 hover:text-white transition-all cursor-pointer shadow-sm"
+            className="flex items-center space-x-1.5 px-3 py-1.5 bg-[#18181B] hover:bg-[#27272A] border border-white/15 hover:border-white/30 rounded-full text-[11px] font-mono text-[#FAFAFA] transition-all cursor-pointer shadow-sm"
           >
-            <Clock className="w-3 h-3 text-amber-400" />
+            <Clock className="w-3 h-3 text-white" />
             <span>Pending Checklists</span>
           </button>
         </div>
@@ -383,16 +380,16 @@ export const FloatingChatbot: React.FC = () => {
       <div className="flex flex-wrap gap-1.5 pt-2">
         <button
           onClick={() => handleSendMessage("Where is my order and what is its status?")}
-          className="flex items-center space-x-1.5 px-2.5 py-1.5 bg-[#1C1D24] hover:bg-[#252733] border border-white/10 hover:border-white/20 rounded-full text-[11px] font-mono text-neutral-300 hover:text-white transition-all cursor-pointer shadow-sm"
+          className="flex items-center space-x-1.5 px-3 py-1.5 bg-[#18181B] hover:bg-[#27272A] border border-white/15 hover:border-white/30 rounded-full text-[11px] font-mono text-[#FAFAFA] transition-all cursor-pointer shadow-sm"
         >
-          <Package className="w-3 h-3 text-blue-400" />
+          <Package className="w-3 h-3 text-white" />
           <span>Track My Order</span>
         </button>
         <button
           onClick={() => handleSendMessage("Show all my active service orders")}
-          className="flex items-center space-x-1.5 px-2.5 py-1.5 bg-[#1C1D24] hover:bg-[#252733] border border-white/10 hover:border-white/20 rounded-full text-[11px] font-mono text-neutral-300 hover:text-white transition-all cursor-pointer shadow-sm"
+          className="flex items-center space-x-1.5 px-3 py-1.5 bg-[#18181B] hover:bg-[#27272A] border border-white/15 hover:border-white/30 rounded-full text-[11px] font-mono text-[#FAFAFA] transition-all cursor-pointer shadow-sm"
         >
-          <CheckCircle2 className="w-3 h-3 text-emerald-400" />
+          <CheckCircle2 className="w-3 h-3 text-white" />
           <span>My Orders</span>
         </button>
       </div>
@@ -401,8 +398,8 @@ export const FloatingChatbot: React.FC = () => {
 
   return (
     <>
-      {/* Floating Trigger Button in Bottom-Right Corner */}
-      <div className="fixed bottom-6 right-6 z-50 flex items-center space-x-3">
+      {/* Floating Trigger Button in Bottom-Right Corner (Origin Obsidian & Stark White Palette) */}
+      <div className="fixed bottom-6 right-6 z-50 flex items-center space-x-3 select-none">
         {/* Teaser pill (when closed) */}
         {!isOpen && (
           <motion.div
@@ -410,10 +407,10 @@ export const FloatingChatbot: React.FC = () => {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: 10 }}
             onClick={() => setIsOpen(true)}
-            className="hidden sm:flex items-center space-x-2 px-3 py-1.5 bg-[#111218]/90 hover:bg-[#181A22] backdrop-blur-md border border-white/10 rounded-full shadow-lg text-xs font-mono text-neutral-300 hover:text-white cursor-pointer transition-all"
+            className="hidden sm:flex items-center space-x-2 px-3.5 py-1.5 bg-[#09090B] hover:bg-[#18181B] border border-white/20 rounded-full shadow-2xl text-xs font-mono text-white cursor-pointer transition-all hover:border-white/40"
           >
-            <Sparkles className="w-3.5 h-3.5 text-emerald-400 animate-pulse" />
-            <span>VendorOS AI Assistant</span>
+            <Sparkles className="w-3.5 h-3.5 text-white animate-pulse" />
+            <span className="font-bold">VendorOS Copilot</span>
           </motion.div>
         )}
 
@@ -426,16 +423,16 @@ export const FloatingChatbot: React.FC = () => {
           whileTap={{ scale: 0.94 }}
           className={`relative p-3.5 rounded-full shadow-2xl transition-all cursor-pointer flex items-center justify-center ${
             isOpen
-              ? "bg-[#1E2028] text-white border border-white/20"
-              : "bg-gradient-to-tr from-emerald-600 via-teal-500 to-cyan-500 text-black shadow-emerald-500/20"
+              ? "bg-[#18181B] text-white border border-white/30"
+              : "bg-[#09090B] text-white border border-white/25 hover:border-white/50 shadow-black/80"
           }`}
           title={isOpen ? "Close AI Copilot" : "Open VendorOS AI Copilot"}
         >
           {isOpen ? (
-            <X className="w-5 h-5" />
+            <X className="w-5 h-5 text-white" />
           ) : (
             <>
-              <Bot className="w-6 h-6 text-black" />
+              <Bot className="w-6 h-6 text-white" />
               <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-white rounded-full border-2 border-black animate-ping" />
               <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-white rounded-full border-2 border-black" />
             </>
@@ -443,7 +440,7 @@ export const FloatingChatbot: React.FC = () => {
         </motion.button>
       </div>
 
-      {/* Floating Chat Modal Panel */}
+      {/* Floating Chat Modal Panel (Origin Monochrome Obsidian Palette) */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -451,20 +448,20 @@ export const FloatingChatbot: React.FC = () => {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.88, y: 30 }}
             transition={{ type: "spring", stiffness: 360, damping: 28 }}
-            className="fixed bottom-22 right-6 z-50 w-[92vw] sm:w-[410px] h-[580px] max-h-[82vh] bg-[#0E1015]/95 backdrop-blur-2xl border border-white/10 rounded-2xl shadow-2xl flex flex-col overflow-hidden font-sans"
+            className="fixed bottom-22 right-6 z-50 w-[92vw] sm:w-[410px] h-[580px] max-h-[82vh] bg-[#09090B] border border-white/20 rounded-2xl shadow-[0_25px_60px_rgba(0,0,0,0.95)] flex flex-col overflow-hidden font-sans text-white"
           >
             {/* Header */}
-            <div className="p-3.5 bg-[#14161F] border-b border-white/10 flex items-center justify-between">
+            <div className="p-3.5 bg-[#121215] border-b border-white/10 flex items-center justify-between">
               <div className="flex items-center space-x-2.5">
-                <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-emerald-500 to-cyan-500 flex items-center justify-center text-black shadow-sm">
-                  <Sparkles className="w-4 h-4" />
+                <div className="w-8 h-8 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-white shadow-sm">
+                  <Bot className="w-4 h-4 text-white" />
                 </div>
                 <div>
                   <div className="flex items-center space-x-1.5">
                     <span className="text-xs font-bold text-white font-mono tracking-tight">
                       VendorOS Copilot
                     </span>
-                    <span className="px-1.5 py-0.2 bg-emerald-500/10 border border-emerald-500/30 text-[9px] font-mono text-emerald-400 rounded-sm">
+                    <span className="px-1.5 py-0.2 bg-white/10 border border-white/20 text-[9px] font-mono text-neutral-300 rounded-sm">
                       Llama 3.3
                     </span>
                   </div>
@@ -510,13 +507,13 @@ export const FloatingChatbot: React.FC = () => {
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: "auto" }}
                   exit={{ opacity: 0, height: 0 }}
-                  className="bg-[#12141C] border-b border-white/10 p-3 max-h-[220px] overflow-y-auto space-y-2"
+                  className="bg-[#121215] border-b border-white/10 p-3 max-h-[220px] overflow-y-auto space-y-2"
                 >
                   <div className="flex items-center justify-between text-[11px] font-mono text-neutral-400 pb-1 border-b border-white/5">
                     <span>Recent Conversations</span>
                     <button
                       onClick={handleNewChat}
-                      className="text-emerald-400 hover:text-emerald-300 text-[10px] flex items-center space-x-1 cursor-pointer"
+                      className="text-white hover:text-neutral-300 text-[10px] flex items-center space-x-1 cursor-pointer font-bold"
                     >
                       <Plus className="w-3 h-3" />
                       <span>Start Fresh</span>
@@ -524,8 +521,8 @@ export const FloatingChatbot: React.FC = () => {
                   </div>
 
                   {loadingSessions ? (
-                    <div className="py-4 text-center text-xs text-neutral-500 font-mono flex items-center justify-center space-x-2">
-                      <RefreshCw className="w-3.5 h-3.5 animate-spin text-neutral-400" />
+                    <div className="py-4 text-center text-xs text-neutral-400 font-mono flex items-center justify-center space-x-2">
+                      <RefreshCw className="w-3.5 h-3.5 animate-spin text-white" />
                       <span>Loading history...</span>
                     </div>
                   ) : sessions.length === 0 ? (
@@ -538,10 +535,10 @@ export const FloatingChatbot: React.FC = () => {
                         <button
                           key={sess.id}
                           onClick={() => selectSession(sess.id)}
-                          className="w-full text-left p-2 rounded-lg bg-[#181A24] hover:bg-[#202330] border border-white/5 hover:border-white/10 text-xs font-mono text-neutral-200 transition-all flex items-center justify-between cursor-pointer"
+                          className="w-full text-left p-2 rounded-lg bg-[#18181B] hover:bg-[#27272A] border border-white/10 text-xs font-mono text-white transition-all flex items-center justify-between cursor-pointer"
                         >
                           <span className="truncate pr-2 font-medium">{sess.title}</span>
-                          <span className="text-[10px] text-neutral-500 flex-shrink-0">
+                          <span className="text-[10px] text-neutral-400 flex-shrink-0">
                             {sess.messageCount} msgs
                           </span>
                         </button>
@@ -553,10 +550,10 @@ export const FloatingChatbot: React.FC = () => {
             </AnimatePresence>
 
             {/* Chat Messages Body */}
-            <div className="flex-1 p-3.5 overflow-y-auto space-y-3.5 text-xs">
+            <div className="flex-1 p-3.5 overflow-y-auto space-y-3.5 text-xs bg-[#09090B]">
               {messages.length === 0 ? (
                 <div className="h-full flex flex-col justify-center items-center text-center p-4 space-y-3">
-                  <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-emerald-500/20 to-teal-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shadow-inner">
+                  <div className="w-12 h-12 rounded-2xl bg-white/5 border border-white/20 flex items-center justify-center text-white shadow-inner">
                     <Bot className="w-6 h-6" />
                   </div>
                   <div>
@@ -564,13 +561,13 @@ export const FloatingChatbot: React.FC = () => {
                       Welcome, {user?.name || "User"}
                     </h3>
                     <p className="text-[11px] text-neutral-400 font-mono mt-1 max-w-[260px] mx-auto">
-                      Ask any operational query in English, Hindi, or Hinglish, or speak into the microphone.
+                      Ask operational questions in English, Hindi, or Hinglish, or speak into the microphone.
                     </p>
                   </div>
 
                   {/* Suggested Prompts */}
                   <div className="w-full text-left pt-2">
-                    <span className="text-[10px] font-mono uppercase tracking-widest text-neutral-500 font-bold block mb-1">
+                    <span className="text-[10px] font-mono uppercase tracking-widest text-neutral-400 font-bold block mb-1">
                       Quick Inquiries:
                     </span>
                     {renderQuickChips()}
@@ -587,13 +584,13 @@ export const FloatingChatbot: React.FC = () => {
                     <div
                       className={`max-w-[85%] rounded-2xl px-3.5 py-2.5 text-xs font-mono shadow-sm leading-relaxed whitespace-pre-wrap ${
                         m.role === "user"
-                          ? "bg-neutral-800 text-white rounded-br-none border border-neutral-700"
-                          : "bg-[#1A1C26] text-neutral-200 rounded-bl-none border border-white/10 shadow-md"
+                          ? "bg-[#27272A] text-white rounded-br-none border border-white/20"
+                          : "bg-[#18181B] text-neutral-100 rounded-bl-none border border-white/15 shadow-md"
                       }`}
                     >
                       {m.content}
                     </div>
-                    <span className="text-[9px] text-neutral-500 font-mono mt-1 px-1">
+                    <span className="text-[9px] text-neutral-400 font-mono mt-1 px-1">
                       {m.role === "user" ? "You" : "VendorOS AI"} • {new Date(m.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </span>
                   </div>
@@ -602,9 +599,9 @@ export const FloatingChatbot: React.FC = () => {
 
               {/* Typing / Loading indicator */}
               {loading && (
-                <div className="flex items-center space-x-2 p-2 rounded-xl bg-[#1A1C26] border border-white/10 max-w-[140px]">
-                  <RefreshCw className="w-3.5 h-3.5 animate-spin text-emerald-400" />
-                  <span className="text-[11px] font-mono text-neutral-400">Processing...</span>
+                <div className="flex items-center space-x-2 p-2 rounded-xl bg-[#18181B] border border-white/15 max-w-[140px]">
+                  <RefreshCw className="w-3.5 h-3.5 animate-spin text-white" />
+                  <span className="text-[11px] font-mono text-neutral-300">Processing...</span>
                 </div>
               )}
               <div ref={messagesEndRef} />
@@ -617,7 +614,7 @@ export const FloatingChatbot: React.FC = () => {
                   initial={{ opacity: 0, y: 15 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: 15 }}
-                  className="bg-red-950/90 border-t border-red-500/30 p-3 flex items-center justify-between"
+                  className="bg-[#1C0D0D] border-t border-red-500/40 p-3 flex items-center justify-between text-white"
                 >
                   <div className="flex items-center space-x-2.5">
                     <span className="relative flex h-3 w-3">
@@ -648,8 +645,8 @@ export const FloatingChatbot: React.FC = () => {
               )}
             </AnimatePresence>
 
-            {/* Input Bar */}
-            <div className="p-3 bg-[#14161F] border-t border-white/10">
+            {/* Input Bar (Origin Monochrome Palette) */}
+            <div className="p-3 bg-[#121215] border-t border-white/10">
               <form
                 onSubmit={(e) => {
                   e.preventDefault();
@@ -663,7 +660,7 @@ export const FloatingChatbot: React.FC = () => {
                   onChange={(e) => setInputMessage(e.target.value)}
                   placeholder="Ask about orders, risk, workers, stock..."
                   disabled={loading || isRecording}
-                  className="flex-1 bg-[#1A1C26] border border-white/10 focus:border-emerald-500/50 rounded-xl px-3.5 py-2 text-xs font-mono text-white placeholder-neutral-500 focus:outline-none transition-colors"
+                  className="flex-1 bg-[#18181B] border border-white/15 focus:border-white/40 rounded-xl px-3.5 py-2 text-xs font-mono text-white placeholder-neutral-500 focus:outline-none transition-colors"
                 />
 
                 {/* Microphone / Audio toggle */}
@@ -675,19 +672,19 @@ export const FloatingChatbot: React.FC = () => {
                   className={`p-2 rounded-xl border transition-all cursor-pointer ${
                     isRecording
                       ? "bg-red-500/20 text-red-400 border-red-500/40"
-                      : "bg-[#1A1C26] text-neutral-400 hover:text-white border-white/10 hover:border-white/20"
+                      : "bg-[#18181B] text-neutral-300 hover:text-white border-white/15 hover:border-white/30"
                   }`}
                 >
                   <Mic className="w-4 h-4" />
                 </button>
 
-                {/* Send Button */}
+                {/* Send Button — Pure Stark White CTA */}
                 <button
                   type="submit"
                   disabled={!inputMessage.trim() || loading || isRecording}
-                  className="p-2 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-40 disabled:hover:bg-emerald-600 text-black font-bold rounded-xl transition-all cursor-pointer flex items-center justify-center"
+                  className="p-2 bg-white hover:bg-neutral-200 disabled:opacity-40 disabled:hover:bg-white text-black font-bold rounded-xl transition-all cursor-pointer flex items-center justify-center shadow-md"
                 >
-                  <Send className="w-4 h-4" />
+                  <Send className="w-4 h-4 text-black" />
                 </button>
               </form>
             </div>

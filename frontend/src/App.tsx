@@ -240,23 +240,17 @@ const MainLayout: React.FC = () => {
 
   if (authScreen === "landing") {
     return (
-      <>
-        <ThemeManager />
-        <LandingPage
-          onNavigateToLogin={() => setAuthScreen("login")}
-          onNavigateToSignUp={() => setAuthScreen("signup")}
-          onNavigateToPublic={() => setAuthScreen("public")}
-        />
-      </>
+      <LandingPage
+        onNavigateToLogin={() => setAuthScreen("login")}
+        onNavigateToSignUp={() => setAuthScreen("signup")}
+        onNavigateToPublic={() => setAuthScreen("public")}
+      />
     );
   }
 
   if (authScreen === "public") {
     return (
-      <>
-        <ThemeManager />
-        <PublicCompanyProfile onBackToLogin={() => setAuthScreen("login")} />
-      </>
+      <PublicCompanyProfile onBackToLogin={() => setAuthScreen("login")} />
     );
   }
 
@@ -320,7 +314,7 @@ const MainLayout: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#0A0A0A] text-[#E5E5E5] flex flex-col font-sans">
+    <div className="dashboard-theme-scope min-h-screen bg-[#0A0A0A] text-[#E5E5E5] flex flex-col font-sans">
       <ThemeManager />
       {/* Universal Navigation bar customized by role and active claims */}
       <Navigation />

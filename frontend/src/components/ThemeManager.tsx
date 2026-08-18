@@ -144,8 +144,7 @@ export const THEME_PRESETS = {
   },
 };
 
-// Semantic status colors are intentionally theme-independent so
-// success/warning/info/danger read consistently everywhere.
+// Semantic status colors are intentionally theme-independent
 const STATUS = {
   success: {
     bg: "rgba(122,168,105,0.16)",
@@ -170,12 +169,13 @@ const STATUS = {
 };
 
 // Escapes a literal Tailwind arbitrary-value class name for use as a CSS selector
-const sel = (className: string) =>
-  `.${className.replace(/([\[\]#\/:.])/g, "\\$1")}`;
-const selAll = (classNames: string[]) => classNames.map(sel).join(", ");
+const sel = (prefix: string, className: string) =>
+  `${prefix} .${className.replace(/([\[\]#\/:.])/g, "\\$1")}`;
+const selAll = (prefix: string, classNames: string[]) =>
+  classNames.map((c) => sel(prefix, c)).join(", ");
 
 export const ThemeManager: React.FC = () => {
-  const { preferences } = useAuth();
+  const { preferences, user } = useAuth();
 
   const [systemIsDark, setSystemIsDark] = React.useState(
     () => typeof window !== "undefined" && window.matchMedia("(prefers-color-scheme: dark)").matches
@@ -221,6 +221,10 @@ export const ThemeManager: React.FC = () => {
     mode === "light" ? `${colors.accent}22` : `${colors.accent}29`;
   const rowHover = mode === "light" ? colors.bgSecondary : `${colors.accent}0F`;
 
+  // Scope theme overrides ONLY to dashboard elements when a user is authenticated,
+  // NEVER overriding public landing, login, or explicit high-contrast white text.
+  const scope = user ? ".dashboard-theme-scope" : ".dashboard-theme-scope";
+
   const bgAppClasses = [
     "bg-[#0A0A0A]",
     "bg-[#070707]",
@@ -259,9 +263,6 @@ export const ThemeManager: React.FC = () => {
     "bg-[#0A0707]",
     "bg-[#1C0D0D]",
     "bg-[#140D0D]",
-    "bg-stone-100/80",
-    "bg-stone-200/60",
-    "bg-black/5",
   ];
   const bgInputClasses = [
     "bg-[#1A1A1A]",
@@ -273,7 +274,6 @@ export const ThemeManager: React.FC = () => {
     "bg-[#1C1C1C]",
     "bg-[#1D1D2D]",
     "bg-[#202020]",
-    "bg-[#09090B]",
   ];
   const bgBorderTintClasses = [
     "bg-[#222222]",
@@ -293,12 +293,6 @@ export const ThemeManager: React.FC = () => {
     "border-zinc-800",
     "border-neutral-800",
     "border-[#27272A]",
-    "border-red-950/60",
-    "border-red-950/40",
-    "border-stone-200",
-    "border-stone-300",
-    "border-black/10",
-    "border-black/15",
   ];
   const borderSoftClasses = [
     "border-[#1A1A1A]",
@@ -308,7 +302,6 @@ export const ThemeManager: React.FC = () => {
   ];
   const borderStrongClasses = ["border-[#444444]", "border-[#333333]", "border-[#3F3F46]"];
 
-  const textPrimaryClasses = ["text-white", "text-[#E5E5E5]", "text-[#FAFAFA]"];
   const textSecondaryClasses = [
     "text-[#888888]",
     "text-zinc-400",
@@ -328,56 +321,71 @@ export const ThemeManager: React.FC = () => {
   ];
 
   const css = `
-    /* ---- Base surfaces ---- */
-    body, html, #root {
-      background-color: ${colors.bgApp} !important;
-      color: ${colors.textPrimary} !important;
+    :root {
+      --vos-bg-app: ${colors.bgApp};
+      --vos-bg-card: ${colors.bgCard};
+      --vos-bg-secondary: ${colors.bgSecondary};
+      --vos-bg-input: ${colors.bgInput};
+      --vos-border: ${colors.border};
+      --vos-text-primary: ${colors.textPrimary};
+      --vos-text-secondary: ${colors.textSecondary};
+      --vos-text-muted: ${colors.textMuted};
+      --vos-accent: ${colors.accent};
+      --vos-accent-hover: ${colors.accentHover};
     }
 
-    ${selAll(bgAppClasses)} { background-color: ${colors.bgApp} !important; }
-    ${selAll(bgCardClasses)} { background-color: ${colors.bgCard} !important; }
-    ${selAll(bgSecondaryClasses)} { background-color: ${colors.bgSecondary} !important; }
-    ${selAll(bgInputClasses)} { background-color: ${colors.bgInput} !important; }
-    ${selAll(bgBorderTintClasses)} { background-color: ${colors.border} !important; }
+    /* ---- Scoped Dashboard Theme Surfaces ---- */
+    ${scope} ${selAll("", bgAppClasses)} { background-color: ${colors.bgApp} !important; }
+    ${scope} ${selAll("", bgCardClasses)} { background-color: ${colors.bgCard} !important; }
+    ${scope} ${selAll("", bgSecondaryClasses)} { background-color: ${colors.bgSecondary} !important; }
+    ${scope} ${selAll("", bgInputClasses)} { background-color: ${colors.bgInput} !important; }
+    ${scope} ${selAll("", bgBorderTintClasses)} { background-color: ${colors.border} !important; }
 
-    ${selAll(borderMainClasses)} { border-color: ${colors.border} !important; }
-    ${selAll(borderSoftClasses)} { border-color: ${mode === "light" ? colors.border : colors.bgInput} !important; }
-    ${selAll(borderStrongClasses)} { border-color: ${borderStrong} !important; }
+    ${scope} ${selAll("", borderMainClasses)} { border-color: ${colors.border} !important; }
+    ${scope} ${selAll("", borderSoftClasses)} { border-color: ${mode === "light" ? colors.border : colors.bgInput} !important; }
+    ${scope} ${selAll("", borderStrongClasses)} { border-color: ${borderStrong} !important; }
 
-    ${selAll(textPrimaryClasses)} { color: ${colors.textPrimary} !important; }
-    ${selAll(textSecondaryClasses)} { color: ${colors.textSecondary} !important; }
-    ${selAll(textMutedClasses)} { color: ${colors.textMuted} !important; }
+    ${scope} ${selAll("", textSecondaryClasses)} { color: ${colors.textSecondary} !important; }
+    ${scope} ${selAll("", textMutedClasses)} { color: ${colors.textMuted} !important; }
 
-    /* ---- Accent (brand) ---- */
-    .bg-emerald-500, .bg-emerald-600, .bg-\\[\\#10B981\\] { background-color: ${colors.accent} !important; }
-    .text-emerald-400, .text-emerald-500, .text-\\[\\#10B981\\] { color: ${colors.accent} !important; }
-    .hover\\:bg-emerald-600:hover, .hover\\:bg-emerald-500:hover { background-color: ${colors.accentHover} !important; }
-    .border-emerald-500 { border-color: ${colors.accent} !important; }
-    .border-emerald-950\\/40 { border-color: ${colors.border} !important; }
-    .fill-emerald-500, .stroke-emerald-500 { fill: ${colors.accent} !important; stroke: ${colors.accent} !important; }
+    /* ---- Dashboard Accent (brand) ---- */
+    ${scope} .bg-emerald-500, ${scope} .bg-emerald-600, ${scope} .bg-\\[\\#10B981\\] { background-color: ${colors.accent} !important; }
+    ${scope} .text-emerald-400, ${scope} .text-emerald-500, ${scope} .text-\\[\\#10B981\\] { color: ${colors.accent} !important; }
+    ${scope} .hover\\:bg-emerald-600:hover, ${scope} .hover\\:bg-emerald-500:hover { background-color: ${colors.accentHover} !important; }
+    ${scope} .border-emerald-500 { border-color: ${colors.accent} !important; }
+    ${scope} .border-emerald-950\\/40 { border-color: ${colors.border} !important; }
+    ${scope} .fill-emerald-500, ${scope} .stroke-emerald-500 { fill: ${colors.accent} !important; stroke: ${colors.accent} !important; }
 
-    /* ---- Semantic status badges (theme-independent, dark & light) ---- */
-    .bg-\\[\\#0D2A1D\\], .bg-\\[\\#0D2214\\], .bg-\\[\\#0A2215\\] {
+    /* ---- Semantic status badges (theme-independent) ---- */
+    ${scope} .bg-\\[\\#0D2A1D\\], ${scope} .bg-\\[\\#0D2214\\], ${scope} .bg-\\[\\#0A2215\\] {
       background-color: ${STATUS.success.bg} !important; border-color: ${STATUS.success.border} !important;
     }
-    .bg-\\[\\#0D2A1D\\] span, .bg-\\[\\#0D2214\\] span, .bg-\\[\\#0A2215\\] span { color: ${STATUS.success.text} !important; }
-    .bg-\\[\\#2D220D\\], .bg-\\[\\#1A1208\\], .bg-\\[\\#2D1C0F\\], .bg-\\[\\#1C120D\\], .bg-\\[\\#2D1D0F\\], .bg-\\[\\#1C160C\\] {
+    ${scope} .bg-\\[\\#0D2A1D\\] span, ${scope} .bg-\\[\\#0D2214\\] span, ${scope} .bg-\\[\\#0A2215\\] span { color: ${STATUS.success.text} !important; }
+    ${scope} .bg-\\[\\#2D220D\\], ${scope} .bg-\\[\\#1A1208\\], ${scope} .bg-\\[\\#2D1C0F\\], ${scope} .bg-\\[\\#1C120D\\], ${scope} .bg-\\[\\#2D1D0F\\], ${scope} .bg-\\[\\#1C160C\\] {
       background-color: ${STATUS.warning.bg} !important; border-color: ${STATUS.warning.border} !important;
     }
-    .bg-\\[\\#2D220D\\] span, .bg-\\[\\#1A1208\\] span, .bg-\\[\\#2D1C0F\\] span { color: ${STATUS.warning.text} !important; }
-    .bg-\\[\\#0D1D2D\\], .bg-\\[\\#1D122D\\] {
+    ${scope} .bg-\\[\\#2D220D\\] span, ${scope} .bg-\\[\\#1A1208\\] span, ${scope} .bg-\\[\\#2D1C0F\\] span { color: ${STATUS.warning.text} !important; }
+    ${scope} .bg-\\[\\#0D1D2D\\], ${scope} .bg-\\[\\#1D122D\\] {
       background-color: ${STATUS.info.bg} !important; border-color: ${STATUS.info.border} !important;
     }
-    .bg-\\[\\#0D1D2D\\] span, .bg-\\[\\#1D122D\\] span { color: ${STATUS.info.text} !important; }
-    .bg-\\[\\#1D120D\\], .bg-\\[\\#2D0D0D\\] {
+    ${scope} .bg-\\[\\#0D1D2D\\] span, ${scope} .bg-\\[\\#1D122D\\] span { color: ${STATUS.info.text} !important; }
+    ${scope} .bg-\\[\\#1D120D\\], ${scope} .bg-\\[\\#2D0D0D\\] {
       background-color: ${STATUS.danger.bg} !important; border-color: ${STATUS.danger.border} !important;
     }
-    .bg-\\[\\#1D120D\\] span { color: ${STATUS.danger.text} !important; }
+    ${scope} .bg-\\[\\#1D120D\\] span { color: ${STATUS.danger.text} !important; }
 
-    .text-red-400, .text-red-500 { color: ${STATUS.danger.text} !important; }
-    .bg-red-950\\/20 { background-color: ${STATUS.danger.bg} !important; }
-    .border-red-900\\/50, .border-red-950\\/40 { border-color: ${STATUS.danger.border} !important; }
-    .text-amber-400 { color: ${STATUS.warning.text} !important; }
+    ${scope} .text-red-400, ${scope} .text-red-500 { color: ${STATUS.danger.text} !important; }
+    ${scope} .bg-red-950\\/20 { background-color: ${STATUS.danger.bg} !important; }
+    ${scope} .border-red-900\\/50, ${scope} .border-red-950\\/40 { border-color: ${STATUS.danger.border} !important; }
+    ${scope} .text-amber-400 { color: ${STATUS.warning.text} !important; }
+
+    /* ---- High-Contrast Safety Rule: Always keep pure stark white text on black/dark surfaces ---- */
+    .bg-black, .bg-\\[\\#000000\\], .bg-\\[\\#09090B\\], .bg-neutral-900, .bg-\\[\\#111111\\] {
+      color: inherit;
+    }
+    .bg-black .text-white, .bg-\\[\\#000000\\] .text-white, .bg-\\[\\#09090B\\] .text-white, [class*="bg-black/"] .text-white, [class*="bg-white/"] .text-white {
+      color: #FFFFFF !important;
+    }
 
     /* ================================================================== */
     /* Premium presentation layer — radius, elevation, motion             */
@@ -387,7 +395,7 @@ export const ThemeManager: React.FC = () => {
     .rounded-xs { border-radius: 6px !important; }
     button.rounded-sm, a.rounded-sm, [role="button"].rounded-sm { border-radius: var(--vos-radius-sm, 10px) !important; }
 
-    ${selAll(bgCardClasses)} { box-shadow: ${mode === "light" ? "var(--vos-shadow-card-light)" : "var(--vos-shadow-card)"}; }
+    ${scope} ${selAll("", bgCardClasses)} { box-shadow: ${mode === "light" ? "var(--vos-shadow-card-light)" : "var(--vos-shadow-card)"}; }
 
     .transition-all, .transition-colors, .transition-opacity, .transition-transform {
       transition-timing-function: var(--vos-ease-soft) !important;
@@ -405,18 +413,15 @@ export const ThemeManager: React.FC = () => {
       transform: translateY(0) scale(0.98);
     }
 
-    input, select, textarea {
+    ${scope} input, ${scope} select, ${scope} textarea {
       transition: border-color 0.18s var(--vos-ease-soft), box-shadow 0.18s var(--vos-ease-soft), background-color 0.18s var(--vos-ease-soft) !important;
     }
-    input:focus, select:focus, textarea:focus {
+    ${scope} input:focus, ${scope} select:focus, ${scope} textarea:focus {
       border-color: ${colors.accent} !important;
       box-shadow: 0 0 0 3px ${accentSoft} !important;
     }
 
-    tbody tr, [class*="divide-y"] > div {
-      transition: background-color 0.16s var(--vos-ease-soft);
-    }
-    table tbody tr:hover {
+    ${scope} table tbody tr:hover {
       background-color: ${rowHover} !important;
     }
 
@@ -429,16 +434,16 @@ export const ThemeManager: React.FC = () => {
       box-shadow: 0 1px 0 rgba(0,0,0,0.4);
     }
 
-    /* ---- Light mode corrections ---- */
+    /* ---- Light mode scoped dashboard corrections ---- */
     ${
-      mode === "light"
+      mode === "light" && user
         ? `
-      .bg-\\[\\#E5E5E5\\] { background-color: ${colors.bgSecondary} !important; color: ${colors.textPrimary} !important; }
-      header:not(.landing-header), nav:not(.landing-nav) { background-color: ${colors.bgCard} !important; border-color: ${colors.border} !important; }
-      .hover\\:bg-\\[\\#0A0A0A\\]:hover, .hover\\:bg-\\[\\#111111\\]:hover, .hover\\:bg-\\[\\#1A1A1A\\]:hover { background-color: ${colors.bgSecondary} !important; }
-      input, select, textarea { color: ${colors.textPrimary} !important; background-color: ${colors.bgCard} !important; border-color: ${colors.border} !important; }
-      ::selection { background: ${colors.accent}33; color: ${colors.textPrimary}; }
-      ::-webkit-scrollbar-thumb { background-color: ${colors.borderStrong || colors.border}; }
+      ${scope} .bg-\\[\\#E5E5E5\\] { background-color: ${colors.bgSecondary} !important; color: ${colors.textPrimary} !important; }
+      ${scope} header:not(.landing-header), ${scope} nav:not(.landing-nav) { background-color: ${colors.bgCard} !important; border-color: ${colors.border} !important; }
+      ${scope} .hover\\:bg-\\[\\#0A0A0A\\]:hover, ${scope} .hover\\:bg-\\[\\#111111\\]:hover, ${scope} .hover\\:bg-\\[\\#1A1A1A\\]:hover { background-color: ${colors.bgSecondary} !important; }
+      ${scope} input, ${scope} select, ${scope} textarea { color: ${colors.textPrimary} !important; background-color: ${colors.bgCard} !important; border-color: ${colors.border} !important; }
+      ${scope} ::selection { background: ${colors.accent}33; color: ${colors.textPrimary}; }
+      ${scope} ::-webkit-scrollbar-thumb { background-color: ${colors.borderStrong || colors.border}; }
     `
         : ""
     }
