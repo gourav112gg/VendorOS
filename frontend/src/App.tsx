@@ -15,6 +15,7 @@ import { AdminProvider, useSuperAdmin } from "./context/AdminContext";
 import { AdminLogin } from "./pages/AdminLogin";
 import { AdminDashboard } from "./pages/AdminDashboard";
 import { ShortcutBadge } from "./components/ShortcutBadge";
+import { FloatingChatbot } from "./components/FloatingChatbot";
 import { motion, AnimatePresence } from "motion/react";
 import {
   Layers,
@@ -504,13 +505,16 @@ const MainLayout: React.FC = () => {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 16, scale: 0.94 }}
             transition={{ type: "spring", stiffness: 380, damping: 30 }}
-            className="fixed bottom-6 right-6 z-50 bg-[#111111] border border-emerald-500/40 text-emerald-400 font-mono text-[9px] font-bold uppercase tracking-wider px-4 py-2.5 rounded-sm shadow-2xl flex items-center gap-2"
+            className="fixed bottom-6 left-6 z-50 bg-[#111111] border border-emerald-500/40 text-emerald-400 font-mono text-[9px] font-bold uppercase tracking-wider px-4 py-2.5 rounded-sm shadow-2xl flex items-center gap-2"
           >
             <Terminal className="w-3.5 h-3.5 animate-pulse text-emerald-400" />
             <span>{toastMsg}</span>
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Floating AI Chatbot Pop-up Widget */}
+      <FloatingChatbot />
 
       {/* Modern, architectural minimalist footer */}
       <footer className="bg-[#111111] border-t border-[#222222] py-6 text-[10px] text-[#666666] font-mono">

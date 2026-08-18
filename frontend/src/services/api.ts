@@ -332,6 +332,47 @@ const notifications = {
   markAllRead: () => request<{ success: boolean }>('PATCH', '/api/notifications/read-all', undefined, getToken() || undefined),
 };
 
+const chatbot = {
+  query: (message: string) =>
+    request<{ success: boolean; reply: string }>('POST', '/api/chatbot/query', { message }, getToken() || undefined),
+
+  voiceQuery: async (audioBlob: Blob): Promise<{ success: boolean; transcript?: string; reply: string }> => {
+    const formData = new FormData();
+    formData.append('audio', audioBlob, 'query.webm');
+    const headers: Record<string, string> = {};
+    const token = getToken();
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+    const res = await fetch(`${BASE_URL}/api/chatbot/voice-query`, {
+      method: 'POST',
+      headers,
+      body: formData,
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({ message: 'Voice query failed' }));
+      throw new Error(err.message || 'Voice query failed');
+    }
+    return res.json();
+  },
+
+  clearHistory: () =>
+    request<{ success: boolean; message: string }>('DELETE', '/api/chatbot/history', undefined, getToken() || undefined),
+
+  getSessions: () =>
+    request<{
+      success: boolean;
+      sessions: Array<{ id: string; title: string; messageCount: number; createdAt: string; updatedAt: string }>;
+    }>('GET', '/api/chatbot/sessions', undefined, getToken() || undefined),
+
+  getSession: (sessionId: string) =>
+    request<{
+      success: boolean;
+      title: string;
+      messages: Array<{ role: 'user' | 'assistant'; content: string; timestamp: string }>;
+    }>('GET', `/api/chatbot/sessions/${sessionId}`, undefined, getToken() || undefined),
+};
+
 // ─── Named export ─────────────────────────────────────────────────────────────
 
 const api = {
@@ -347,6 +388,7 @@ const api = {
   domains,
   dashboard,
   risk,
+  chatbot,
   /** Raw request helper for custom calls */
   request,
   getToken,
