@@ -20,6 +20,7 @@ import {
   Bot
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
+import { useTranslation } from "../context/LanguageContext";
 import api from "../services/api";
 import dbStore from "../services/store";
 
@@ -41,6 +42,7 @@ interface ChatSessionItem {
 
 export const FloatingChatbot: React.FC = () => {
   const { user } = useAuth();
+  const { t, language } = useTranslation();
 
   const [isOpen, setIsOpen] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
@@ -328,28 +330,28 @@ export const FloatingChatbot: React.FC = () => {
             className="flex items-center space-x-1.5 px-3 py-1.5 bg-[#18181B] hover:bg-[#27272A] border border-white/15 hover:border-white/30 rounded-full text-[11px] font-mono text-[#FAFAFA] transition-all cursor-pointer shadow-sm"
           >
             <Package className="w-3 h-3 text-white" />
-            <span>Recent Orders</span>
+            <span>{t("recentOrders", "Recent Orders")}</span>
           </button>
           <button
             onClick={() => handleSendMessage("Are any technicians or workers free right now?")}
             className="flex items-center space-x-1.5 px-3 py-1.5 bg-[#18181B] hover:bg-[#27272A] border border-white/15 hover:border-white/30 rounded-full text-[11px] font-mono text-[#FAFAFA] transition-all cursor-pointer shadow-sm"
           >
             <Users className="w-3 h-3 text-white" />
-            <span>Worker Availability</span>
+            <span>{t("workerAvailability", "Worker Availability")}</span>
           </button>
           <button
             onClick={() => handleSendMessage("Check risk scores and delay predictions")}
             className="flex items-center space-x-1.5 px-3 py-1.5 bg-[#18181B] hover:bg-[#27272A] border border-white/15 hover:border-white/30 rounded-full text-[11px] font-mono text-[#FAFAFA] transition-all cursor-pointer shadow-sm"
           >
             <AlertTriangle className="w-3 h-3 text-white" />
-            <span>Delay Risk</span>
+            <span>{t("delayRisk", "Delay Risk")}</span>
           </button>
           <button
             onClick={() => handleSendMessage("Check current stock and raw material inventory")}
             className="flex items-center space-x-1.5 px-3 py-1.5 bg-[#18181B] hover:bg-[#27272A] border border-white/15 hover:border-white/30 rounded-full text-[11px] font-mono text-[#FAFAFA] transition-all cursor-pointer shadow-sm"
           >
             <Boxes className="w-3 h-3 text-white" />
-            <span>Inventory Stock</span>
+            <span>{t("inventoryStock", "Inventory Stock")}</span>
           </button>
         </div>
       );
@@ -363,14 +365,14 @@ export const FloatingChatbot: React.FC = () => {
             className="flex items-center space-x-1.5 px-3 py-1.5 bg-[#18181B] hover:bg-[#27272A] border border-white/15 hover:border-white/30 rounded-full text-[11px] font-mono text-[#FAFAFA] transition-all cursor-pointer shadow-sm"
           >
             <CheckCircle2 className="w-3 h-3 text-white" />
-            <span>My Assigned Tasks</span>
+            <span>{t("myAssignedTasks", "My Assigned Tasks")}</span>
           </button>
           <button
             onClick={() => handleSendMessage("Which checklist items are still pending completion?")}
             className="flex items-center space-x-1.5 px-3 py-1.5 bg-[#18181B] hover:bg-[#27272A] border border-white/15 hover:border-white/30 rounded-full text-[11px] font-mono text-[#FAFAFA] transition-all cursor-pointer shadow-sm"
           >
             <Clock className="w-3 h-3 text-white" />
-            <span>Pending Checklists</span>
+            <span>{t("pendingChecklists", "Pending Checklists")}</span>
           </button>
         </div>
       );
@@ -383,14 +385,14 @@ export const FloatingChatbot: React.FC = () => {
           className="flex items-center space-x-1.5 px-3 py-1.5 bg-[#18181B] hover:bg-[#27272A] border border-white/15 hover:border-white/30 rounded-full text-[11px] font-mono text-[#FAFAFA] transition-all cursor-pointer shadow-sm"
         >
           <Package className="w-3 h-3 text-white" />
-          <span>Track My Order</span>
+          <span>{t("trackMyOrder", "Track My Order")}</span>
         </button>
         <button
           onClick={() => handleSendMessage("Show all my active service orders")}
           className="flex items-center space-x-1.5 px-3 py-1.5 bg-[#18181B] hover:bg-[#27272A] border border-white/15 hover:border-white/30 rounded-full text-[11px] font-mono text-[#FAFAFA] transition-all cursor-pointer shadow-sm"
         >
           <CheckCircle2 className="w-3 h-3 text-white" />
-          <span>My Orders</span>
+          <span>{t("myOrders", "My Orders")}</span>
         </button>
       </div>
     );
@@ -561,14 +563,14 @@ export const FloatingChatbot: React.FC = () => {
                       Welcome, {user?.name || "User"}
                     </h3>
                     <p className="text-[11px] text-neutral-400 font-mono mt-1 max-w-[260px] mx-auto">
-                      Ask operational questions in English, Hindi, or Hinglish, or speak into the microphone.
+                      {t("botWelcome", "Ask operational questions in English, Hindi, or Punjabi, or speak into the microphone.")}
                     </p>
                   </div>
 
                   {/* Suggested Prompts */}
                   <div className="w-full text-left pt-2">
                     <span className="text-[10px] font-mono uppercase tracking-widest text-neutral-400 font-bold block mb-1">
-                      Quick Inquiries:
+                      {t("quickInquiries", "Quick Inquiries:")}
                     </span>
                     {renderQuickChips()}
                   </div>
@@ -658,7 +660,7 @@ export const FloatingChatbot: React.FC = () => {
                   type="text"
                   value={inputMessage}
                   onChange={(e) => setInputMessage(e.target.value)}
-                  placeholder="Ask about orders, risk, workers, stock..."
+                  placeholder={t("botPlaceholder", "Ask about orders, risk, workers, stock...")}
                   disabled={loading || isRecording}
                   className="flex-1 bg-[#18181B] border border-white/15 focus:border-white/40 rounded-xl px-3.5 py-2 text-xs font-mono text-white placeholder-neutral-500 focus:outline-none transition-colors"
                 />

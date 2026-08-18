@@ -154,6 +154,28 @@ export interface TranslationDictionary {
   expectedDelay: string;
   analyzeRisk: string;
   predictedBy: string;
+
+  // Landing Page Navigation
+  home: string;
+  features: string;
+  clients: string;
+  howItWorks: string;
+  pricing: string;
+  login: string;
+  startForFree: string;
+
+  // Chatbot Localization
+  botWelcome: string;
+  botPlaceholder: string;
+  quickInquiries: string;
+  recentOrders: string;
+  workerAvailability: string;
+  delayRisk: string;
+  inventoryStock: string;
+  myAssignedTasks: string;
+  pendingChecklists: string;
+  trackMyOrder: string;
+  myOrders: string;
 }
 
 export const translations: Record<Language, TranslationDictionary> = {
@@ -299,6 +321,26 @@ export const translations: Record<Language, TranslationDictionary> = {
     expectedDelay: "Expected Delay",
     analyzeRisk: "Analyze Risk",
     predictedBy: "Engine",
+
+    home: "Home",
+    features: "Features",
+    clients: "Clients",
+    howItWorks: "How it Works",
+    pricing: "Pricing",
+    login: "Login",
+    startForFree: "Start for Free",
+
+    botWelcome: "Ask operational questions in English, Hindi, or Punjabi, or speak into the microphone.",
+    botPlaceholder: "Ask about orders, risk, workers, stock...",
+    quickInquiries: "Quick Inquiries:",
+    recentOrders: "Recent Orders",
+    workerAvailability: "Worker Availability",
+    delayRisk: "Delay Risk",
+    inventoryStock: "Inventory Stock",
+    myAssignedTasks: "My Assigned Tasks",
+    pendingChecklists: "Pending Checklists",
+    trackMyOrder: "Track My Order",
+    myOrders: "My Orders",
   },
   hi: {
     vendorOS: "वेंडर-ओएस",
@@ -442,6 +484,26 @@ export const translations: Record<Language, TranslationDictionary> = {
     expectedDelay: "अपेक्षित देरी",
     analyzeRisk: "जोखिम विश्लेषण करें",
     predictedBy: "इंजन",
+
+    home: "होम",
+    features: "सुविधाएं",
+    clients: "ग्राहक",
+    howItWorks: "यह कैसे काम करता है",
+    pricing: "मूल्य निर्धारण",
+    login: "लॉग इन",
+    startForFree: "निःशुल्क शुरू करें",
+
+    botWelcome: "अंग्रेजी, हिन्दी या पंजाबी में कोई भी परिचालन प्रश्न पूछें, या माइक्रोफ़ोन में बोलें।",
+    botPlaceholder: "आदेशों, जोखिम, कर्मचारियों या स्टॉक के बारे में पूछें...",
+    quickInquiries: "त्वरित पूछताछ:",
+    recentOrders: "हाल के आदेश",
+    workerAvailability: "कर्मचारी उपलब्धता",
+    delayRisk: "देरी का जोखिम",
+    inventoryStock: "इन्वेंट्री स्टॉक",
+    myAssignedTasks: "मेरे सौंपे गए कार्य",
+    pendingChecklists: "लंबित चेकलिस्ट",
+    trackMyOrder: "मेरा आदेश ट्रैक करें",
+    myOrders: "मेरे आदेश",
   },
   pa: {
     vendorOS: "ਵੇਂਡਰ-ਓ.ਐਸ",
@@ -585,5 +647,25 @@ export const translations: Record<Language, TranslationDictionary> = {
     expectedDelay: "ਸੰਭਾਵਿਤ ਦੇਰੀ",
     analyzeRisk: "ਜੋਖਮ ਵਿਸ਼ਲੇਸ਼ਣ ਕਰੋ",
     predictedBy: "ਇੰਜਣ",
+
+    home: "ਹੋਮ",
+    features: "ਵਿਸ਼ੇਸ਼ਤਾਵਾਂ",
+    clients: "ਗਾਹਕ",
+    howItWorks: "ਇਹ ਕਿਵੇਂ ਕੰਮ ਕਰਦਾ ਹੈ",
+    pricing: "ਕੀਮਤਾਂ",
+    login: "ਲਾਗਇਨ",
+    startForFree: "ਮੁਫ਼ਤ ਸ਼ੁਰੂ ਕਰੋ",
+
+    botWelcome: "ਅੰਗਰੇਜ਼ੀ, ਹਿੰਦੀ ਜਾਂ ਪੰਜਾਬੀ ਵਿੱਚ ਕੋਈ ਵੀ ਸਵਾਲ ਪੁੱਛੋ, ਜਾਂ ਮਾਈਕ੍ਰੋਫੋਨ ਵਿੱਚ ਬੋਲੋ।",
+    botPlaceholder: "ਆਰਡਰਾਂ, ਜੋਖਮ, ਕਾਮਿਆਂ ਜਾਂ ਸਟਾਕ ਬਾਰੇ ਪੁੱਛੋ...",
+    quickInquiries: "ਤੁਰੰਤ ਪੁੱਛਗਿੱਛ:",
+    recentOrders: "ਹਾਲੀਆ ਆਰਡਰ",
+    workerAvailability: "ਕਾਮਿਆਂ ਦੀ ਉਪਲਬਧਤਾ",
+    delayRisk: "ਦੇਰੀ ਦਾ ਖਤਰਾ",
+    inventoryStock: "ਇਨਵੈਂਟਰੀ ਸਟਾਕ",
+    myAssignedTasks: "ਮੇਰੇ ਸੌਂਪੇ ਗਏ ਕੰਮ",
+    pendingChecklists: "ਬਕਾਇਆ ਚੈੱਕਲਿਸਟਾਂ",
+    trackMyOrder: "ਮੇਰਾ ਆਰਡਰ ਟ੍ਰੈਕ ਕਰੋ",
+    myOrders: "ਮੇਰੇ ਆਰਡਰ",
   },
 };

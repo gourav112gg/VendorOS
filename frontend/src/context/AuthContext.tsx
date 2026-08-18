@@ -12,7 +12,7 @@ export interface UserPreferences {
   notifySMS?: boolean;
   notifyPush?: boolean;
   themeMode: 'dark' | 'light' | 'system';
-  themeName: 'slate' | 'sage' | 'sapphire' | 'warm' | 'tokyo' | 'custom';
+  themeName: 'slate' | 'sage' | 'sapphire' | 'warm' | 'tokyo' | 'azure' | 'midnight' | 'custom';
   language?: 'en' | 'hi' | 'pa';
   customThemePrompt?: string;
   customThemeColors?: {

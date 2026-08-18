@@ -1056,7 +1056,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ initialTab = 'prof
               <span className="text-[9px] font-mono font-bold text-slate-500 dark:text-[#888888] uppercase tracking-widest block">
                 Choose Theme Palette
               </span>
-              <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
+              <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3">
                 {[
                   {
                     id: "slate",
@@ -1082,6 +1082,16 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ initialTab = 'prof
                     id: "tokyo",
                     name: "Tokyo Midnight",
                     colors: ["#100C14", "#A985D8"],
+                  },
+                  {
+                    id: "azure",
+                    name: "Azure Sky",
+                    colors: ["#071426", "#2196F3"],
+                  },
+                  {
+                    id: "midnight",
+                    name: "Midnight Ocean",
+                    colors: ["#0A2647", "#2C74B3"],
                   },
                 ].map((preset) => {
                   const isActive =

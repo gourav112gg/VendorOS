@@ -22,7 +22,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   onNavigateToLogin,
   onNavigateToSignUp,
 }) => {
-  const { language, setLanguage } = useTranslation();
+  const { language, setLanguage, t } = useTranslation();
   const { updatePreference } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -56,19 +56,19 @@ export const Navbar: React.FC<NavbarProps> = ({
         {/* Center Nav Links (Desktop) */}
         <div className="hidden md:flex items-center space-x-6 text-[11px] font-mono tracking-wider text-neutral-300">
           <a href="#top" className="hover:text-white transition-colors">
-            Home
+            {t("home", "Home")}
           </a>
           <a href="#features" className="hover:text-white transition-colors">
-            Features
+            {t("features", "Features")}
           </a>
           <a href="#automation" className="hover:text-white transition-colors">
-            Clients
+            {t("clients", "Clients")}
           </a>
           <a href="#bento" className="hover:text-white transition-colors">
-            How it Works
+            {t("howItWorks", "How it Works")}
           </a>
           <a href="#pricing" className="hover:text-white transition-colors">
-            Pricing
+            {t("pricing", "Pricing")}
           </a>
         </div>
 
@@ -89,7 +89,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             onClick={onNavigateToLogin}
             className="hidden sm:inline-block text-xs font-mono text-neutral-300 hover:text-white transition-colors cursor-pointer px-2 py-1"
           >
-            Login
+            {t("login", "Login")}
           </button>
 
           {/* Start for Free CTA */}
@@ -97,7 +97,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             onClick={onNavigateToSignUp}
             className="bg-white hover:bg-neutral-200 text-black text-xs font-mono font-bold rounded-full px-4 py-1.5 shadow-lg transition-all cursor-pointer transform hover:scale-105 active:scale-95"
           >
-            Start for Free
+            {t("startForFree", "Start for Free")}
           </button>
 
           {/* Mobile Hamburger Toggle */}
@@ -128,35 +128,35 @@ export const Navbar: React.FC<NavbarProps> = ({
               onClick={() => setMobileMenuOpen(false)}
               className="block py-1 hover:text-white"
             >
-              Home
+              {t("home", "Home")}
             </a>
             <a
               href="#features"
               onClick={() => setMobileMenuOpen(false)}
               className="block py-1 hover:text-white"
             >
-              Features
+              {t("features", "Features")}
             </a>
             <a
               href="#automation"
               onClick={() => setMobileMenuOpen(false)}
               className="block py-1 hover:text-white"
             >
-              Clients
+              {t("clients", "Clients")}
             </a>
             <a
               href="#bento"
               onClick={() => setMobileMenuOpen(false)}
               className="block py-1 hover:text-white"
             >
-              How it Works
+              {t("howItWorks", "How it Works")}
             </a>
             <a
               href="#pricing"
               onClick={() => setMobileMenuOpen(false)}
               className="block py-1 hover:text-white"
             >
-              Pricing
+              {t("pricing", "Pricing")}
             </a>
             <div className="pt-2 border-t border-[#222222] flex flex-col gap-2">
               <button
@@ -166,7 +166,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 }}
                 className="w-full py-2 bg-[#1A1A1A] border border-[#333333] rounded-lg text-white font-bold"
               >
-                Login
+                {t("login", "Login")}
               </button>
               <button
                 onClick={() => {
@@ -175,7 +175,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 }}
                 className="w-full py-2 bg-white text-black font-bold rounded-lg"
               >
-                Start for Free
+                {t("startForFree", "Start for Free")}
               </button>
             </div>
           </motion.div>
