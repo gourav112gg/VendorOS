@@ -165,7 +165,7 @@ export const THEME_PRESETS = {
       borderStrong: "#2196F3",
       textPrimary: "#0B192C",
       textSecondary: "#1E3E62",
-      textMuted: "#4B6584",
+      textMuted: "#3B5A80",
       accent: "#0D47A1",
       accentHover: "#1565C0",
     },
@@ -231,7 +231,7 @@ const selAll = (prefix: string, classNames: string[]) =>
   classNames.map((c) => sel(prefix, c)).join(", ");
 
 export const ThemeManager: React.FC = () => {
-  const { preferences, user } = useAuth();
+  const { preferences } = useAuth();
 
   const [systemIsDark, setSystemIsDark] = React.useState(
     () => typeof window !== "undefined" && window.matchMedia("(prefers-color-scheme: dark)").matches
@@ -286,7 +286,6 @@ export const ThemeManager: React.FC = () => {
     "bg-[#060B18]",
     "bg-[#110F0C]",
     "bg-[#090812]",
-    "bg-[#09090B]",
     "bg-[#080606]",
   ];
   const bgCardClasses = [
@@ -300,7 +299,6 @@ export const ThemeManager: React.FC = () => {
     "bg-[#141414]",
     "bg-[#151515]",
     "bg-[#0F0F0F]",
-    "bg-[#18181B]",
     "bg-[#100B0B]",
     "bg-[#100C14]",
   ];
@@ -312,7 +310,6 @@ export const ThemeManager: React.FC = () => {
     "bg-[#0D0C1A]",
     "bg-[#0b0e1a]",
     "bg-[#161616]",
-    "bg-[#121215]",
     "bg-[#170E0E]",
     "bg-[#0A0707]",
     "bg-[#1C0D0D]",
@@ -346,7 +343,6 @@ export const ThemeManager: React.FC = () => {
     "border-[#222222]",
     "border-zinc-800",
     "border-neutral-800",
-    "border-[#27272A]",
   ];
   const borderSoftClasses = [
     "border-[#1A1A1A]",
@@ -355,6 +351,12 @@ export const ThemeManager: React.FC = () => {
     "border-[#1C1C1C]",
   ];
   const borderStrongClasses = ["border-[#444444]", "border-[#333333]", "border-[#3F3F46]"];
+
+  const textPrimaryClasses = [
+    "text-white",
+    "text-[#FAFAFA]",
+    "text-[#E5E5E5]",
+  ];
 
   const textSecondaryClasses = [
     "text-[#888888]",
@@ -373,6 +375,8 @@ export const ThemeManager: React.FC = () => {
     "text-neutral-500",
     "text-[#71717A]",
   ];
+
+  const notChatbot = ":not(.floating-chatbot-root):not(.floating-chatbot-root *)";
 
   const css = `
     :root {
@@ -394,19 +398,36 @@ export const ThemeManager: React.FC = () => {
       color: ${colors.textPrimary} !important;
     }
 
-    /* ---- Scoped Dashboard Theme Surfaces ---- */
-    ${scope} ${selAll("", bgAppClasses)} { background-color: ${colors.bgApp} !important; }
-    ${scope} ${selAll("", bgCardClasses)} { background-color: ${colors.bgCard} !important; }
-    ${scope} ${selAll("", bgSecondaryClasses)} { background-color: ${colors.bgSecondary} !important; }
-    ${scope} ${selAll("", bgInputClasses)} { background-color: ${colors.bgInput} !important; }
-    ${scope} ${selAll("", bgBorderTintClasses)} { background-color: ${colors.border} !important; }
+    /* ---- Scoped Dashboard Theme Surfaces (excluding insulated Chatbot) ---- */
+    ${scope} ${selAll("", bgAppClasses)}${notChatbot} { background-color: ${colors.bgApp} !important; }
+    ${scope} ${selAll("", bgCardClasses)}${notChatbot} { background-color: ${colors.bgCard} !important; }
+    ${scope} ${selAll("", bgSecondaryClasses)}${notChatbot} { background-color: ${colors.bgSecondary} !important; }
+    ${scope} ${selAll("", bgInputClasses)}${notChatbot} { background-color: ${colors.bgInput} !important; }
+    ${scope} ${selAll("", bgBorderTintClasses)}${notChatbot} { background-color: ${colors.border} !important; }
 
-    ${scope} ${selAll("", borderMainClasses)} { border-color: ${colors.border} !important; }
-    ${scope} ${selAll("", borderSoftClasses)} { border-color: ${mode === "light" ? colors.border : colors.bgInput} !important; }
-    ${scope} ${selAll("", borderStrongClasses)} { border-color: ${borderStrong} !important; }
+    ${scope} ${selAll("", borderMainClasses)}${notChatbot} { border-color: ${colors.border} !important; }
+    ${scope} ${selAll("", borderSoftClasses)}${notChatbot} { border-color: ${mode === "light" ? colors.border : colors.bgInput} !important; }
+    ${scope} ${selAll("", borderStrongClasses)}${notChatbot} { border-color: ${borderStrong} !important; }
 
-    ${scope} ${selAll("", textSecondaryClasses)} { color: ${colors.textSecondary} !important; }
-    ${scope} ${selAll("", textMutedClasses)} { color: ${colors.textMuted} !important; }
+    /* ---- Text Inversion Rules in Light Mode ---- */
+    ${
+      mode === "light"
+        ? `
+      ${scope} ${selAll("", textPrimaryClasses)}${notChatbot}:not([class*="bg-black"]):not([class*="bg-slate-900"]):not([class*="bg-neutral-900"]):not([class*="bg-emerald"]):not(.keep-white) {
+        color: ${colors.textPrimary} !important;
+      }
+      ${scope} ${selAll("", textSecondaryClasses)}${notChatbot} { color: ${colors.textSecondary} !important; }
+      ${scope} ${selAll("", textMutedClasses)}${notChatbot} { color: ${colors.textMuted} !important; }
+      ${scope} .bg-white.text-black${notChatbot} {
+        background-color: ${colors.textPrimary} !important;
+        color: ${colors.bgCard} !important;
+      }
+    `
+        : `
+      ${scope} ${selAll("", textSecondaryClasses)}${notChatbot} { color: ${colors.textSecondary} !important; }
+      ${scope} ${selAll("", textMutedClasses)}${notChatbot} { color: ${colors.textMuted} !important; }
+    `
+    }
 
     /* ---- Dashboard Accent (brand) ---- */
     ${scope} .bg-emerald-500, ${scope} .bg-emerald-600, ${scope} .bg-\\[\\#10B981\\] { background-color: ${colors.accent} !important; }
@@ -439,9 +460,50 @@ export const ThemeManager: React.FC = () => {
     ${scope} .border-red-900\\/50, ${scope} .border-red-950\\/40 { border-color: ${STATUS.danger.border} !important; }
     ${scope} .text-amber-400 { color: ${STATUS.warning.text} !important; }
 
-    /* ---- High-Contrast Safety Rule: Always keep pure stark white text on black/dark surfaces ---- */
-    .bg-black .text-white, .bg-\\[\\#000000\\] .text-white, .bg-\\[\\#09090B\\] .text-white, [class*="bg-black/"] .text-white, [class*="bg-white/"] .text-white {
+    /* ---- High-Contrast Safety Rule: Always keep pure stark white text on black/dark elements ---- */
+    .bg-black .text-white, .bg-\\[\\#000000\\] .text-white, .bg-\\[\\#09090B\\] .text-white, 
+    .bg-slate-900 .text-white, .bg-neutral-900 .text-white, 
+    .bg-emerald-600 .text-white, .bg-emerald-500 .text-white,
+    [class*="bg-black/"] .text-white, [class*="bg-white/"] .text-white {
       color: #FFFFFF !important;
+    }
+
+    /* ---- Permanent Obsidian Monochrome Isolation for Floating Chatbot ---- */
+    .floating-chatbot-root .bg-\\[\\#09090B\\],
+    .floating-chatbot-root.bg-\\[\\#09090B\\] {
+      background-color: #09090B !important;
+    }
+    .floating-chatbot-root .bg-\\[\\#18181B\\] {
+      background-color: #18181B !important;
+    }
+    .floating-chatbot-root .bg-\\[\\#121215\\] {
+      background-color: #121215 !important;
+    }
+    .floating-chatbot-root .bg-\\[\\#27272A\\] {
+      background-color: #27272A !important;
+    }
+    .floating-chatbot-root .text-white {
+      color: #FFFFFF !important;
+    }
+    .floating-chatbot-root .text-\\[\\#FAFAFA\\] {
+      color: #FAFAFA !important;
+    }
+    .floating-chatbot-root .text-neutral-100 {
+      color: #F5F5F5 !important;
+    }
+    .floating-chatbot-root .text-neutral-300 {
+      color: #D4D4D4 !important;
+    }
+    .floating-chatbot-root .text-neutral-400 {
+      color: #A3A3A3 !important;
+    }
+    .floating-chatbot-root .text-neutral-500 {
+      color: #737373 !important;
+    }
+    .floating-chatbot-root .border-white\\/15,
+    .floating-chatbot-root .border-white\\/20,
+    .floating-chatbot-root .border-white\\/10 {
+      border-color: rgba(255, 255, 255, 0.18) !important;
     }
 
     /* ================================================================== */
@@ -452,7 +514,7 @@ export const ThemeManager: React.FC = () => {
     .rounded-xs { border-radius: 6px !important; }
     button.rounded-sm, a.rounded-sm, [role="button"].rounded-sm { border-radius: var(--vos-radius-sm, 10px) !important; }
 
-    ${scope} ${selAll("", bgCardClasses)} { box-shadow: ${mode === "light" ? "var(--vos-shadow-card-light)" : "var(--vos-shadow-card)"}; }
+    ${scope} ${selAll("", bgCardClasses)}${notChatbot} { box-shadow: ${mode === "light" ? "var(--vos-shadow-card-light)" : "var(--vos-shadow-card)"}; }
 
     .transition-all, .transition-colors, .transition-opacity, .transition-transform {
       transition-timing-function: var(--vos-ease-soft) !important;
@@ -470,10 +532,10 @@ export const ThemeManager: React.FC = () => {
       transform: translateY(0) scale(0.98);
     }
 
-    ${scope} input, ${scope} select, ${scope} textarea {
+    ${scope} input${notChatbot}, ${scope} select${notChatbot}, ${scope} textarea${notChatbot} {
       transition: border-color 0.18s var(--vos-ease-soft), box-shadow 0.18s var(--vos-ease-soft), background-color 0.18s var(--vos-ease-soft) !important;
     }
-    ${scope} input:focus, ${scope} select:focus, ${scope} textarea:focus {
+    ${scope} input${notChatbot}:focus, ${scope} select${notChatbot}:focus, ${scope} textarea${notChatbot}:focus {
       border-color: ${colors.accent} !important;
       box-shadow: 0 0 0 3px ${accentSoft} !important;
     }
@@ -495,10 +557,10 @@ export const ThemeManager: React.FC = () => {
     ${
       mode === "light"
         ? `
-      ${scope} .bg-\\[\\#E5E5E5\\] { background-color: ${colors.bgSecondary} !important; color: ${colors.textPrimary} !important; }
+      ${scope} .bg-\\[\\#E5E5E5\\]${notChatbot} { background-color: ${colors.bgSecondary} !important; color: ${colors.textPrimary} !important; }
       ${scope} header:not(.landing-header), ${scope} nav:not(.landing-nav) { background-color: ${colors.bgCard} !important; border-color: ${colors.border} !important; }
       ${scope} .hover\\:bg-\\[\\#0A0A0A\\]:hover, ${scope} .hover\\:bg-\\[\\#111111\\]:hover, ${scope} .hover\\:bg-\\[\\#1A1A1A\\]:hover { background-color: ${colors.bgSecondary} !important; }
-      ${scope} input, ${scope} select, ${scope} textarea { color: ${colors.textPrimary} !important; background-color: ${colors.bgCard} !important; border-color: ${colors.border} !important; }
+      ${scope} input${notChatbot}, ${scope} select${notChatbot}, ${scope} textarea${notChatbot} { color: ${colors.textPrimary} !important; background-color: ${colors.bgCard} !important; border-color: ${colors.border} !important; }
       ${scope} ::selection { background: ${colors.accent}33; color: ${colors.textPrimary}; }
       ${scope} ::-webkit-scrollbar-thumb { background-color: ${colors.borderStrong || colors.border}; }
     `

@@ -401,7 +401,7 @@ export const FloatingChatbot: React.FC = () => {
   return (
     <>
       {/* Floating Trigger Button in Bottom-Right Corner (Origin Obsidian & Stark White Palette) */}
-      <div className="fixed bottom-6 right-6 z-50 flex items-center space-x-3 select-none">
+      <div className="floating-chatbot-root fixed bottom-6 right-6 z-50 flex items-center space-x-3 select-none">
         {/* Teaser pill (when closed) */}
         {!isOpen && (
           <motion.div
@@ -412,7 +412,7 @@ export const FloatingChatbot: React.FC = () => {
             className="hidden sm:flex items-center space-x-2 px-3.5 py-1.5 bg-[#09090B] hover:bg-[#18181B] border border-white/20 rounded-full shadow-2xl text-xs font-mono text-white cursor-pointer transition-all hover:border-white/40"
           >
             <Sparkles className="w-3.5 h-3.5 text-white animate-pulse" />
-            <span className="font-bold">VendorOS Copilot</span>
+            <span className="font-bold text-white">VendorOS Copilot</span>
           </motion.div>
         )}
 
@@ -450,7 +450,7 @@ export const FloatingChatbot: React.FC = () => {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.88, y: 30 }}
             transition={{ type: "spring", stiffness: 360, damping: 28 }}
-            className="fixed bottom-22 right-6 z-50 w-[92vw] sm:w-[410px] h-[580px] max-h-[82vh] bg-[#09090B] border border-white/20 rounded-2xl shadow-[0_25px_60px_rgba(0,0,0,0.95)] flex flex-col overflow-hidden font-sans text-white"
+            className="floating-chatbot-root fixed bottom-22 right-6 z-50 w-[92vw] sm:w-[410px] h-[580px] max-h-[82vh] bg-[#09090B] border border-white/20 rounded-2xl shadow-[0_25px_60px_rgba(0,0,0,0.95)] flex flex-col overflow-hidden font-sans text-white"
           >
             {/* Header */}
             <div className="p-3.5 bg-[#121215] border-b border-white/10 flex items-center justify-between">
