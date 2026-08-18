@@ -4,30 +4,30 @@ import { useAuth } from "../context/AuthContext";
 export const THEME_PRESETS = {
   slate: {
     dark: {
-      bgApp: "#09090B",
-      bgCard: "#18181B",
-      bgSecondary: "#121215",
-      bgInput: "#09090B",
-      border: "#27272A",
-      borderStrong: "#3F3F46",
-      textPrimary: "#FAFAFA",
-      textSecondary: "#A1A1AA",
-      textMuted: "#71717A",
-      accent: "#FAFAFA",
-      accentHover: "#E4E4E7",
+      bgApp: "#0A0A0A",
+      bgCard: "#111111",
+      bgSecondary: "#161616",
+      bgInput: "#1A1A1A",
+      border: "#222222",
+      borderStrong: "#333333",
+      textPrimary: "#FFFFFF",
+      textSecondary: "#888888",
+      textMuted: "#666666",
+      accent: "#10B981",
+      accentHover: "#059669",
     },
     light: {
-      bgApp: "#FAF6EE",
+      bgApp: "#F8F9FA",
       bgCard: "#FFFFFF",
-      bgSecondary: "#F4EFE6",
-      bgInput: "#EBE3D5",
-      border: "#E2D7C3",
-      borderStrong: "#C9BA9B",
-      textPrimary: "#18181B",
-      textSecondary: "#52525B",
-      textMuted: "#71717A",
-      accent: "#18181B",
-      accentHover: "#27272A",
+      bgSecondary: "#F1F3F5",
+      bgInput: "#E9ECEF",
+      border: "#DEE2E6",
+      borderStrong: "#CED4DA",
+      textPrimary: "#111827",
+      textSecondary: "#4B5563",
+      textMuted: "#6B7280",
+      accent: "#10B981",
+      accentHover: "#059669",
     },
   },
   sage: {
@@ -51,9 +51,9 @@ export const THEME_PRESETS = {
       bgInput: "#E1E9D9",
       border: "#D3DFCB",
       borderStrong: "#B7C7A9",
-      textPrimary: "#202A1E",
-      textSecondary: "#445040",
-      textMuted: "#78876F",
+      textPrimary: "#182216",
+      textSecondary: "#3A4736",
+      textMuted: "#5C6B58",
       accent: "#4E7A3C",
       accentHover: "#3D6130",
     },
@@ -79,9 +79,9 @@ export const THEME_PRESETS = {
       bgInput: "#DCE4F0",
       border: "#CBD6E8",
       borderStrong: "#AFC0DC",
-      textPrimary: "#101827",
-      textSecondary: "#33445E",
-      textMuted: "#64758F",
+      textPrimary: "#0F172A",
+      textSecondary: "#334155",
+      textMuted: "#64748B",
       accent: "#B4802A",
       accentHover: "#966A20",
     },
@@ -107,9 +107,9 @@ export const THEME_PRESETS = {
       bgInput: "#EDDFC0",
       border: "#E1CFA9",
       borderStrong: "#CBB182",
-      textPrimary: "#2E2013",
-      textSecondary: "#55402A",
-      textMuted: "#8A7154",
+      textPrimary: "#2A1D11",
+      textSecondary: "#4D3823",
+      textMuted: "#705437",
       accent: "#B8642A",
       accentHover: "#99511F",
     },
@@ -135,9 +135,9 @@ export const THEME_PRESETS = {
       bgInput: "#E4DAF1",
       border: "#D5C7E8",
       borderStrong: "#BBA5D6",
-      textPrimary: "#1D1728",
-      textSecondary: "#3E3251",
-      textMuted: "#6F6086",
+      textPrimary: "#1F172B",
+      textSecondary: "#43335A",
+      textMuted: "#69528A",
       accent: "#7C55B0",
       accentHover: "#664896",
     },
@@ -150,22 +150,22 @@ export const THEME_PRESETS = {
       bgInput: "#13315C",
       border: "#1C457A",
       borderStrong: "#2196F3",
-      textPrimary: "#E3F2FD",
-      textSecondary: "#90CAF9",
-      textMuted: "#5E97D1",
+      textPrimary: "#FFFFFF",
+      textSecondary: "#B3D4FC",
+      textMuted: "#7BAAE0",
       accent: "#2196F3",
       accentHover: "#1976D2",
     },
     light: {
-      bgApp: "#E3F2FD",
+      bgApp: "#F0F6FC",
       bgCard: "#FFFFFF",
-      bgSecondary: "#D0E8FA",
-      bgInput: "#BEDDF6",
-      border: "#90CAF9",
+      bgSecondary: "#E1EEFA",
+      bgInput: "#CFE3F7",
+      border: "#B6D6F2",
       borderStrong: "#2196F3",
-      textPrimary: "#0D47A1",
-      textSecondary: "#1565C0",
-      textMuted: "#42A5F5",
+      textPrimary: "#0B192C",
+      textSecondary: "#1E3E62",
+      textMuted: "#4B6584",
       accent: "#0D47A1",
       accentHover: "#1565C0",
     },
@@ -178,22 +178,22 @@ export const THEME_PRESETS = {
       bgInput: "#194E85",
       border: "#205295",
       borderStrong: "#2C74B3",
-      textPrimary: "#F0F6FC",
-      textSecondary: "#A5C7E8",
-      textMuted: "#6B9AC4",
+      textPrimary: "#FFFFFF",
+      textSecondary: "#B8D9F8",
+      textMuted: "#7EA9D4",
       accent: "#2C74B3",
       accentHover: "#3A8FD6",
     },
     light: {
-      bgApp: "#EDF4FA",
+      bgApp: "#F0F4F8",
       bgCard: "#FFFFFF",
-      bgSecondary: "#DCE9F5",
-      bgInput: "#C8DDF0",
-      border: "#B4D0EB",
+      bgSecondary: "#E2EAF2",
+      bgInput: "#D0DEEC",
+      border: "#B8CDE2",
       borderStrong: "#2C74B3",
       textPrimary: "#0A2647",
       textSecondary: "#144272",
-      textMuted: "#205295",
+      textMuted: "#335E8A",
       accent: "#144272",
       accentHover: "#205295",
     },
@@ -277,9 +277,7 @@ export const ThemeManager: React.FC = () => {
     mode === "light" ? `${colors.accent}22` : `${colors.accent}29`;
   const rowHover = mode === "light" ? colors.bgSecondary : `${colors.accent}0F`;
 
-  // Scope theme overrides ONLY to dashboard elements when a user is authenticated,
-  // NEVER overriding public landing, login, or explicit high-contrast white text.
-  const scope = user ? ".dashboard-theme-scope" : ".dashboard-theme-scope";
+  const scope = ".dashboard-theme-scope";
 
   const bgAppClasses = [
     "bg-[#0A0A0A]",
@@ -390,6 +388,12 @@ export const ThemeManager: React.FC = () => {
       --vos-accent-hover: ${colors.accentHover};
     }
 
+    /* ---- Unified Dashboard Layout Background ---- */
+    .dashboard-theme-scope {
+      background-color: ${colors.bgApp} !important;
+      color: ${colors.textPrimary} !important;
+    }
+
     /* ---- Scoped Dashboard Theme Surfaces ---- */
     ${scope} ${selAll("", bgAppClasses)} { background-color: ${colors.bgApp} !important; }
     ${scope} ${selAll("", bgCardClasses)} { background-color: ${colors.bgCard} !important; }
@@ -436,9 +440,6 @@ export const ThemeManager: React.FC = () => {
     ${scope} .text-amber-400 { color: ${STATUS.warning.text} !important; }
 
     /* ---- High-Contrast Safety Rule: Always keep pure stark white text on black/dark surfaces ---- */
-    .bg-black, .bg-\\[\\#000000\\], .bg-\\[\\#09090B\\], .bg-neutral-900, .bg-\\[\\#111111\\] {
-      color: inherit;
-    }
     .bg-black .text-white, .bg-\\[\\#000000\\] .text-white, .bg-\\[\\#09090B\\] .text-white, [class*="bg-black/"] .text-white, [class*="bg-white/"] .text-white {
       color: #FFFFFF !important;
     }
@@ -492,7 +493,7 @@ export const ThemeManager: React.FC = () => {
 
     /* ---- Light mode scoped dashboard corrections ---- */
     ${
-      mode === "light" && user
+      mode === "light"
         ? `
       ${scope} .bg-\\[\\#E5E5E5\\] { background-color: ${colors.bgSecondary} !important; color: ${colors.textPrimary} !important; }
       ${scope} header:not(.landing-header), ${scope} nav:not(.landing-nav) { background-color: ${colors.bgCard} !important; border-color: ${colors.border} !important; }
