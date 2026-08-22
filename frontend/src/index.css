@@ -126,3 +126,26 @@ body {
   transform: translateZ(0);
   backface-visibility: hidden;
 }
+
+/* ---- FOAC Prevention & Initial Hidden State Guards ---- */
+[data-animate],
+.scroll-reveal {
+  opacity: 0;
+  will-change: opacity, transform;
+}
+
+/* Ensure elements are visible when JS/animations are finished or for reduced motion */
+.animate-ready [data-animate],
+.animate-ready .scroll-reveal {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-animate],
+  .scroll-reveal {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+}
+

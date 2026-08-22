@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { motion } from "motion/react";
+import { motion, type Variants } from "motion/react";
 import {
   Play,
   ArrowRight,
@@ -9,46 +9,59 @@ import {
   Truck,
   Triangle,
 } from "lucide-react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 interface HeroSectionProps {
   onGetStarted: () => void;
 }
 
+const VOS_EASE = [0.22, 1, 0.36, 1] as const;
+
+const containerVariants: Variants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.12,
+      delayChildren: 0.1,
+    },
+  },
+};
+
+const itemVariants: Variants = {
+  hidden: { opacity: 0, y: 24 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.7,
+      ease: VOS_EASE,
+    },
+  },
+};
+
+const nodeVariants: Variants = {
+  hidden: { opacity: 0, scale: 0.85, y: 15 },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    y: 0,
+    transition: {
+      duration: 0.8,
+      ease: VOS_EASE,
+    },
+  },
+};
+
 export const HeroSection: React.FC<HeroSectionProps> = ({ onGetStarted }) => {
-  const sectionRef = useRef<HTMLElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
-  const [progress, setProgress] = useState(1);
   const [mousePos, setMousePos] = useState({ x: 75, y: 30 });
   const [isReducedMotion, setIsReducedMotion] = useState(false);
 
-  // GSAP ScrollTrigger Pinning (100vh budget, 1:1 scrub)
   useEffect(() => {
     const reduced =
       typeof window !== "undefined" &&
       window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     setIsReducedMotion(reduced);
-
-    if (reduced) {
-      setProgress(1);
-      return;
-    }
-
-    const ctx = gsap.context(() => {
-      ScrollTrigger.create({
-        trigger: sectionRef.current,
-        start: "top top",
-        end: "+=100%",
-        pin: true,
-        scrub: true,
-        anticipatePin: 1,
-        invalidateOnRefresh: true,
-        onUpdate: (self) => setProgress(self.progress),
-      });
-    }, sectionRef);
-
-    return () => ctx.revert();
   }, []);
 
   // Mouse Position tracking for living interactive diffuse glow
@@ -62,7 +75,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onGetStarted }) => {
 
   return (
     <section
-      ref={sectionRef}
+      id="hero"
       className="relative min-h-[100dvh] md:h-screen flex flex-col justify-center items-center bg-[#000000] text-white pt-20 pb-4 overflow-hidden font-sans"
     >
       {/* Inset Framed Hero Card Container */}
@@ -71,7 +84,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onGetStarted }) => {
         onMouseMove={handleMouseMove}
         className="relative w-[94vw] max-w-7xl h-[86vh] min-h-[620px] bg-[#000000] border border-white/10 rounded-[28px] sm:rounded-[36px] md:rounded-[44px] overflow-hidden shadow-[0_30px_100px_rgba(0,0,0,0.95)] flex flex-col justify-center p-6 sm:p-10 text-center select-none"
       >
-        {/* Static Atmospheric Milky-White Light Patch (Reference Match) */}
+        {/* Static Atmospheric Milky-White Light Patch */}
         <div
           className="absolute inset-0 pointer-events-none z-0"
           style={{
@@ -80,7 +93,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onGetStarted }) => {
           }}
         />
 
-        {/* Dynamic Cursor Diffuse Milky-White Light Layer (Mix-Blend Screen Diffuse) */}
+        {/* Dynamic Cursor Diffuse Milky-White Light Layer */}
         {!isReducedMotion && (
           <div
             className="absolute inset-0 pointer-events-none transition-opacity duration-300 z-0"
@@ -92,9 +105,9 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onGetStarted }) => {
           />
         )}
 
-        {/* SVG Connector Lines Layer (Terminates at Nodes with Continuous Power Glow) */}
+        {/* SVG Connector Lines Layer */}
         <svg className="absolute inset-0 w-full h-full pointer-events-none z-10 hidden md:block">
-          {/* Path 1: Top-Left (Owner) - Terminates at Owner Node */}
+          {/* Path 1: Top-Left (Owner) */}
           <path
             d="M 0 110 H 260"
             fill="none"
@@ -117,7 +130,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onGetStarted }) => {
             transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut" }}
           />
 
-          {/* Path 2: Top-Right (Customer) - Terminates at Customer Node */}
+          {/* Path 2: Top-Right (Customer) */}
           <path
             d="M 1280 110 H 1020"
             fill="none"
@@ -140,7 +153,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onGetStarted }) => {
             transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
           />
 
-          {/* Path 3: Bottom-Left (Manager) - Terminates at Manager Node */}
+          {/* Path 3: Bottom-Left (Manager) */}
           <path
             d="M 0 510 H 260"
             fill="none"
@@ -163,7 +176,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onGetStarted }) => {
             transition={{ duration: 2.0, repeat: Infinity, ease: "easeInOut" }}
           />
 
-          {/* Path 4: Bottom-Right (Driver) - Terminates at Driver Node */}
+          {/* Path 4: Bottom-Right (Driver) */}
           <path
             d="M 1280 510 H 1020"
             fill="none"
@@ -187,12 +200,12 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onGetStarted }) => {
           />
         </svg>
 
-        {/* NODE 1: Owner (SVG Line Ends Here) */}
+        {/* NODE 1: Owner */}
         <motion.div
-          style={{
-            opacity: Math.min(1, progress * 2.5),
-            transform: `translateY(${(1 - Math.min(1, progress * 2.5)) * -20}px)`,
-          }}
+          variants={nodeVariants}
+          initial="hidden"
+          animate="visible"
+          transition={{ delay: 0.35 }}
           className="absolute top-[18%] left-[20%] hidden md:flex items-center space-x-3 z-20"
         >
           <div className="w-8 h-8 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-white shadow-md">
@@ -210,12 +223,12 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onGetStarted }) => {
           </div>
         </motion.div>
 
-        {/* NODE 2: Customer (SVG Line Ends Here) */}
+        {/* NODE 2: Customer */}
         <motion.div
-          style={{
-            opacity: Math.min(1, progress * 2.5),
-            transform: `translateY(${(1 - Math.min(1, progress * 2.5)) * -20}px)`,
-          }}
+          variants={nodeVariants}
+          initial="hidden"
+          animate="visible"
+          transition={{ delay: 0.45 }}
           className="absolute top-[18%] right-[20%] hidden md:flex items-center space-x-3 z-20"
         >
           <div className="text-right font-mono">
@@ -230,12 +243,12 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onGetStarted }) => {
           </div>
         </motion.div>
 
-        {/* NODE 3: Manager (SVG Line Ends Here) */}
+        {/* NODE 3: Manager */}
         <motion.div
-          style={{
-            opacity: Math.min(1, Math.max(0, (progress - 0.2) * 2.5)),
-            transform: `translateY(${(1 - Math.min(1, Math.max(0, (progress - 0.2) * 2.5))) * 20}px)`,
-          }}
+          variants={nodeVariants}
+          initial="hidden"
+          animate="visible"
+          transition={{ delay: 0.55 }}
           className="absolute bottom-[22%] left-[20%] hidden md:flex items-center space-x-3 z-20"
         >
           <div className="w-10 h-10 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center shadow-lg">
@@ -250,12 +263,12 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onGetStarted }) => {
           </div>
         </motion.div>
 
-        {/* NODE 4: Driver (SVG Line Ends Here) */}
+        {/* NODE 4: Driver */}
         <motion.div
-          style={{
-            opacity: Math.min(1, Math.max(0, (progress - 0.2) * 2.5)),
-            transform: `translateY(${(1 - Math.min(1, Math.max(0, (progress - 0.2) * 2.5))) * 20}px)`,
-          }}
+          variants={nodeVariants}
+          initial="hidden"
+          animate="visible"
+          transition={{ delay: 0.65 }}
           className="absolute bottom-[22%] right-[20%] hidden md:flex items-center space-x-3 z-20"
         >
           <div className="text-right font-mono">
@@ -271,13 +284,15 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onGetStarted }) => {
         </motion.div>
 
         {/* CENTER STACKED COMPOSITION */}
-        <div className="relative max-w-3xl mx-auto z-20 pt-4">
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+          className="relative max-w-3xl mx-auto z-20 pt-4"
+        >
           {/* Small Circular Play Button Icon */}
           <motion.div
-            style={{
-              opacity: Math.min(1, progress * 3),
-              transform: `scale(${0.85 + Math.min(1, progress * 3) * 0.15})`,
-            }}
+            variants={itemVariants}
             onClick={onGetStarted}
             className="w-11 h-11 rounded-full bg-white/10 backdrop-blur-md border border-white/25 flex items-center justify-center text-white shadow-2xl mx-auto mb-4 hover:scale-110 transition-transform cursor-pointer"
           >
@@ -286,10 +301,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onGetStarted }) => {
 
           {/* Badge Pill with Icon Badge on Left */}
           <motion.div
-            style={{
-              opacity: Math.min(1, progress * 2.5),
-              transform: `translateY(${(1 - Math.min(1, progress * 2.5)) * 20}px)`,
-            }}
+            variants={itemVariants}
             onClick={onGetStarted}
             className="inline-flex items-center space-x-2.5 px-4 py-1.5 bg-black/40 backdrop-blur-xl border border-white/20 rounded-full text-xs font-mono text-neutral-200 mb-6 shadow-lg cursor-pointer hover:border-white/40 transition-colors"
           >
@@ -299,12 +311,9 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onGetStarted }) => {
             <span>See VendorOS in action →</span>
           </motion.div>
 
-          {/* Large Centered Stark Pure White Headline (No Scramble Decoding Text) */}
+          {/* Large Centered Stark Pure White Headline */}
           <motion.h1
-            style={{
-              opacity: Math.min(1, progress * 2),
-              transform: `translateY(${(1 - Math.min(1, progress * 2)) * 30}px)`,
-            }}
+            variants={itemVariants}
             className="text-4xl sm:text-6xl md:text-7xl font-display font-extrabold tracking-tight text-white leading-[1.06] mb-6 max-w-4xl mx-auto drop-shadow-lg"
           >
             Unlock the Future <br className="hidden sm:inline" />
@@ -313,10 +322,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onGetStarted }) => {
 
           {/* Centered Subcopy */}
           <motion.p
-            style={{
-              opacity: Math.min(1, Math.max(0, (progress - 0.15) * 2.2)),
-              transform: `translateY(${(1 - Math.min(1, Math.max(0, (progress - 0.15) * 2.2))) * 25}px)`,
-            }}
+            variants={itemVariants}
             className="text-xs sm:text-sm font-sans text-white/70 max-w-xl mx-auto mb-8 leading-relaxed tracking-normal"
           >
             Replace WhatsApp & Excel chaos with AI-driven work order dispatching, real-time fleet tracking, and automated field diagnostics.
@@ -324,10 +330,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onGetStarted }) => {
 
           {/* Two CTA Buttons */}
           <motion.div
-            style={{
-              opacity: Math.min(1, Math.max(0, (progress - 0.3) * 2.5)),
-              transform: `translateY(${(1 - Math.min(1, Math.max(0, (progress - 0.3) * 2.5))) * 20}px)`,
-            }}
+            variants={itemVariants}
             className="flex flex-wrap items-center justify-center gap-4 mb-8"
           >
             <button
@@ -349,9 +352,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onGetStarted }) => {
 
           {/* Row of 3 Thin Vertical Glowing Lines */}
           <motion.div
-            style={{
-              opacity: Math.min(1, Math.max(0, (progress - 0.4) * 2)),
-            }}
+            variants={itemVariants}
             className="flex items-center justify-center gap-2 pt-2"
           >
             <motion.div
@@ -370,8 +371,9 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onGetStarted }) => {
               className="w-[1.5px] h-8 bg-gradient-to-b from-white/90 to-transparent rounded-full"
             />
           </motion.div>
-        </div>
+        </motion.div>
       </div>
     </section>
   );
 };
+

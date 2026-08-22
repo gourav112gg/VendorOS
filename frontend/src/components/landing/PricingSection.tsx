@@ -1,8 +1,6 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState } from "react";
 import { motion } from "motion/react";
 import { Check } from "lucide-react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { NumberRoll } from "./NumberRoll";
 
 interface PricingSectionProps {
@@ -11,31 +9,6 @@ interface PricingSectionProps {
 
 export const PricingSection: React.FC<PricingSectionProps> = ({ onSelectPlan }) => {
   const [isYearly, setIsYearly] = useState(true);
-  const sectionRef = useRef<HTMLElement>(null);
-  const [progress, setProgress] = useState(1);
-
-  useEffect(() => {
-    const isReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (isReducedMotion) {
-      setProgress(1);
-      return;
-    }
-
-    const ctx = gsap.context(() => {
-      ScrollTrigger.create({
-        trigger: sectionRef.current,
-        start: "top top",
-        end: "+=120%",
-        pin: true,
-        scrub: true,
-        anticipatePin: 1,
-        invalidateOnRefresh: true,
-        onUpdate: (self) => setProgress(self.progress),
-      });
-    }, sectionRef);
-
-    return () => ctx.revert();
-  }, []);
 
   const handlePlanClick = (tier: string) => {
     if (onSelectPlan) {
@@ -46,27 +19,30 @@ export const PricingSection: React.FC<PricingSectionProps> = ({ onSelectPlan }) 
   return (
     <section
       id="pricing"
-      ref={sectionRef}
       className="relative min-h-[100dvh] md:h-screen flex flex-col justify-center py-28 bg-[#000000] text-white overflow-hidden"
     >
       {/* Giant Backdrop Text: Pricing */}
-      <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
+      <motion.div
+        initial={{ opacity: 0, scale: 0.92 }}
+        whileInView={{ opacity: 1, scale: 1 }}
+        viewport={{ once: true, amount: 0.15 }}
+        transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+        className="absolute inset-0 flex items-center justify-center pointer-events-none z-0"
+      >
         <span className="text-[clamp(70px,18vw,360px)] font-display font-extrabold text-white/40 tracking-tighter select-none leading-none opacity-100 filter drop-shadow-2xl">
           Pricing
         </span>
-      </div>
+      </motion.div>
 
       <div className="relative max-w-6xl mx-auto px-4 z-10">
         {/* 3 Glassmorphism Cards Grid */}
         <div className="living-card-grid grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch pt-12 mb-12">
           {/* Card 1 — Free Plan */}
           <motion.div
-            style={{
-              opacity: Math.min(1, progress * 2.5),
-              transform: `translateY(${(1 - Math.min(1, progress * 2.5)) * 40}px) scale(${
-                0.9 + Math.min(1, progress * 2.5) * 0.1
-              })`,
-            }}
+            initial={{ opacity: 0, y: 50, scale: 0.96 }}
+            whileInView={{ opacity: 1, y: 0, scale: 1 }}
+            viewport={{ once: true, amount: 0.15 }}
+            transition={{ duration: 0.7, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
             className="living-card bg-white/[0.04] backdrop-blur-3xl border border-white/20 rounded-3xl p-8 flex flex-col justify-between shadow-[0_20px_50px_rgba(0,0,0,0.7)] hover:bg-white/[0.08] hover:border-white/35 transition-all"
           >
             <div>
@@ -113,6 +89,7 @@ export const PricingSection: React.FC<PricingSectionProps> = ({ onSelectPlan }) 
             </div>
 
             <button
+              type="button"
               onClick={() => handlePlanClick("free")}
               className="w-full py-3 bg-[#0A0A0C]/80 hover:bg-black border border-white/20 rounded-full text-xs font-mono font-bold text-white transition-all cursor-pointer shadow-lg text-center"
             >
@@ -122,12 +99,10 @@ export const PricingSection: React.FC<PricingSectionProps> = ({ onSelectPlan }) 
 
           {/* Card 2 — Standard Plan (Featured Center Card) */}
           <motion.div
-            style={{
-              opacity: Math.min(1, Math.max(0, (progress - 0.2) * 2.5)),
-              transform: `translateY(${(1 - Math.min(1, Math.max(0, (progress - 0.2) * 2.5))) * 40}px) scale(${
-                0.9 + Math.min(1, Math.max(0, (progress - 0.2) * 2.5)) * 0.1
-              })`,
-            }}
+            initial={{ opacity: 0, y: 50, scale: 0.96 }}
+            whileInView={{ opacity: 1, y: 0, scale: 1 }}
+            viewport={{ once: true, amount: 0.15 }}
+            transition={{ duration: 0.7, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
             className="living-card bg-white/[0.08] backdrop-blur-3xl border border-white/30 rounded-3xl p-8 flex flex-col justify-between shadow-[0_25px_60px_rgba(0,0,0,0.9)] relative transform md:-translate-y-2 hover:bg-white/[0.12] transition-all"
           >
             <div>
@@ -184,6 +159,7 @@ export const PricingSection: React.FC<PricingSectionProps> = ({ onSelectPlan }) 
             </div>
 
             <button
+              type="button"
               onClick={() => handlePlanClick("growth")}
               className="w-full py-3 bg-white hover:bg-neutral-200 text-black rounded-full text-xs font-mono font-bold transition-all cursor-pointer shadow-xl text-center"
             >
@@ -193,12 +169,10 @@ export const PricingSection: React.FC<PricingSectionProps> = ({ onSelectPlan }) 
 
           {/* Card 3 — Enterprise Plan */}
           <motion.div
-            style={{
-              opacity: Math.min(1, Math.max(0, (progress - 0.4) * 2.5)),
-              transform: `translateY(${(1 - Math.min(1, Math.max(0, (progress - 0.4) * 2.5))) * 40}px) scale(${
-                0.9 + Math.min(1, Math.max(0, (progress - 0.4) * 2.5)) * 0.1
-              })`,
-            }}
+            initial={{ opacity: 0, y: 50, scale: 0.96 }}
+            whileInView={{ opacity: 1, y: 0, scale: 1 }}
+            viewport={{ once: true, amount: 0.15 }}
+            transition={{ duration: 0.7, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
             className="living-card bg-white/[0.04] backdrop-blur-3xl border border-white/20 rounded-3xl p-8 flex flex-col justify-between shadow-[0_20px_50px_rgba(0,0,0,0.7)] hover:bg-white/[0.08] hover:border-white/35 transition-all"
           >
             <div>
@@ -245,6 +219,7 @@ export const PricingSection: React.FC<PricingSectionProps> = ({ onSelectPlan }) 
             </div>
 
             <button
+              type="button"
               onClick={() => handlePlanClick("enterprise")}
               className="w-full py-3 bg-[#0A0A0C]/80 hover:bg-black border border-white/20 rounded-full text-xs font-mono font-bold text-white transition-all cursor-pointer shadow-lg text-center"
             >
@@ -254,9 +229,16 @@ export const PricingSection: React.FC<PricingSectionProps> = ({ onSelectPlan }) 
         </div>
 
         {/* Monthly vs Yearly Toggle Pill */}
-        <div className="flex justify-center">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.15 }}
+          transition={{ duration: 0.6, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
+          className="flex justify-center"
+        >
           <div className="bg-white/10 backdrop-blur-md border border-white/20 p-1.5 rounded-full flex items-center gap-1 shadow-2xl font-mono text-xs">
             <button
+              type="button"
               onClick={() => setIsYearly(false)}
               className={`px-6 py-2 rounded-full font-bold transition-all cursor-pointer ${
                 !isYearly ? "bg-white text-black shadow-md" : "text-neutral-400 hover:text-white"
@@ -265,6 +247,7 @@ export const PricingSection: React.FC<PricingSectionProps> = ({ onSelectPlan }) 
               Monthly Billing
             </button>
             <button
+              type="button"
               onClick={() => setIsYearly(true)}
               className={`px-6 py-2 rounded-full font-bold transition-all cursor-pointer flex items-center gap-2 ${
                 isYearly ? "bg-white text-black shadow-md" : "text-neutral-400 hover:text-white"
@@ -276,8 +259,9 @@ export const PricingSection: React.FC<PricingSectionProps> = ({ onSelectPlan }) 
               </span>
             </button>
           </div>
-        </div>
+        </motion.div>
       </div>
     </section>
   );
 };
+

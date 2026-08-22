@@ -1,37 +1,10 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState } from "react";
 import { motion } from "motion/react";
 import { ArrowLeftRight, Clock, Layers } from "lucide-react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 export const AppIntegrationSection: React.FC = () => {
   const [val1, setVal1] = useState("1.0812");
   const [val2, setVal2] = useState("2.542");
-  const sectionRef = useRef<HTMLElement>(null);
-  const [progress, setProgress] = useState(1);
-
-  useEffect(() => {
-    const isReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (isReducedMotion) {
-      setProgress(1);
-      return;
-    }
-
-    const ctx = gsap.context(() => {
-      ScrollTrigger.create({
-        trigger: sectionRef.current,
-        start: "top top",
-        end: "+=150%",
-        pin: true,
-        scrub: true,
-        anticipatePin: 1,
-        invalidateOnRefresh: true,
-        onUpdate: (self) => setProgress(self.progress),
-      });
-    }, sectionRef);
-
-    return () => ctx.revert();
-  }, []);
 
   const handleSwap = () => {
     setVal1((prev) => (prev === "1.0812" ? "2.542" : "1.0812"));
@@ -41,26 +14,25 @@ export const AppIntegrationSection: React.FC = () => {
   return (
     <section
       id="features"
-      ref={sectionRef}
       className="relative min-h-[100dvh] md:h-screen flex flex-col justify-center py-16 bg-[#E3E3E3] text-black overflow-hidden"
     >
       <div className="max-w-5xl mx-auto px-4 text-center w-full">
         {/* Header */}
         <motion.h2
-          style={{
-            opacity: Math.min(1, progress * 3),
-            transform: `translateY(${(1 - Math.min(1, progress * 3)) * 30}px)`,
-          }}
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           className="text-3xl sm:text-5xl font-mono font-bold tracking-tight mb-4 text-neutral-900"
         >
           Integrate with popular apps
         </motion.h2>
 
         <motion.p
-          style={{
-            opacity: Math.min(1, Math.max(0, (progress - 0.1) * 3)),
-            transform: `translateY(${(1 - Math.min(1, Math.max(0, (progress - 0.1) * 3))) * 25}px)`,
-          }}
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ duration: 0.6, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
           className="text-xs sm:text-sm font-mono text-neutral-600 max-w-2xl mx-auto mb-12"
         >
           Streamline your work order dispatching, invoicing, and real-time operational risk evaluation directly from your device.
@@ -70,12 +42,10 @@ export const AppIntegrationSection: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-left">
           {/* Left Card — Time Saving Automation */}
           <motion.div
-            style={{
-              opacity: Math.min(1, Math.max(0, (progress - 0.2) * 2.5)),
-              transform: `translateY(${(1 - Math.min(1, Math.max(0, (progress - 0.2) * 2.5))) * 50}px) scale(${
-                0.9 + Math.min(1, Math.max(0, (progress - 0.2) * 2.5)) * 0.1
-              })`,
-            }}
+            initial={{ opacity: 0, y: 40, scale: 0.96 }}
+            whileInView={{ opacity: 1, y: 0, scale: 1 }}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{ duration: 0.7, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
             className="living-card bg-white border border-neutral-300 rounded-3xl p-6 sm:p-8 shadow-xl flex flex-col justify-between"
           >
             <div>
@@ -94,6 +64,7 @@ export const AppIntegrationSection: React.FC = () => {
 
                 <div className="flex justify-center">
                   <button
+                    type="button"
                     onClick={handleSwap}
                     className="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center hover:scale-110 transition-transform cursor-pointer shadow-md"
                   >
@@ -118,12 +89,10 @@ export const AppIntegrationSection: React.FC = () => {
 
           {/* Right Card — All-in-One Field Solution */}
           <motion.div
-            style={{
-              opacity: Math.min(1, Math.max(0, (progress - 0.35) * 2.5)),
-              transform: `translateY(${(1 - Math.min(1, Math.max(0, (progress - 0.35) * 2.5))) * 50}px) scale(${
-                0.9 + Math.min(1, Math.max(0, (progress - 0.35) * 2.5)) * 0.1
-              })`,
-            }}
+            initial={{ opacity: 0, y: 40, scale: 0.96 }}
+            whileInView={{ opacity: 1, y: 0, scale: 1 }}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{ duration: 0.7, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
             className="living-card bg-white border border-neutral-300 rounded-3xl p-6 sm:p-8 shadow-xl flex flex-col justify-between"
           >
             <div>
@@ -163,3 +132,4 @@ export const AppIntegrationSection: React.FC = () => {
     </section>
   );
 };
+

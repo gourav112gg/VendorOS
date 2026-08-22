@@ -17,7 +17,7 @@ export const FooterSection: React.FC = () => {
       gsap.fromTo(
         textRef.current,
         {
-          fontSize: " clamp(40px, 12vw, 220px)",
+          fontSize: "clamp(40px, 12vw, 220px)",
           opacity: 0.4,
         },
         {
@@ -49,7 +49,7 @@ export const FooterSection: React.FC = () => {
           <motion.div
             initial={{ opacity: 0, y: 40, scale: 0.95 }}
             whileInView={{ opacity: 1, y: 0, scale: 1 }}
-            viewport={{ once: false, amount: 0.2 }}
+            viewport={{ once: true, amount: 0.2 }}
             transition={{ duration: 0.6 }}
             className="space-y-4"
           >
@@ -67,7 +67,7 @@ export const FooterSection: React.FC = () => {
           <motion.div
             initial={{ opacity: 0, y: 40, scale: 0.95 }}
             whileInView={{ opacity: 1, y: 0, scale: 1 }}
-            viewport={{ once: false, amount: 0.2 }}
+            viewport={{ once: true, amount: 0.2 }}
             transition={{ duration: 0.6, delay: 0.1 }}
             className="space-y-4"
           >
@@ -107,7 +107,7 @@ export const FooterSection: React.FC = () => {
           <motion.div
             initial={{ opacity: 0, y: 40, scale: 0.95 }}
             whileInView={{ opacity: 1, y: 0, scale: 1 }}
-            viewport={{ once: false, amount: 0.2 }}
+            viewport={{ once: true, amount: 0.2 }}
             transition={{ duration: 0.6, delay: 0.2 }}
             className="space-y-4"
           >
@@ -139,7 +139,7 @@ export const FooterSection: React.FC = () => {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: false, amount: 0.2 }}
+        viewport={{ once: true, amount: 0.2 }}
         transition={{ duration: 0.5, delay: 0.3 }}
         className="max-w-7xl mx-auto px-6 w-full flex flex-col sm:flex-row items-center justify-between text-[10px] text-neutral-500 border-t border-neutral-900 pt-4 relative z-30 bg-black"
       >
@@ -149,3 +149,4 @@ export const FooterSection: React.FC = () => {
     </footer>
   );
 };
+

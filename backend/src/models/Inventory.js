@@ -21,8 +21,8 @@ const inventorySchema = new mongoose.Schema(
 
     sku: {
       type: String,
-      unique: true,
       required: true,
+      trim: true,
     },
 
     unit: {
@@ -33,21 +33,27 @@ const inventorySchema = new mongoose.Schema(
     quantity: {
       type: Number,
       default: 0,
+      min: [0, "Quantity cannot be negative"],
     },
 
     minimumStock: {
       type: Number,
       default: 10,
+      min: [0, "Minimum stock cannot be negative"],
     },
 
     price: {
       type: Number,
       default: 0,
+      min: [0, "Price cannot be negative"],
     },
   },
   {
     timestamps: true,
   }
 );
+
+// Compound unique index per company to ensure tenant isolation and prevent cross-tenant SKU collisions
+inventorySchema.index({ company: 1, sku: 1 }, { unique: true });
 
 module.exports = mongoose.model("Inventory", inventorySchema);

@@ -32,7 +32,10 @@ export const LandingPage: React.FC<LandingPageProps> = ({
       typeof window !== "undefined" &&
       window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-    if (isReducedMotion) return; // Disable smooth scroll & pinning loop when reduced motion is preferred
+    // Mark document as animation-ready to safely activate animations
+    document.documentElement.classList.add("animate-ready");
+
+    if (isReducedMotion) return;
 
     const lenis = new Lenis({
       wrapper: window,
@@ -53,7 +56,13 @@ export const LandingPage: React.FC<LandingPageProps> = ({
     gsap.ticker.add(updateTicker);
     gsap.ticker.lagSmoothing(0);
 
+    // Refresh ScrollTrigger calculations after initial paint
+    const timer = setTimeout(() => {
+      ScrollTrigger.refresh();
+    }, 100);
+
     return () => {
+      clearTimeout(timer);
       gsap.ticker.remove(updateTicker);
       lenis.destroy();
       lenisRef.current = null;

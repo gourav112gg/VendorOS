@@ -1,41 +1,12 @@
-import React, { useEffect, useRef, useState } from "react";
+import React from "react";
 import { motion } from "motion/react";
 import { ArrowUpRight, Clock, Lock, ShieldCheck } from "lucide-react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { NumberRoll } from "./NumberRoll";
 
 export const BentoGridSection: React.FC = () => {
-  const sectionRef = useRef<HTMLElement>(null);
-  const [progress, setProgress] = useState(1);
-
-  useEffect(() => {
-    const isReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (isReducedMotion) {
-      setProgress(1);
-      return;
-    }
-
-    const ctx = gsap.context(() => {
-      ScrollTrigger.create({
-        trigger: sectionRef.current,
-        start: "top top",
-        end: "+=100%",
-        pin: true,
-        scrub: true,
-        anticipatePin: 1,
-        invalidateOnRefresh: true,
-        onUpdate: (self) => setProgress(self.progress),
-      });
-    }, sectionRef);
-
-    return () => ctx.revert();
-  }, []);
-
   return (
     <section
       id="bento"
-      ref={sectionRef}
       className="relative min-h-[100dvh] md:h-screen flex flex-col justify-center py-16 bg-[#E8E8E8] text-black overflow-hidden border-t border-neutral-300"
     >
       <div className="max-w-5xl mx-auto px-4 w-full">
@@ -45,12 +16,10 @@ export const BentoGridSection: React.FC = () => {
           <div className="space-y-6 flex flex-col justify-between">
             {/* Top Left Card — Dark Matrix Card */}
             <motion.div
-              style={{
-                opacity: Math.min(1, progress * 2.5),
-                transform: `translateY(${(1 - Math.min(1, progress * 2.5)) * 40}px) scale(${
-                  0.9 + Math.min(1, progress * 2.5) * 0.1
-                })`,
-              }}
+              initial={{ opacity: 0, y: 35, scale: 0.96 }}
+              whileInView={{ opacity: 1, y: 0, scale: 1 }}
+              viewport={{ once: true, amount: 0.15 }}
+              transition={{ duration: 0.6, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
               className="living-card relative overflow-hidden bg-[#09090B] text-white border border-neutral-800 rounded-3xl p-6 shadow-2xl flex-1 flex flex-col justify-between min-h-[200px]"
             >
               {/* Matrix Binary Graphic Background Overlay */}
@@ -77,12 +46,10 @@ export const BentoGridSection: React.FC = () => {
 
             {/* Bottom Left Card — White Clock Automation Card */}
             <motion.div
-              style={{
-                opacity: Math.min(1, Math.max(0, (progress - 0.15) * 2.5)),
-                transform: `translateY(${(1 - Math.min(1, Math.max(0, (progress - 0.15) * 2.5))) * 40}px) scale(${
-                  0.9 + Math.min(1, Math.max(0, (progress - 0.15) * 2.5)) * 0.1
-                })`,
-              }}
+              initial={{ opacity: 0, y: 35, scale: 0.96 }}
+              whileInView={{ opacity: 1, y: 0, scale: 1 }}
+              viewport={{ once: true, amount: 0.15 }}
+              transition={{ duration: 0.6, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
               className="living-card bg-white border border-neutral-300 rounded-3xl p-6 shadow-xl flex-1 flex flex-col justify-between min-h-[200px]"
             >
               <div className="flex items-center justify-between mb-4">
@@ -107,12 +74,10 @@ export const BentoGridSection: React.FC = () => {
 
           {/* Center Column — Tall White Card with Phone & App Badges */}
           <motion.div
-            style={{
-              opacity: Math.min(1, Math.max(0, (progress - 0.25) * 2.5)),
-              transform: `translateY(${(1 - Math.min(1, Math.max(0, (progress - 0.25) * 2.5))) * 40}px) scale(${
-                0.9 + Math.min(1, Math.max(0, (progress - 0.25) * 2.5)) * 0.1
-              })`,
-            }}
+            initial={{ opacity: 0, y: 40, scale: 0.95 }}
+            whileInView={{ opacity: 1, y: 0, scale: 1 }}
+            viewport={{ once: true, amount: 0.15 }}
+            transition={{ duration: 0.7, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
             className="living-card bg-white border border-neutral-300 rounded-3xl p-6 sm:p-8 shadow-xl flex flex-col justify-between text-center items-center"
           >
             {/* Phone Frame Mockup */}
@@ -150,12 +115,10 @@ export const BentoGridSection: React.FC = () => {
           <div className="space-y-6 flex flex-col justify-between">
             {/* Top Right Card — White Grow Solution Card */}
             <motion.div
-              style={{
-                opacity: Math.min(1, Math.max(0, (progress - 0.35) * 2.5)),
-                transform: `translateY(${(1 - Math.min(1, Math.max(0, (progress - 0.35) * 2.5))) * 40}px) scale(${
-                  0.9 + Math.min(1, Math.max(0, (progress - 0.35) * 2.5)) * 0.1
-                })`,
-              }}
+              initial={{ opacity: 0, y: 35, scale: 0.96 }}
+              whileInView={{ opacity: 1, y: 0, scale: 1 }}
+              viewport={{ once: true, amount: 0.15 }}
+              transition={{ duration: 0.6, delay: 0.25, ease: [0.22, 1, 0.36, 1] }}
               className="living-card bg-white border border-neutral-300 rounded-3xl p-6 shadow-xl flex-1 flex flex-col justify-between min-h-[200px]"
             >
               <div className="flex items-center justify-between mb-4">
@@ -179,12 +142,10 @@ export const BentoGridSection: React.FC = () => {
 
             {/* Bottom Right Card — Dark Matrix Card */}
             <motion.div
-              style={{
-                opacity: Math.min(1, Math.max(0, (progress - 0.45) * 2.5)),
-                transform: `translateY(${(1 - Math.min(1, Math.max(0, (progress - 0.45) * 2.5))) * 40}px) scale(${
-                  0.9 + Math.min(1, Math.max(0, (progress - 0.45) * 2.5)) * 0.1
-                })`,
-              }}
+              initial={{ opacity: 0, y: 35, scale: 0.96 }}
+              whileInView={{ opacity: 1, y: 0, scale: 1 }}
+              viewport={{ once: true, amount: 0.15 }}
+              transition={{ duration: 0.6, delay: 0.35, ease: [0.22, 1, 0.36, 1] }}
               className="living-card relative overflow-hidden bg-[#09090B] text-white border border-neutral-800 rounded-3xl p-6 shadow-2xl flex-1 flex flex-col justify-between min-h-[200px]"
             >
               {/* Matrix Binary Graphic Background Overlay */}
@@ -214,3 +175,4 @@ export const BentoGridSection: React.FC = () => {
     </section>
   );
 };
+

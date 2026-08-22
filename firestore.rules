@@ -57,7 +57,9 @@ service cloud.firestore {
     match /orders/{orderId} {
       allow read: if isAuthenticated() && 
                   (request.auth.token.companyId == resource.data.companyId || 
-                   request.auth.token.role == 'Customer');
+                   (request.auth.token.role == 'Customer' && 
+                    (resource.data.customerId == request.auth.uid || 
+                     resource.data.customerPhone == request.auth.token.phone_number)));
       allow create: if isAuthenticated() && 
                     (request.auth.token.role == 'Owner' || request.auth.token.role == 'Manager' || request.auth.token.role == 'Customer');
       allow update: if isAuthenticated() && 

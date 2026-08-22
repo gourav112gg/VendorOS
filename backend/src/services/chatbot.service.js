@@ -9,6 +9,11 @@ const { getHistory, appendToHistory } = require("../utils/chatMemory");
 const GROQ_CHAT_URL = "https://api.groq.com/openai/v1/chat/completions";
 const CHAT_MODEL = "llama-3.3-70b-versatile";
 
+// Helper to escape special regex characters and prevent ReDoS attacks
+function escapeRegExp(string) {
+  return typeof string === "string" ? string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") : "";
+}
+
 const tools = [
   {
     type: "function",
@@ -207,7 +212,9 @@ async function executeTool(toolName, args, user) {
     }
 
     let query = { role: "worker", company: user.company };
-    if (args.workerName) query.name = new RegExp(args.workerName, "i");
+    if (args.workerName && typeof args.workerName === "string") {
+      query.name = new RegExp(escapeRegExp(args.workerName.trim()), "i");
+    }
 
     const workers = await User.find(query)
       .select("name isAvailable domains")
@@ -230,7 +237,9 @@ async function executeTool(toolName, args, user) {
     }
 
     let query = { company: user.company };
-    if (args.productName) query.productName = new RegExp(args.productName, "i");
+    if (args.productName && typeof args.productName === "string") {
+      query.productName = new RegExp(escapeRegExp(args.productName.trim()), "i");
+    }
 
     const products = await Inventory.find(query)
       .select("productName quantity unit minimumStock")

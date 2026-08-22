@@ -16,23 +16,23 @@ export const LogoCloudSection: React.FC = () => {
   const listLeftToRight = [...techLogos, ...techLogos, ...techLogos, ...techLogos];
 
   return (
-    <section className="relative h-screen min-h-screen flex flex-col justify-between py-16 bg-[#E8E8E8] text-black overflow-hidden border-t border-neutral-300">
+    <section className="relative min-h-[100dvh] md:h-screen flex flex-col justify-between py-16 bg-[#E8E8E8] text-black overflow-hidden border-t border-neutral-300">
       {/* Title */}
       <div className="max-w-5xl mx-auto px-4 text-center z-30 pt-8">
         <motion.h2
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: false, amount: 0.25 }}
-          transition={{ duration: 0.6 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           className="text-3xl sm:text-5xl font-mono font-bold tracking-tight mb-4 text-neutral-900"
         >
           Integrate with popular apps.
         </motion.h2>
         <motion.p
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: false, amount: 0.25 }}
-          transition={{ duration: 0.6, delay: 0.1 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ duration: 0.6, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
           className="text-xs sm:text-sm font-mono text-neutral-600 max-w-xl mx-auto"
         >
           Powered by enterprise infrastructure including Firebase, Google, MongoDB, Render, Vercel, and Razorpay.
@@ -40,7 +40,13 @@ export const LogoCloudSection: React.FC = () => {
       </div>
 
       {/* Bold Diagonal Crossing Strips Container */}
-      <div className="relative w-full flex-grow flex items-center justify-center overflow-hidden my-auto">
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        whileInView={{ opacity: 1, scale: 1 }}
+        viewport={{ once: true, amount: 0.15 }}
+        transition={{ duration: 0.8, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
+        className="relative w-full flex-grow flex items-center justify-center overflow-hidden my-auto py-12"
+      >
         {/* Strip 1: Bold Tilted rotate-[12deg], Moving Right -> Left */}
         <div className="absolute w-[150vw] bg-black text-white py-4 shadow-[0_20px_50px_rgba(0,0,0,0.8)] transform rotate-[12deg] z-20 border-y-2 border-amber-400 flex overflow-hidden select-none">
           <motion.div
@@ -81,7 +87,8 @@ export const LogoCloudSection: React.FC = () => {
 
         {/* Center Intersection Glow Circle */}
         <div className="absolute w-24 h-24 rounded-full bg-amber-400/20 blur-2xl z-25 pointer-events-none" />
-      </div>
+      </motion.div>
     </section>
   );
 };
+

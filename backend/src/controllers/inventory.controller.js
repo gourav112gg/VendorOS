@@ -28,6 +28,13 @@ const createProduct = async (req, res) => {
       });
     }
 
+    if (quantity < 0 || price < 0 || (minimumStock !== undefined && minimumStock < 0)) {
+      return res.status(400).json({
+        success: false,
+        message: "Quantity, price, and minimum stock cannot be negative",
+      });
+    }
+
     // Check duplicate SKU
     const existingProduct = await Inventory.findOne({
       sku: sku.trim(),
@@ -143,6 +150,17 @@ const updateProduct = async (req, res) => {
       unit,
     } = req.body;
 
+    if (
+      (quantity !== undefined && quantity < 0) ||
+      (price !== undefined && price < 0) ||
+      (minimumStock !== undefined && minimumStock < 0)
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "Quantity, price, and minimum stock cannot be negative",
+      });
+    }
+
     if (productName) product.productName = productName.trim();
     if (category) product.category = category.trim();
     if (sku) product.sku = sku.trim();
@@ -209,6 +227,13 @@ const updateStock = async (req, res) => {
       return res.status(400).json({
         success: false,
         message: "Quantity is required",
+      });
+    }
+
+    if (quantity < 0) {
+      return res.status(400).json({
+        success: false,
+        message: "Quantity cannot be negative",
       });
     }
 
