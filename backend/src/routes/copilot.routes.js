@@ -1,6 +1,9 @@
 const express = require("express");
 const router = express.Router();
+const crypto = require("crypto");
 const { GoogleGenAI, Type } = require("@google/genai");
+const protect = require("../middleware/auth.middleware");
+const Company = require("../models/Company");
 
 // Initialize Gemini Client
 const ai = new GoogleGenAI({
@@ -219,11 +222,20 @@ function computeFallbackRiskScore(order) {
 /**
  * AI Operations Copilot API
  */
-router.post("/copilot/risk", async (req, res) => {
-  const { order, subscription } = req.body;
+router.post("/copilot/risk", protect, async (req, res) => {
+  const { order } = req.body;
   try {
     if (!order) {
       return res.status(400).json({ error: "Order details are required." });
+    }
+
+    // Verify subscription from authenticated user's company
+    let subscription = null;
+    if (req.user && req.user.company) {
+      const company = await Company.findById(req.user.company);
+      if (company && company.subscription) {
+        subscription = company.subscription;
+      }
     }
 
     if (
@@ -339,7 +351,7 @@ Provide a JSON with the following exact keys:
 - bgApp, bgCard, bgSecondary, bgInput, border, textPrimary, textSecondary, textMuted, accent, accentHover`;
 
     const response = await ai.models.generateContent({
-      model: "gemini-3.5-flash",
+      model: "gemini-1.5-flash",
       contents,
       config: {
         systemInstruction: systemPrompt,
@@ -394,6 +406,21 @@ Provide a JSON with the following exact keys:
  * Razorpay Subscription Webhook Simulation Endpoint
  */
 router.post("/razorpay/webhook", (req, res) => {
+  const webhookSecret = process.env.RAZORPAY_WEBHOOK_SECRET;
+  if (webhookSecret) {
+    const signature = req.headers["x-razorpay-signature"];
+    if (!signature) {
+      return res.status(400).json({ error: "Missing x-razorpay-signature header." });
+    }
+    const expectedSignature = crypto
+      .createHmac("sha256", webhookSecret)
+      .update(JSON.stringify(req.body))
+      .digest("hex");
+    if (signature !== expectedSignature) {
+      return res.status(400).json({ error: "Invalid webhook signature." });
+    }
+  }
+
   const { event, subscriptionId, tier } = req.body;
 
   if (!event || !subscriptionId || !tier) {

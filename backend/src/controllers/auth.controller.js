@@ -26,16 +26,7 @@ const recordFailureAttempt = async (email, emailFailKey) => {
   const failuresCount = await LoginAttempt.countDocuments({ email });
 
   if (failuresCount >= 5) {
-    try {
-      const firebaseUser = await admin.auth().getUserByEmail(email);
-      await admin.auth().updateUser(firebaseUser.uid, { disabled: true });
-      
-      // Generate password reset link and simulate email dispatch
-      const resetLink = await admin.auth().generatePasswordResetLink(email);
-      console.log(`[LOCKOUT NOTIFICATION] Email sent to: ${email} | Reset Link: ${resetLink}`);
-    } catch (fbErr) {
-      console.warn("[Lockout Service] Could not disable Firebase auth user:", fbErr.message);
-    }
+    console.warn(`[Security Alert] 5 or more failed login attempts recorded for: ${email}. Account locked out for 15 minutes.`);
   }
 };
 

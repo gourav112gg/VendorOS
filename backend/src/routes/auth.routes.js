@@ -28,8 +28,11 @@ router.post("/owner/signup", signupRateLimiter, validateSchema(ownerSignupSchema
 router.post("/vendor/signup", signupRateLimiter, validateSchema(vendorSignupSchema), vendorSignup);
 router.post("/customer/signup", signupRateLimiter, validateSchema(customerSignupSchema), customerSignup);
 
+const rateLimiter = require("../middleware/rateLimiter");
+const reportFailureLimiter = rateLimiter({ windowMs: 60000, max: 10, message: "Too many failure reports. Please wait." });
+
 // Unified login endpoints
 router.post("/login", validateSchema(loginSchema), login);
-router.post("/report-failure", reportFailure);
+router.post("/report-failure", reportFailureLimiter, reportFailure);
 
 module.exports = router;

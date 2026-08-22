@@ -1,4 +1,5 @@
-from fastapi import FastAPI
+import os
+from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 import joblib
 import pandas as pd
@@ -6,10 +7,14 @@ import uvicorn
 
 app = FastAPI()
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+model_risk = None
+model_delay = None
+
 # 1. Load both trained ML models
 try:
-    model_risk = joblib.load('stack_model_risk.pkl')
-    model_delay = joblib.load('stack_model_delay.pkl')
+    model_risk = joblib.load(os.path.join(BASE_DIR, 'stack_model_risk.pkl'))
+    model_delay = joblib.load(os.path.join(BASE_DIR, 'stack_model_delay.pkl'))
     print("✅ ML Models loaded successfully!")
 except Exception as e:
     print(f"❌ Error loading models: {e}")
@@ -28,6 +33,9 @@ class PredictionInput(BaseModel):
 
 @app.post("/predict")
 def predict_metrics(data: PredictionInput):
+    if model_risk is None or model_delay is None:
+        raise HTTPException(status_code=503, detail="ML Models are not loaded.")
+
     # Node.js se aaye data ko Pandas DataFrame me convert kiya (Feature names ke sath)
     input_df = pd.DataFrame([[
         data.sla_days,

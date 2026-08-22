@@ -76,6 +76,13 @@ const createOrder = async (req, res) => {
       expectedDelayDays: expectedDelayDays ?? null,
     });
 
+    // Deduct purchased quantities from inventory
+    for (const item of products) {
+      await Inventory.findByIdAndUpdate(item.product, {
+        $inc: { quantity: -item.quantity },
+      });
+    }
+
     return res.status(201).json({
       success: true,
       message: "Order created successfully",
@@ -178,7 +185,26 @@ const updateOrder = async (req, res) => {
       });
     }
 
-    Object.assign(order, req.body);
+    const {
+      customerName,
+      customerPhone,
+      customerAddress,
+      deliveryDate,
+      slaOverride,
+      status,
+    } = req.body;
+
+    if (customerName !== undefined) order.customerName = customerName.trim();
+    if (customerPhone !== undefined) order.customerPhone = customerPhone.trim();
+    if (customerAddress !== undefined) order.customerAddress = customerAddress.trim();
+    if (deliveryDate !== undefined) order.deliveryDate = deliveryDate ? new Date(deliveryDate) : null;
+    if (slaOverride !== undefined) order.slaOverride = slaOverride;
+    if (status !== undefined) {
+      const allowedStatus = ["Pending", "Accepted", "Packed", "Out For Delivery", "Delivered", "Cancelled"];
+      if (allowedStatus.includes(status)) {
+        order.status = status;
+      }
+    }
 
     await order.save();
 

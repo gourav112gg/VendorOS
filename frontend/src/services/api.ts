@@ -315,7 +315,7 @@ const companies = {
     try {
       const res = await request<{ success: boolean; companies: any[] }>('GET', '/api/companies');
       const exists = (res.companies || []).some(
-        (c) => c.name?.toLowerCase() === name.trim().toLowerCase()
+        (c) => (c.companyName || c.name)?.toLowerCase() === name.trim().toLowerCase()
       );
       return { available: !exists };
     } catch {

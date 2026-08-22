@@ -15,6 +15,20 @@ const companySchema = new mongoose.Schema(
       required: true,
     },
 
+    managers: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
+
+    workers: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
+
     description: {
       type: String,
       default: "",

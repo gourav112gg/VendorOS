@@ -93,11 +93,14 @@ const analyzeRisk = async (req, res) => {
       assignedWorker: assignedWorker ?? null,
     });
 
-    if (orderId) {
-      await Order.findByIdAndUpdate(orderId, {
-        riskScore: result.riskPercentage,
-        expectedDelayDays: result.expectedDelayDays,
-      });
+    if (orderId && req.user && req.user.company) {
+      await Order.findOneAndUpdate(
+        { _id: orderId, company: req.user.company },
+        {
+          riskScore: result.riskPercentage,
+          expectedDelayDays: result.expectedDelayDays,
+        }
+      );
     }
 
     return res.status(200).json({
@@ -220,11 +223,14 @@ const predictRiskML = async (req, res) => {
       });
     }
 
-    if (orderId) {
-      await Order.findByIdAndUpdate(orderId, {
-        riskScore: result.riskPercentage,
-        expectedDelayDays: result.expectedDelayDays,
-      });
+    if (orderId && req.user && req.user.company) {
+      await Order.findOneAndUpdate(
+        { _id: orderId, company: req.user.company },
+        {
+          riskScore: result.riskPercentage,
+          expectedDelayDays: result.expectedDelayDays,
+        }
+      );
     }
 
     return res.status(200).json({

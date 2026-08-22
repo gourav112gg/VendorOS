@@ -1,4 +1,5 @@
 const axios = require("axios");
+const mongoose = require("mongoose");
 const Order = require("../models/Order");
 const User = require("../models/User");
 const Inventory = require("../models/Inventory");
@@ -86,6 +87,10 @@ const tools = [
 
 async function executeTool(toolName, args, user) {
   if (toolName === "get_order_status") {
+    if (!args.orderId || !mongoose.Types.ObjectId.isValid(args.orderId)) {
+      return { found: false, message: "Invalid order ID format." };
+    }
+
     let query = { _id: args.orderId };
 
     if (user.role === "customer") query.customerPhone = user.phone;
@@ -123,7 +128,12 @@ async function executeTool(toolName, args, user) {
     if (user.role === "owner") query = { company: user.company };
     else if (user.role === "manager") query = { company: user.company, assignedManager: user._id };
     else if (user.role === "worker") query = { assignedWorker: user._id };
-    else if (user.role === "customer") query = { customerPhone: user.phone };
+    else if (user.role === "customer") {
+      if (!user.phone) {
+        return { count: 0, orders: [], message: "No phone number linked to your customer account to look up orders." };
+      }
+      query = { customerPhone: user.phone };
+    }
 
     const orders = await Order.find(query)
       .sort({ createdAt: -1 })
@@ -145,6 +155,10 @@ async function executeTool(toolName, args, user) {
   if (toolName === "get_order_risk") {
     if (!["owner", "manager"].includes(user.role)) {
       return { allowed: false, message: "Only owners and managers can check order risk." };
+    }
+
+    if (!args.orderId || !mongoose.Types.ObjectId.isValid(args.orderId)) {
+      return { found: false, message: "Invalid order ID format." };
     }
 
     let query = { _id: args.orderId, company: user.company };

@@ -28,7 +28,9 @@ const updatePolicy = async (req, res) => {
   try {
     const policy = await CompanyPolicy.findOne({ _id: req.params.id, company: req.user.company });
     if (!policy) return res.status(404).json({ success: false, message: "Policy not found" });
-    Object.assign(policy, req.body);
+    const { topic, answer } = req.body;
+    if (topic !== undefined) policy.topic = topic.trim();
+    if (answer !== undefined) policy.answer = answer.trim();
     await policy.save();
     return res.status(200).json({ success: true, policy });
   } catch (error) {

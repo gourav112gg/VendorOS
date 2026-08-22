@@ -72,6 +72,14 @@ const getCustomerOrders = async (req, res) => {
   try {
     const Order = require("../models/Order");
 
+    if (!req.user.phone) {
+      return res.status(200).json({
+        success: true,
+        count: 0,
+        orders: [],
+      });
+    }
+
     // Orders are matched by the customer's phone number stored at order creation
     const orders = await Order.find({
       customerPhone: req.user.phone,

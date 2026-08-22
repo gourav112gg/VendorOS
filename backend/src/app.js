@@ -35,7 +35,7 @@ const compression = require("compression");
 
 app.use(compression({ threshold: 1024 }));
 
-// Restrict CORS to VendorOS production and local dev domains only — no wildcard
+// Restrict CORS to VendorOS production and local dev domains only
 const allowedOrigins = [
   "https://vendoros-b2c1d.web.app",
   "https://vendoros-b2c1d.firebaseapp.com",
@@ -43,17 +43,21 @@ const allowedOrigins = [
   "http://localhost:5173",
   "http://localhost:3000",
 ];
+
+const isAllowedOrigin = (origin) => {
+  if (!origin) return true;
+  if (allowedOrigins.includes(origin)) return true;
+  if (/^https:\/\/vendoros(-[a-z0-9-]+)?\.vercel\.app$/.test(origin)) return true;
+  if (/^https:\/\/vendoros-[a-z0-9-]+\.firebaseapp\.com$/.test(origin)) return true;
+  if (/^https:\/\/vendoros-[a-z0-9-]+\.web\.app$/.test(origin)) return true;
+  if (/^http:\/\/localhost(:\d+)?$/.test(origin)) return true;
+  if (/^http:\/\/127\.0\.0\.1(:\d+)?$/.test(origin)) return true;
+  return false;
+};
+
 app.use(cors({
   origin: (origin, callback) => {
-    if (
-      !origin || 
-      allowedOrigins.includes(origin) || 
-      origin.endsWith(".vercel.app") ||
-      origin.endsWith(".firebaseapp.com") ||
-      origin.endsWith(".web.app") ||
-      /^http:\/\/localhost(:\d+)?$/.test(origin) || 
-      /^http:\/\/127\.0\.0\.1(:\d+)?$/.test(origin)
-    ) {
+    if (isAllowedOrigin(origin)) {
       callback(null, true);
     } else {
       callback(new Error("Not allowed by CORS"));
@@ -66,8 +70,11 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan("dev"));
 
-// Default Cache-Control to prevent caching of sensitive dashboard data
+// Standard security headers
 app.use((req, res, next) => {
+  res.setHeader("X-Content-Type-Options", "nosniff");
+  res.setHeader("X-Frame-Options", "SAMEORIGIN");
+  res.setHeader("X-XSS-Protection", "1; mode=block");
   res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
   next();
 });
@@ -127,5 +134,9 @@ app.get("/", (req, res) => {
     status: "ok",
   });
 });
+
+// --- Centralized Error Handler ---
+const errorHandler = require("./middleware/error.middleware");
+app.use(errorHandler);
 
 module.exports = app;

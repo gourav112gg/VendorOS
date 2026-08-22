@@ -1,5 +1,6 @@
 import express from 'express';
 import path from 'path';
+import crypto from 'crypto';
 import dotenv from 'dotenv';
 import { GoogleGenAI, Type } from '@google/genai';
 import { createServer as createViteServer } from 'vite';
@@ -76,7 +77,7 @@ Stage: ${order.stage}
 Evaluate potential risks like high cost complexity, scheduling issues, safety challenges, location delays, and severe weather impacts. Keep the reason and action highly concise and focused.`;
 
     const response = await ai.models.generateContent({
-      model: 'gemini-3.5-flash',
+      model: 'gemini-1.5-flash',
       contents: prompt,
       config: {
         systemInstruction: "You are VendorOS AI Copilot. You analyze field service operations orders to find risks and suggest mitagations.",
@@ -122,6 +123,21 @@ Evaluate potential risks like high cost complexity, scheduling issues, safety ch
  * Receives simulated webhook payloads and updates subscription status.
  */
 app.post('/api/razorpay/webhook', (req, res) => {
+  const webhookSecret = process.env.RAZORPAY_WEBHOOK_SECRET;
+  if (webhookSecret) {
+    const signature = req.headers['x-razorpay-signature'] as string;
+    if (!signature) {
+      return res.status(400).json({ error: 'Missing x-razorpay-signature header.' });
+    }
+    const expectedSignature = crypto
+      .createHmac('sha256', webhookSecret)
+      .update(JSON.stringify(req.body))
+      .digest('hex');
+    if (signature !== expectedSignature) {
+      return res.status(400).json({ error: 'Invalid webhook signature.' });
+    }
+  }
+
   const { event, subscriptionId, tier } = req.body;
 
   if (!event || !subscriptionId || !tier) {
@@ -320,7 +336,7 @@ Provide a JSON with the following exact keys (use highly appealing colors):
 - accentHover: Darker or lighter shade of accent color for hovers`;
 
     const response = await ai.models.generateContent({
-      model: 'gemini-3.5-flash',
+      model: 'gemini-1.5-flash',
       contents: contents,
       config: {
         systemInstruction: systemPrompt,

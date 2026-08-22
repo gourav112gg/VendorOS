@@ -10,9 +10,18 @@ async function submitVoiceUpdate(req, res) {
       return res.status(400).json({ error: "No audio file received." });
     }
 
-    const order = await Order.findById(orderId);
+    if (!req.user || !req.user.company) {
+      return res.status(403).json({ error: "Access denied. Company profile required." });
+    }
+
+    const orderQuery = { _id: orderId, company: req.user.company };
+    if (req.user.role === "worker") {
+      orderQuery.assignedWorker = req.user._id;
+    }
+
+    const order = await Order.findOne(orderQuery);
     if (!order) {
-      return res.status(404).json({ error: "Order not found." });
+      return res.status(404).json({ error: "Order not found or access denied." });
     }
 
     const checklistItems = order.checklist || [];
