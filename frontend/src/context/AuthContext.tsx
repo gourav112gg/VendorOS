@@ -12,7 +12,7 @@ export interface UserPreferences {
   notifySMS?: boolean;
   notifyPush?: boolean;
   themeMode: 'dark' | 'light' | 'system';
-  themeName: 'slate' | 'sage' | 'sapphire' | 'warm' | 'tokyo' | 'azure' | 'midnight' | 'custom';
+  themeName: 'midnight' | 'obsidian' | 'pine' | 'graphite' | 'custom' | string;
   language?: 'en' | 'hi' | 'pa';
   customThemePrompt?: string;
   customThemeColors?: {
@@ -99,7 +99,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     notifySMS: false,
     notifyPush: true,
     themeMode: 'dark',
-    themeName: 'slate',
+    themeName: 'midnight',
   });
 
   // Helper to persist session
@@ -129,7 +129,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     
     if (savedPrefs) {
       try {
-        setPreferences(JSON.parse(savedPrefs));
+        const parsed = JSON.parse(savedPrefs);
+        if (parsed.themeName) {
+          if (parsed.themeName === 'slate' || parsed.themeName === 'sapphire') parsed.themeName = 'obsidian';
+          else if (parsed.themeName === 'sage' || parsed.themeName === 'warm') parsed.themeName = 'pine';
+          else if (parsed.themeName === 'tokyo' || parsed.themeName === 'azure') parsed.themeName = 'graphite';
+        }
+        setPreferences(parsed);
       } catch (e) {
         console.error('Failed to parse preferences', e);
       }

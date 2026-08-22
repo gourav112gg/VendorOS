@@ -2,225 +2,151 @@ import React, { useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 
 export const THEME_PRESETS = {
-  slate: {
+  midnight: {
     dark: {
-      bgApp: "#0A0A0A",
-      bgCard: "#111111",
-      bgSecondary: "#161616",
-      bgInput: "#1A1A1A",
-      border: "#222222",
-      borderStrong: "#333333",
+      bgApp: "#0B1120",
+      bgCard: "#111C33",
+      bgSecondary: "#0E172B",
+      bgInput: "#182747",
+      border: "#1E3159",
+      borderStrong: "#2B457D",
       textPrimary: "#FFFFFF",
-      textSecondary: "#888888",
-      textMuted: "#666666",
-      accent: "#10B981",
-      accentHover: "#059669",
+      textSecondary: "#94A3B8",
+      textMuted: "#64748B",
+      accent: "#60A5FA",
+      accentHover: "#3B82F6",
     },
     light: {
-      bgApp: "#F8F9FA",
+      bgApp: "#F0F4F9",
       bgCard: "#FFFFFF",
-      bgSecondary: "#F1F3F5",
-      bgInput: "#E9ECEF",
-      border: "#DEE2E6",
-      borderStrong: "#CED4DA",
-      textPrimary: "#111827",
-      textSecondary: "#4B5563",
-      textMuted: "#6B7280",
-      accent: "#10B981",
-      accentHover: "#059669",
-    },
-  },
-  sage: {
-    dark: {
-      bgApp: "#0F1310",
-      bgCard: "#171D18",
-      bgSecondary: "#0C100D",
-      bgInput: "#202722",
-      border: "#2B342C",
-      borderStrong: "#3E4A3F",
-      textPrimary: "#F1F4EC",
-      textSecondary: "#C6D2C1",
-      textMuted: "#839485",
-      accent: "#7FA66B",
-      accentHover: "#6B8F58",
-    },
-    light: {
-      bgApp: "#F6F8F3",
-      bgCard: "#FFFFFF",
-      bgSecondary: "#ECF1E7",
-      bgInput: "#E1E9D9",
-      border: "#D3DFCB",
-      borderStrong: "#B7C7A9",
-      textPrimary: "#182216",
-      textSecondary: "#3A4736",
-      textMuted: "#5C6B58",
-      accent: "#4E7A3C",
-      accentHover: "#3D6130",
-    },
-  },
-  sapphire: {
-    dark: {
-      bgApp: "#0B0F17",
-      bgCard: "#131A26",
-      bgSecondary: "#0D121B",
-      bgInput: "#1B2536",
-      border: "#263349",
-      borderStrong: "#3B4C6B",
-      textPrimary: "#EDF1F8",
-      textSecondary: "#B7C4DA",
-      textMuted: "#7A8CA8",
-      accent: "#D8A548",
-      accentHover: "#C08F36",
-    },
-    light: {
-      bgApp: "#F2F5FA",
-      bgCard: "#FFFFFF",
-      bgSecondary: "#E7ECF5",
-      bgInput: "#DCE4F0",
-      border: "#CBD6E8",
-      borderStrong: "#AFC0DC",
+      bgSecondary: "#E2E8F0",
+      bgInput: "#D8E2ED",
+      border: "#CBD5E1",
+      borderStrong: "#94A3B8",
       textPrimary: "#0F172A",
       textSecondary: "#334155",
       textMuted: "#64748B",
-      accent: "#B4802A",
-      accentHover: "#966A20",
+      accent: "#2563EB",
+      accentHover: "#1D4ED8",
     },
   },
-  warm: {
+  obsidian: {
     dark: {
-      bgApp: "#14100C",
-      bgCard: "#1E1712",
-      bgSecondary: "#100C09",
-      bgInput: "#271E15",
-      border: "#362A1D",
-      borderStrong: "#4F3D28",
-      textPrimary: "#FBF1DE",
-      textSecondary: "#E4CBA4",
-      textMuted: "#9C8567",
-      accent: "#D08A4F",
-      accentHover: "#B5723C",
+      bgApp: "#0F0F0F",
+      bgCard: "#171717",
+      bgSecondary: "#141414",
+      bgInput: "#212121",
+      border: "#2E2E2E",
+      borderStrong: "#454545",
+      textPrimary: "#FAFAFA",
+      textSecondary: "#A3A3A3",
+      textMuted: "#737373",
+      accent: "#D97706",
+      accentHover: "#B45309",
     },
     light: {
-      bgApp: "#FBF4E8",
+      bgApp: "#F7F7F6",
       bgCard: "#FFFFFF",
-      bgSecondary: "#F4E9D3",
-      bgInput: "#EDDFC0",
-      border: "#E1CFA9",
-      borderStrong: "#CBB182",
-      textPrimary: "#2A1D11",
-      textSecondary: "#4D3823",
-      textMuted: "#705437",
-      accent: "#B8642A",
-      accentHover: "#99511F",
+      bgSecondary: "#ECECEB",
+      bgInput: "#E2E2E0",
+      border: "#D4D4D1",
+      borderStrong: "#A8A8A4",
+      textPrimary: "#171717",
+      textSecondary: "#525252",
+      textMuted: "#737373",
+      accent: "#D97706",
+      accentHover: "#B45309",
     },
   },
-  tokyo: {
+  pine: {
     dark: {
-      bgApp: "#100C14",
-      bgCard: "#191320",
-      bgSecondary: "#0D0A12",
-      bgInput: "#221A2C",
-      border: "#302640",
-      borderStrong: "#473758",
-      textPrimary: "#F1ECF8",
-      textSecondary: "#CBBEDD",
-      textMuted: "#8D7FA3",
-      accent: "#A985D8",
-      accentHover: "#9370C4",
+      bgApp: "#0C1A14",
+      bgCard: "#13261F",
+      bgSecondary: "#0F1F19",
+      bgInput: "#1B332A",
+      border: "#24473A",
+      borderStrong: "#336352",
+      textPrimary: "#ECFDF5",
+      textSecondary: "#A7F3D0",
+      textMuted: "#4E8773",
+      accent: "#34D399",
+      accentHover: "#10B981",
     },
     light: {
-      bgApp: "#F7F4FB",
+      bgApp: "#F0FDF4",
       bgCard: "#FFFFFF",
-      bgSecondary: "#EEE8F6",
-      bgInput: "#E4DAF1",
-      border: "#D5C7E8",
-      borderStrong: "#BBA5D6",
-      textPrimary: "#1F172B",
-      textSecondary: "#43335A",
-      textMuted: "#69528A",
-      accent: "#7C55B0",
-      accentHover: "#664896",
+      bgSecondary: "#DCFCE7",
+      bgInput: "#D1FAE5",
+      border: "#A7F3D0",
+      borderStrong: "#6EE7B7",
+      textPrimary: "#064E3B",
+      textSecondary: "#065F46",
+      textMuted: "#047857",
+      accent: "#059669",
+      accentHover: "#047857",
     },
   },
-  azure: {
+  graphite: {
     dark: {
-      bgApp: "#071426",
-      bgCard: "#0D2342",
-      bgSecondary: "#091A33",
-      bgInput: "#13315C",
-      border: "#1C457A",
-      borderStrong: "#2196F3",
-      textPrimary: "#FFFFFF",
-      textSecondary: "#B3D4FC",
-      textMuted: "#7BAAE0",
-      accent: "#2196F3",
-      accentHover: "#1976D2",
+      bgApp: "#1C1C24",
+      bgCard: "#24242F",
+      bgSecondary: "#20202A",
+      bgInput: "#2D2D3B",
+      border: "#3B3B4D",
+      borderStrong: "#52526A",
+      textPrimary: "#F5F5FA",
+      textSecondary: "#C5C5D8",
+      textMuted: "#8E8EA8",
+      accent: "#818CF8",
+      accentHover: "#6366F1",
     },
     light: {
-      bgApp: "#F0F6FC",
+      bgApp: "#F4F4F8",
       bgCard: "#FFFFFF",
-      bgSecondary: "#E1EEFA",
-      bgInput: "#CFE3F7",
-      border: "#B6D6F2",
-      borderStrong: "#2196F3",
-      textPrimary: "#0B192C",
-      textSecondary: "#1E3E62",
-      textMuted: "#3B5A80",
-      accent: "#0D47A1",
-      accentHover: "#1565C0",
+      bgSecondary: "#EAEAF2",
+      bgInput: "#DFDFEA",
+      border: "#CBCBDD",
+      borderStrong: "#A7A7C6",
+      textPrimary: "#181824",
+      textSecondary: "#424258",
+      textMuted: "#686884",
+      accent: "#6366F1",
+      accentHover: "#4F46E5",
     },
   },
-  midnight: {
-    dark: {
-      bgApp: "#0A2647",
-      bgCard: "#144272",
-      bgSecondary: "#0E3159",
-      bgInput: "#194E85",
-      border: "#205295",
-      borderStrong: "#2C74B3",
-      textPrimary: "#FFFFFF",
-      textSecondary: "#B8D9F8",
-      textMuted: "#7EA9D4",
-      accent: "#2C74B3",
-      accentHover: "#3A8FD6",
-    },
-    light: {
-      bgApp: "#F0F4F8",
-      bgCard: "#FFFFFF",
-      bgSecondary: "#E2EAF2",
-      bgInput: "#D0DEEC",
-      border: "#B8CDE2",
-      borderStrong: "#2C74B3",
-      textPrimary: "#0A2647",
-      textSecondary: "#144272",
-      textMuted: "#335E8A",
-      accent: "#144272",
-      accentHover: "#205295",
-    },
-  },
+};
+
+// Legacy Theme Name Resolver for Backwards Compatibility
+export const resolveThemePreset = (themeName: string) => {
+  const clean = (themeName || "midnight").toLowerCase().trim();
+  if (clean === "slate" || clean === "sapphire") return THEME_PRESETS.obsidian;
+  if (clean === "sage" || clean === "warm") return THEME_PRESETS.pine;
+  if (clean === "tokyo" || clean === "azure") return THEME_PRESETS.graphite;
+  if (clean in THEME_PRESETS) return THEME_PRESETS[clean as keyof typeof THEME_PRESETS];
+  return THEME_PRESETS.midnight;
 };
 
 // Semantic status colors are intentionally theme-independent
 const STATUS = {
   success: {
-    bg: "rgba(122,168,105,0.16)",
-    text: "#9FCB8B",
-    border: "rgba(122,168,105,0.35)",
+    bg: "rgba(52,211,153,0.16)",
+    text: "#6EE7B7",
+    border: "rgba(52,211,153,0.35)",
   },
   warning: {
-    bg: "rgba(206,158,84,0.16)",
-    text: "#E0B568",
-    border: "rgba(206,158,84,0.35)",
+    bg: "rgba(217,119,6,0.16)",
+    text: "#FBBF24",
+    border: "rgba(217,119,6,0.35)",
   },
   info: {
-    bg: "rgba(108,150,206,0.16)",
-    text: "#9DBEE8",
-    border: "rgba(108,150,206,0.35)",
+    bg: "rgba(96,165,250,0.16)",
+    text: "#93C5FD",
+    border: "rgba(96,165,250,0.35)",
   },
   danger: {
-    bg: "rgba(199,101,101,0.16)",
-    text: "#E5A0A0",
-    border: "rgba(199,101,101,0.35)",
+    bg: "rgba(239,68,68,0.16)",
+    text: "#FCA5A5",
+    border: "rgba(239,68,68,0.35)",
   },
 };
 
@@ -247,7 +173,7 @@ export const ThemeManager: React.FC = () => {
 
   const rawMode = preferences.themeMode || "dark";
   const mode = rawMode === "system" ? (systemIsDark ? "dark" : "light") : rawMode;
-  const theme = preferences.themeName || "slate";
+  const theme = preferences.themeName || "midnight";
 
   useEffect(() => {
     if (mode === "light") {
@@ -259,17 +185,13 @@ export const ThemeManager: React.FC = () => {
     }
   }, [mode]);
 
-  let colors: any = THEME_PRESETS.slate.dark;
+  let colors: any = THEME_PRESETS.midnight.dark;
 
   if (theme === "custom" && preferences.customThemeColors) {
     colors = preferences.customThemeColors;
-  } else if (THEME_PRESETS[theme as keyof typeof THEME_PRESETS]) {
-    colors =
-      THEME_PRESETS[theme as keyof typeof THEME_PRESETS][
-        mode as "dark" | "light"
-      ];
   } else {
-    colors = THEME_PRESETS.slate[mode as "dark" | "light"];
+    const preset = resolveThemePreset(theme);
+    colors = preset[mode as "dark" | "light"] || preset.dark;
   }
 
   const borderStrong = colors.borderStrong || colors.accent;
@@ -280,6 +202,10 @@ export const ThemeManager: React.FC = () => {
   const scope = ".dashboard-theme-scope";
 
   const bgAppClasses = [
+    "bg-[#0B1120]",
+    "bg-[#0F0F0F]",
+    "bg-[#0C1A14]",
+    "bg-[#1C1C24]",
     "bg-[#0A0A0A]",
     "bg-[#070707]",
     "bg-[#0C0F0D]",
@@ -289,6 +215,10 @@ export const ThemeManager: React.FC = () => {
     "bg-[#080606]",
   ];
   const bgCardClasses = [
+    "bg-[#111C33]",
+    "bg-[#171717]",
+    "bg-[#13261F]",
+    "bg-[#24242F]",
     "bg-[#111111]",
     "bg-[#151A16]",
     "bg-[#0E172E]",
@@ -303,6 +233,10 @@ export const ThemeManager: React.FC = () => {
     "bg-[#100C14]",
   ];
   const bgSecondaryClasses = [
+    "bg-[#0E172B]",
+    "bg-[#141414]",
+    "bg-[#0F1F19]",
+    "bg-[#20202A]",
     "bg-[#0D0D0D]",
     "bg-[#101411]",
     "bg-[#0A1021]",
@@ -316,6 +250,10 @@ export const ThemeManager: React.FC = () => {
     "bg-[#140D0D]",
   ];
   const bgInputClasses = [
+    "bg-[#182747]",
+    "bg-[#212121]",
+    "bg-[#1B332A]",
+    "bg-[#2D2D3B]",
     "bg-[#1A1A1A]",
     "bg-[#202822]",
     "bg-[#18254A]",
@@ -327,6 +265,10 @@ export const ThemeManager: React.FC = () => {
     "bg-[#202020]",
   ];
   const bgBorderTintClasses = [
+    "bg-[#1E3159]",
+    "bg-[#2E2E2E]",
+    "bg-[#24473A]",
+    "bg-[#3B3B4D]",
     "bg-[#222222]",
     "bg-[#2A2A2A]",
     "bg-[#333333]",
@@ -340,17 +282,33 @@ export const ThemeManager: React.FC = () => {
   ];
 
   const borderMainClasses = [
+    "border-[#1E3159]",
+    "border-[#2E2E2E]",
+    "border-[#24473A]",
+    "border-[#3B3B4D]",
     "border-[#222222]",
     "border-zinc-800",
     "border-neutral-800",
   ];
   const borderSoftClasses = [
+    "border-[#182747]",
+    "border-[#212121]",
+    "border-[#1B332A]",
+    "border-[#2D2D3B]",
     "border-[#1A1A1A]",
     "border-[#1D1D1D]",
     "border-[#1F1F1F]",
     "border-[#1C1C1C]",
   ];
-  const borderStrongClasses = ["border-[#444444]", "border-[#333333]", "border-[#3F3F46]"];
+  const borderStrongClasses = [
+    "border-[#2B457D]",
+    "border-[#454545]",
+    "border-[#336352]",
+    "border-[#52526A]",
+    "border-[#444444]",
+    "border-[#333333]",
+    "border-[#3F3F46]",
+  ];
 
   const textPrimaryClasses = [
     "text-white",
@@ -430,12 +388,24 @@ export const ThemeManager: React.FC = () => {
     }
 
     /* ---- Dashboard Accent (brand) ---- */
-    ${scope} .bg-emerald-500, ${scope} .bg-emerald-600, ${scope} .bg-\\[\\#10B981\\] { background-color: ${colors.accent} !important; }
-    ${scope} .text-emerald-400, ${scope} .text-emerald-500, ${scope} .text-\\[\\#10B981\\] { color: ${colors.accent} !important; }
-    ${scope} .hover\\:bg-emerald-600:hover, ${scope} .hover\\:bg-emerald-500:hover { background-color: ${colors.accentHover} !important; }
-    ${scope} .border-emerald-500 { border-color: ${colors.accent} !important; }
-    ${scope} .border-emerald-950\\/40 { border-color: ${colors.border} !important; }
-    ${scope} .fill-emerald-500, ${scope} .stroke-emerald-500 { fill: ${colors.accent} !important; stroke: ${colors.accent} !important; }
+    ${scope} .bg-emerald-500, ${scope} .bg-emerald-600, ${scope} .bg-\\[\\#10B981\\],
+    ${scope} .bg-blue-500, ${scope} .bg-blue-600, ${scope} .bg-\\[\\#60A5FA\\],
+    ${scope} .bg-amber-600, ${scope} .bg-\\[\\#D97706\\],
+    ${scope} .bg-indigo-500, ${scope} .bg-\\[\\#818CF8\\] { background-color: ${colors.accent} !important; }
+
+    ${scope} .text-emerald-400, ${scope} .text-emerald-500, ${scope} .text-\\[\\#10B981\\],
+    ${scope} .text-blue-400, ${scope} .text-blue-500, ${scope} .text-\\[\\#60A5FA\\],
+    ${scope} .text-amber-500, ${scope} .text-\\[\\#D97706\\],
+    ${scope} .text-indigo-400, ${scope} .text-\\[\\#818CF8\\] { color: ${colors.accent} !important; }
+
+    ${scope} .hover\\:bg-emerald-600:hover, ${scope} .hover\\:bg-emerald-500:hover,
+    ${scope} .hover\\:bg-blue-600:hover, ${scope} .hover\\:bg-blue-500:hover,
+    ${scope} .hover\\:bg-amber-600:hover, ${scope} .hover\\:bg-amber-500:hover,
+    ${scope} .hover\\:bg-indigo-600:hover, ${scope} .hover\\:bg-indigo-500:hover { background-color: ${colors.accentHover} !important; }
+
+    ${scope} .border-emerald-500, ${scope} .border-blue-500, ${scope} .border-amber-500, ${scope} .border-indigo-500 { border-color: ${colors.accent} !important; }
+    ${scope} .border-emerald-950\\/40, ${scope} .border-blue-950\\/40, ${scope} .border-amber-950\\/40, ${scope} .border-indigo-950\\/40 { border-color: ${colors.border} !important; }
+    ${scope} .fill-emerald-500, ${scope} .stroke-emerald-500, ${scope} .fill-blue-500, ${scope} .stroke-blue-500 { fill: ${colors.accent} !important; stroke: ${colors.accent} !important; }
 
     /* ---- Semantic status badges (theme-independent) ---- */
     ${scope} .bg-\\[\\#0D2A1D\\], ${scope} .bg-\\[\\#0D2214\\], ${scope} .bg-\\[\\#0A2215\\] {

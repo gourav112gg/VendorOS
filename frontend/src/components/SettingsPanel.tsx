@@ -1052,83 +1052,142 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ initialTab = 'prof
             </div>
 
             {/* PRESET PALETTES */}
-            <div className="space-y-3">
-              <span className="text-[9px] font-mono font-bold text-slate-500 dark:text-[#888888] uppercase tracking-widest block">
-                Choose Theme Palette
-              </span>
-              <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3">
+            <div className="space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 border-b border-stone-200 dark:border-[#222222] pb-2">
+                <div>
+                  <span className="text-[10px] font-mono font-bold text-slate-700 dark:text-white uppercase tracking-widest block">
+                    Operational Dark Theme Presets
+                  </span>
+                  <p className="text-[11px] text-slate-500 dark:text-[#888888] font-sans mt-0.5">
+                    High-contrast color palettes engineered for mission-critical vendor dashboards.
+                  </p>
+                </div>
+                <span className="text-[9px] font-mono text-slate-400 dark:text-[#666666] uppercase tracking-wider">
+                  4 Curated Systems
+                </span>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
                 {[
-                  {
-                    id: "slate",
-                    name: "Slate/Classic",
-                    colors: ["#14120F", "#CBA35C"],
-                  },
-                  {
-                    id: "sage",
-                    name: "Sage Forest",
-                    colors: ["#0F1310", "#7FA66B"],
-                  },
-                  {
-                    id: "sapphire",
-                    name: "Sapphire Gold",
-                    colors: ["#0B0F17", "#D8A548"],
-                  },
-                  {
-                    id: "warm",
-                    name: "Warm Editorial",
-                    colors: ["#14100C", "#D08A4F"],
-                  },
-                  {
-                    id: "tokyo",
-                    name: "Tokyo Midnight",
-                    colors: ["#100C14", "#A985D8"],
-                  },
-                  {
-                    id: "azure",
-                    name: "Azure Sky",
-                    colors: ["#071426", "#2196F3"],
-                  },
                   {
                     id: "midnight",
                     name: "Midnight Ocean",
-                    colors: ["#0A2647", "#2C74B3"],
+                    primaryHex: "#0B1120",
+                    accentHex: "#60A5FA",
+                    cardHex: "#111C33",
+                    mood: "Corporate, Stable",
+                    bestFor: "Default / enterprise clients",
+                    desc: "Deep navy reading as trustworthy with an eye-friendly steel-blue accent.",
+                  },
+                  {
+                    id: "obsidian",
+                    name: "Obsidian Ember",
+                    primaryHex: "#0F0F0F",
+                    accentHex: "#D97706",
+                    cardHex: "#171717",
+                    mood: "Urgent, High-Energy",
+                    bestFor: "Dispatchers, alert-heavy roles",
+                    desc: "Near-black paired with high-contrast burnt orange for fast critical alerts.",
+                  },
+                  {
+                    id: "pine",
+                    name: "Shadow Pine",
+                    primaryHex: "#0C1A14",
+                    accentHex: "#34D399",
+                    cardHex: "#13261F",
+                    mood: "Calm, Accomplished",
+                    bestFor: "Field techs, completion views",
+                    desc: "Dark forest green with fresh mint signaling order resolution & stability.",
+                  },
+                  {
+                    id: "graphite",
+                    name: "Graphite Periwinkle",
+                    primaryHex: "#1C1C24",
+                    accentHex: "#818CF8",
+                    cardHex: "#24242F",
+                    mood: "Modern, Analytical",
+                    bestFor: "Analytics dashboards, reporting",
+                    desc: "Charcoal graphite with periwinkle for distinct metrics & data visualization.",
                   },
                 ].map((preset) => {
+                  const currentTheme = preferences.themeName || "midnight";
                   const isActive =
-                    (preferences.themeName || "slate") === preset.id;
+                    currentTheme === preset.id ||
+                    (preset.id === "obsidian" && (currentTheme === "slate" || currentTheme === "sapphire")) ||
+                    (preset.id === "pine" && (currentTheme === "sage" || currentTheme === "warm")) ||
+                    (preset.id === "graphite" && (currentTheme === "tokyo" || currentTheme === "azure"));
+
                   return (
                     <motion.button
                       key={preset.id}
                       type="button"
-                      whileHover={{ y: -2 }}
-                      whileTap={{ scale: 0.96 }}
+                      whileHover={{ y: -3 }}
+                      whileTap={{ scale: 0.98 }}
                       onClick={() =>
                         updatePreference("themeName", preset.id as any)
                       }
-                      className={`flex flex-col items-center justify-center p-3.5 rounded-lg border cursor-pointer transition-colors ${
+                      className={`relative flex flex-col text-left p-4 rounded-xl border cursor-pointer transition-all duration-200 overflow-hidden ${
                         isActive
-                          ? "bg-white dark:bg-[#1A1A1A] border-stone-400 dark:border-[#444444] text-slate-900 dark:text-white font-semibold shadow-md"
-                          : "bg-stone-50 dark:bg-[#0D0D0D] border-stone-200 dark:border-[#222222] text-slate-600 dark:text-[#888888] hover:border-stone-300 dark:hover:border-[#333333]"
+                          ? "bg-white dark:bg-[#15171C] border-stone-400 dark:border-white/30 text-slate-900 dark:text-white shadow-xl ring-1 ring-white/10"
+                          : "bg-stone-50 dark:bg-[#0E0F12] border-stone-200 dark:border-[#222222] text-slate-600 dark:text-[#999999] hover:border-stone-300 dark:hover:border-[#383838] hover:bg-stone-100/80 dark:hover:bg-[#121318]"
                       }`}
                     >
-                      <div className="flex gap-1 mb-2">
-                        <span
-                          className="w-3 h-3 rounded-full border border-stone-300 dark:border-[#333333]"
-                          style={{ backgroundColor: preset.colors[0] }}
-                        />
-                        <span
-                          className="w-3 h-3 rounded-full"
-                          style={{ backgroundColor: preset.colors[1] }}
-                        />
+                      {/* Theme Preview Swatches */}
+                      <div
+                        className="w-full h-14 rounded-lg p-2.5 flex items-center justify-between border border-black/10 dark:border-white/10 mb-3 shadow-inner"
+                        style={{ backgroundColor: preset.primaryHex }}
+                      >
+                        <div className="flex items-center gap-2">
+                          <div
+                            className="w-6 h-6 rounded-full flex items-center justify-center shadow-md border border-white/20"
+                            style={{ backgroundColor: preset.accentHex }}
+                          >
+                            <div className="w-2 h-2 rounded-full bg-white/80" />
+                          </div>
+                          <div className="space-y-1">
+                            <div className="w-12 h-1.5 rounded-full bg-white/40" />
+                            <div className="w-8 h-1 rounded-full bg-white/20" />
+                          </div>
+                        </div>
+                        <div
+                          className="px-2 py-1 rounded text-[9px] font-mono font-bold shadow-sm border border-white/10 text-white/90"
+                          style={{ backgroundColor: preset.cardHex }}
+                        >
+                          {preset.accentHex}
+                        </div>
                       </div>
-                      <span className="text-[10px] font-mono uppercase tracking-wider text-center">
-                        {preset.name}
-                      </span>
-                      {isActive && (
-                        <span className="text-[8px] text-emerald-600 dark:text-emerald-400 font-mono mt-1 uppercase tracking-widest font-bold">
-                          ● Active
+
+                      {/* Header & Title */}
+                      <div className="flex items-center justify-between gap-2 mb-1">
+                        <span className="text-xs font-bold font-sans tracking-tight text-slate-900 dark:text-white">
+                          {preset.name}
                         </span>
-                      )}
+                        {isActive && (
+                          <span className="flex items-center gap-1 text-[8px] font-mono uppercase tracking-widest font-bold px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30">
+                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                            Active
+                          </span>
+                        )}
+                      </div>
+
+                      {/* Mood Tag */}
+                      <div className="mb-2">
+                        <span className="inline-block text-[9px] font-mono uppercase tracking-wider px-2 py-0.5 rounded bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 text-slate-600 dark:text-[#AAAAAA]">
+                          {preset.mood}
+                        </span>
+                      </div>
+
+                      {/* Description & Best For */}
+                      <p className="text-[11px] text-slate-500 dark:text-[#888888] leading-relaxed mb-2 font-sans line-clamp-2">
+                        {preset.desc}
+                      </p>
+
+                      <div className="mt-auto pt-2 border-t border-stone-200 dark:border-[#222222]/80 flex items-center justify-between text-[9px] font-mono text-slate-400 dark:text-[#666666]">
+                        <span>Best for:</span>
+                        <span className="text-slate-600 dark:text-[#999999] truncate max-w-[130px] font-sans">
+                          {preset.bestFor}
+                        </span>
+                      </div>
                     </motion.button>
                   );
                 })}
