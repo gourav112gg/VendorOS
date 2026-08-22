@@ -1,5 +1,11 @@
 const Company = require("../models/Company");
 const User = require("../models/User");
+const Order = require("../models/Order");
+const Inventory = require("../models/Inventory");
+const Domain = require("../models/Domain");
+const Template = require("../models/Template");
+const CompanyPolicy = require("../models/CompanyPolicy");
+const JoinRequest = require("../models/JoinRequest");
 const logAdminAction = require("../utils/auditLogger");
 
 /**
@@ -198,10 +204,18 @@ const deleteCompanyPermanent = async (req, res) => {
 
     const companyName = company.companyName;
 
-    // Delete associated company users
-    const deletedUsersResult = await User.deleteMany({ company: company._id });
+    // Cascade delete all associated company resources
+    const [deletedUsersResult] = await Promise.all([
+      User.deleteMany({ company: company._id }),
+      Order.deleteMany({ company: company._id }),
+      Inventory.deleteMany({ company: company._id }),
+      Domain.deleteMany({ company: company._id }),
+      Template.deleteMany({ company: company._id }),
+      CompanyPolicy.deleteMany({ company: company._id }),
+      JoinRequest.deleteMany({ company: company._id }),
+    ]);
 
-    // Delete company
+    // Delete company document
     await company.deleteOne();
 
     await logAdminAction({
@@ -218,7 +232,7 @@ const deleteCompanyPermanent = async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      message: `Company '${companyName}' and ${deletedUsersResult.deletedCount} associated user(s) permanently deleted.`,
+      message: `Company '${companyName}' and all associated resources permanently deleted.`,
     });
   } catch (error) {
     console.error("Error deleting company:", error);
