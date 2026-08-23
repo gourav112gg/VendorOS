@@ -73,6 +73,10 @@ export const adminApi = {
   deleteCompany: (companyId: string, confirmName: string) =>
     adminRequest<{ success: boolean; message: string }>('DELETE', `/api/admin/companies/${companyId}`, { confirmName }),
 
+  // User Lockout Actions
+  unlockUser: (userId: string) =>
+    adminRequest<{ success: boolean; message: string }>('PATCH', `/api/admin/users/${userId}/unlock`),
+
   getAdminToken,
 };
 

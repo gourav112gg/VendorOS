@@ -46,7 +46,11 @@ export const CustomerDashboard: React.FC = () => {
 
     const loadData = () => {
       setOrders(dbStore.getOrders(undefined, user.id));
-      setCompanies(dbStore.getCompanies());
+      const comps = dbStore.getCompanies();
+      setCompanies(comps);
+      if (comps.length > 0) {
+        setCompanyId((prev) => prev || comps[0].id);
+      }
     };
 
     loadData();
@@ -54,7 +58,7 @@ export const CustomerDashboard: React.FC = () => {
     return () => unsubscribe();
   }, [user]);
 
-  // Handle power user quick navigation shortcut custom events
+  // Handle power user quick navigation shortcut custom events and escape key
   useEffect(() => {
     const handleNav = (e: Event) => {
       const customEvent = e as CustomEvent<string>;
@@ -65,8 +69,19 @@ export const CustomerDashboard: React.FC = () => {
         setActiveTab("settings");
       }
     };
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setIsFormOpen(false);
+      }
+    };
+
     window.addEventListener("vendoros-nav", handleNav);
-    return () => window.removeEventListener("vendoros-nav", handleNav);
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("vendoros-nav", handleNav);
+      window.removeEventListener("keydown", handleKeyDown);
+    };
   }, []);
 
   if (!user) return null;
@@ -83,34 +98,39 @@ export const CustomerDashboard: React.FC = () => {
     if (!companyId || !title.trim() || !address.trim()) return;
     setSubmitting(true);
 
-    await new Promise((resolve) => setTimeout(resolve, 800));
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 600));
 
-    dbStore.addOrder({
-      companyId,
-      title: title.trim(),
-      description: description.trim(),
-      customerId: user.id,
-      customerName: user.name,
-      stage: "Unscheduled",
-      address: address.trim(),
-      latitude: 47.6062 + (Math.random() - 0.5) * 0.05,
-      longitude: -122.3321 + (Math.random() - 0.5) * 0.05,
-      value: Number(value),
-    });
+      dbStore.addOrder({
+        companyId,
+        title: title.trim(),
+        description: description.trim(),
+        customerId: user.id,
+        customerName: user.name,
+        stage: "Unscheduled",
+        address: address.trim(),
+        latitude: 47.6062 + (Math.random() - 0.5) * 0.05,
+        longitude: -122.3321 + (Math.random() - 0.5) * 0.05,
+        value: Number(value),
+      });
 
-    setSubmitting(false);
-    setFormSuccess(true);
+      setFormSuccess(true);
 
-    // Clear form
-    setTitle("");
-    setDescription("");
-    setAddress("");
-    setValue(150);
+      // Clear form
+      setTitle("");
+      setDescription("");
+      setAddress("");
+      setValue(150);
 
-    setTimeout(() => {
-      setIsFormOpen(false);
-      setFormSuccess(false);
-    }, 1500);
+      setTimeout(() => {
+        setIsFormOpen(false);
+        setFormSuccess(false);
+      }, 1500);
+    } catch (err) {
+      console.error("Order submission error:", err);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -369,7 +389,7 @@ export const CustomerDashboard: React.FC = () => {
                           <div className="mt-4 pt-3 border-t border-[#222222] border-dashed flex justify-between items-center text-xs">
                             <span
                               className={
-                                isSelected ? "text-white/80" : "text-[#888888]"
+                                isSelected ? "text-neutral-200" : "text-[#888888]"
                               }
                             >
                               Estimated:{" "}
@@ -570,7 +590,15 @@ export const CustomerDashboard: React.FC = () => {
 
           {/* REQUEST NEW SERVICE FORM MODAL */}
           {isFormOpen && (
-            <div className="fixed inset-0 z-50 overflow-y-auto bg-black/80 backdrop-blur-xs flex items-center justify-center p-4 animate-fade-in">
+            <div
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="submit-request-title"
+              onClick={(e) => {
+                if (e.target === e.currentTarget) setIsFormOpen(false);
+              }}
+              className="fixed inset-0 z-50 overflow-y-auto bg-black/80 backdrop-blur-xs flex items-center justify-center p-4 animate-fade-in"
+            >
               <motion.div
                 initial={{ scale: 0.95, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
@@ -579,12 +607,14 @@ export const CustomerDashboard: React.FC = () => {
                 <div className="p-6 border-b border-[#222222] flex items-center justify-between bg-[#0A0A0A]">
                   <div className="flex items-center space-x-2">
                     <ClipboardList className="w-5 h-5 text-[#888888]" />
-                    <h3 className="font-serif italic font-light text-lg text-white">
+                    <h3 id="submit-request-title" className="font-serif italic font-light text-lg text-white">
                       Submit New Service Request
                     </h3>
                   </div>
                   <button
+                    type="button"
                     onClick={() => setIsFormOpen(false)}
+                    aria-label="Close service request form"
                     className="p-1 text-[#666666] hover:text-white rounded-sm hover:bg-[#1A1A1A] cursor-pointer"
                   >
                     <X className="w-5 h-5" />
@@ -607,18 +637,24 @@ export const CustomerDashboard: React.FC = () => {
                       <label className="block text-[10px] font-mono font-medium text-[#666666] uppercase tracking-widest mb-1.5">
                         Select Company / Service Provider *
                       </label>
-                      <select
-                        required
-                        value={companyId}
-                        onChange={(e) => setCompanyId(e.target.value)}
-                        className="w-full px-4 py-2.5 rounded-sm border border-[#222222] bg-[#0D0D0D] text-white focus:outline-none focus:ring-1 focus:ring-white text-xs font-mono"
-                      >
-                        {companies.map((c) => (
-                          <option key={c.id} value={c.id}>
-                            {c.name}
-                          </option>
-                        ))}
-                      </select>
+                      {companies.length === 0 ? (
+                        <div className="w-full px-4 py-2.5 rounded-sm border border-red-800/40 bg-red-950/20 text-red-400 text-xs font-mono">
+                          No service companies currently available. Please check back later.
+                        </div>
+                      ) : (
+                        <select
+                          required
+                          value={companyId}
+                          onChange={(e) => setCompanyId(e.target.value)}
+                          className="w-full px-4 py-2.5 rounded-sm border border-[#222222] bg-[#0D0D0D] text-white focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 text-xs font-mono"
+                        >
+                          {companies.map((c) => (
+                            <option key={c.id} value={c.id}>
+                              {c.name}
+                            </option>
+                          ))}
+                        </select>
+                      )}
                     </div>
 
                     <div>
@@ -631,7 +667,7 @@ export const CustomerDashboard: React.FC = () => {
                         value={title}
                         onChange={(e) => setTitle(e.target.value)}
                         placeholder="e.g. Clogged Basement Drain Pipe"
-                        className="w-full px-4 py-2.5 rounded-sm border border-[#222222] bg-[#0D0D0D] text-white focus:outline-none focus:ring-1 focus:ring-white text-xs font-mono placeholder-[#333333]"
+                        className="w-full px-4 py-2.5 rounded-sm border border-[#222222] bg-[#0D0D0D] text-white focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 text-xs font-mono placeholder-[#888888]"
                       />
                     </div>
 
@@ -643,7 +679,7 @@ export const CustomerDashboard: React.FC = () => {
                         value={description}
                         onChange={(e) => setDescription(e.target.value)}
                         placeholder="Detail the issue: what requires maintenance or installation..."
-                        className="w-full px-4 py-2.5 rounded-sm border border-[#222222] bg-[#0D0D0D] text-white focus:outline-none focus:ring-1 focus:ring-white text-xs font-mono placeholder-[#333333]"
+                        className="w-full px-4 py-2.5 rounded-sm border border-[#222222] bg-[#0D0D0D] text-white focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 text-xs font-mono placeholder-[#888888]"
                         rows={3}
                       />
                     </div>
@@ -658,7 +694,7 @@ export const CustomerDashboard: React.FC = () => {
                         value={address}
                         onChange={(e) => setAddress(e.target.value)}
                         placeholder="e.g. 523 Broadway East, Seattle, WA"
-                        className="w-full px-4 py-2.5 rounded-sm border border-[#222222] bg-[#0D0D0D] text-white focus:outline-none focus:ring-1 focus:ring-white text-xs font-mono placeholder-[#333333]"
+                        className="w-full px-4 py-2.5 rounded-sm border border-[#222222] bg-[#0D0D0D] text-white focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 text-xs font-mono placeholder-[#888888]"
                       />
                     </div>
 
@@ -673,7 +709,7 @@ export const CustomerDashboard: React.FC = () => {
                         value={value}
                         onChange={(e) => setValue(Number(e.target.value))}
                         min={50}
-                        className="w-full px-4 py-2.5 rounded-sm border border-[#222222] bg-[#0D0D0D] text-white focus:outline-none focus:ring-1 focus:ring-white text-xs font-mono placeholder-[#333333]"
+                        className="w-full px-4 py-2.5 rounded-sm border border-[#222222] bg-[#0D0D0D] text-white focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 text-xs font-mono placeholder-[#888888]"
                       />
                     </div>
 
@@ -687,8 +723,8 @@ export const CustomerDashboard: React.FC = () => {
                       </button>
                       <button
                         type="submit"
-                        disabled={submitting}
-                        className="px-5 py-2 bg-white hover:bg-[#F0EAD8] text-black rounded-sm text-xs font-bold uppercase tracking-widest transition-all flex items-center cursor-pointer"
+                        disabled={submitting || companies.length === 0}
+                        className="px-5 py-2 bg-white hover:bg-neutral-200 text-black rounded-sm text-xs font-bold uppercase tracking-widest transition-all flex items-center cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         {submitting ? "Submitting..." : "Submit Request"}
                         <Send className="w-3.5 h-3.5 ml-1.5" />

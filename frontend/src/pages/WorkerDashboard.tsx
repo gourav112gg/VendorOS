@@ -264,18 +264,9 @@ export const WorkerDashboard: React.FC = () => {
     if (!selectedOrder) return;
     setStatusUpdating(true);
 
-    await new Promise(resolve => setTimeout(resolve, 800));
+    await new Promise(resolve => setTimeout(resolve, 600));
 
-    // Append notes if any
-    if (notes.trim()) {
-      const dbOrders = dbStore.getOrders();
-      const dbOrd = dbOrders.find(o => o.id === selectedOrder.id);
-      if (dbOrd) {
-        dbOrd.description += `\n\n[Technician Notes]: ${notes.trim()}`;
-      }
-    }
-
-    dbStore.updateOrderStage(selectedOrder.id, 'Completed', user.id);
+    dbStore.updateOrderStage(selectedOrder.id, 'Completed', user.id, notes.trim());
     setStatusUpdating(false);
     setShowNotesForm(false);
     setNotes('');
@@ -307,6 +298,7 @@ export const WorkerDashboard: React.FC = () => {
     // Map each job to CSV row
     const rows = filteredOrders.map((job) => {
       const companyName = companies.find((c) => c.id === job.companyId)?.name || 'Vendor Company';
+      const orderNotes = job.notes || (job.description?.includes('[Technician Notes]:') ? job.description.split('[Technician Notes]:')[1].trim() : '');
       return [
         job.id,
         job.title,
@@ -317,7 +309,7 @@ export const WorkerDashboard: React.FC = () => {
         job.value,
         job.stage,
         job.address,
-        job.notes || '',
+        orderNotes,
         new Date(job.createdAt).toLocaleDateString()
       ];
     });
@@ -565,7 +557,7 @@ export const WorkerDashboard: React.FC = () => {
                 <input
                   id="order-filter-input"
                   type="text"
-                  className="w-full bg-[#111111] text-xs text-white placeholder-[#555555] pl-9 pr-9 py-2.5 rounded-sm border border-[#222222] focus:outline-none focus:border-[#444444] transition-colors"
+                  className="w-full bg-[#111111] text-xs text-white placeholder-[#888888] pl-9 pr-9 py-2.5 rounded-sm border border-[#222222] focus:outline-none focus:border-[#555555] transition-colors"
                   placeholder="Filter by vendor or order ID..."
                   value={filterQuery}
                   onChange={(e) => setFilterQuery(e.target.value)}
@@ -584,27 +576,26 @@ export const WorkerDashboard: React.FC = () => {
 
             <div className="space-y-3 max-h-[70vh] overflow-y-auto pr-1">
               {filteredOrders.length === 0 ? (
-                <div className="p-8 text-center text-[#666666] text-xs bg-[#111111] border border-[#222222] border-dashed rounded-sm">
-                  No matching jobs found.
+                <div className="bg-[#111111] rounded-sm border border-[#222222] p-8 text-center text-[#888888] text-xs font-mono">
+                  No assigned tasks match your filter criteria.
                 </div>
               ) : (
                 filteredOrders.map((job) => {
                   const isSelected = selectedOrder?.id === job.id;
                   const companyName = companies.find((c) => c.id === job.companyId)?.name || 'Vendor Company';
                   return (
-                    <button
+                    <motion.div
                       key={job.id}
                       onClick={() => setSelectedOrder(job)}
-                      className={`w-full text-left p-5 rounded-sm border transition-all duration-150 cursor-pointer ${
+                      whileHover={{ scale: 1.01 }}
+                      className={`p-4 rounded-sm border transition-all cursor-pointer relative ${
                         isSelected
-                          ? 'bg-[#1A1A1A] border-[#444444] text-white shadow-md'
-                          : 'bg-[#111111] border-[#222222] hover:border-[#333333] text-[#E5E5E5]'
+                          ? 'bg-[#181818] border-white text-white shadow-xl ring-1 ring-white/10'
+                          : 'bg-[#111111] border-[#222222] text-[#888888] hover:border-[#333333]'
                       }`}
                     >
                       <div className="flex justify-between items-start">
-                        <span className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded-sm ${
-                          isSelected ? 'bg-[#333333] text-white' : 'bg-[#0D0D0D] border border-[#222222] text-[#888888]'
-                        }`}>
+                        <span className="text-xs font-mono font-bold text-white tracking-wider">
                           {job.id}
                         </span>
                         <span className={`text-[10px] font-mono uppercase tracking-widest px-2.5 py-0.5 rounded-sm ${
@@ -625,20 +616,20 @@ export const WorkerDashboard: React.FC = () => {
                         <span className="truncate">{companyName}</span>
                       </p>
 
-                      <p className={`text-xs mt-2 flex items-center ${isSelected ? 'text-white/80' : 'text-[#666666]'}`}>
+                      <p className={`text-xs mt-2 flex items-center ${isSelected ? 'text-neutral-200' : 'text-[#888888]'}`}>
                         <MapPin className="w-3.5 h-3.5 mr-1 flex-shrink-0" />
                         <span className="truncate">{job.address}</span>
                       </p>
 
                       <div className="mt-4 pt-3 border-t border-[#222222] border-dashed flex justify-between items-center text-xs font-semibold">
-                        <span className={isSelected ? 'text-white/80' : 'text-[#888888]'}>
+                        <span className={isSelected ? 'text-neutral-200' : 'text-[#888888]'}>
                           {job.customerName}
                         </span>
                         <span className={`font-mono ${isSelected ? 'text-white' : 'text-[#E5E5E5]'}`}>
                           Est. {formatCurrency(job.value)}
                         </span>
                       </div>
-                    </button>
+                    </motion.div>
                   );
                 })
               )}
@@ -978,7 +969,7 @@ export const WorkerDashboard: React.FC = () => {
                               value={notes}
                               onChange={(e) => setNotes(e.target.value)}
                               placeholder="Describe work completed, components used, or important feedback..."
-                              className="w-full px-4 py-2.5 text-xs font-mono rounded-sm border border-[#222222] bg-[#0A0A0A] text-white focus:outline-none focus:ring-1 focus:ring-white placeholder-[#333333]"
+                              className="w-full px-4 py-2.5 text-xs font-mono rounded-sm border border-[#222222] bg-[#0A0A0A] text-white focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 placeholder-[#888888]"
                               rows={3}
                             />
 

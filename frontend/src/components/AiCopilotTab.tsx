@@ -15,6 +15,7 @@ import { Company, ServiceOrder } from "../types";
 import { hasFeatureAccess } from "../services/subscriptionService";
 import { NoDataPlaceholder } from "./NoDataPlaceholder";
 import api from "../services/api";
+import { useAuth } from "../context/AuthContext";
 
 const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
@@ -41,6 +42,8 @@ export const AiCopilotTab: React.FC<AiCopilotTabProps> = ({
   orders,
   onNavigateToBilling,
 }) => {
+  const { preferences } = useAuth();
+  const isDark = (preferences?.themeMode || "dark") !== "light";
   const access = hasFeatureAccess(company, "ai_copilot");
 
   const [selectedOrderId, setSelectedOrderId] = useState<string>("");
@@ -204,7 +207,7 @@ export const AiCopilotTab: React.FC<AiCopilotTabProps> = ({
             whileTap={{ scale: selectedOrderId && !loading ? 0.97 : 1 }}
             onClick={handleRunAnalysis}
             disabled={!selectedOrderId || loading}
-            className="w-full sm:w-auto px-5 py-3 bg-white hover:bg-[#F0EAD8] text-black disabled:bg-[#1A1A1A] disabled:text-[#444444] disabled:border-[#222222] border border-transparent rounded-sm text-[10px] font-bold uppercase tracking-widest shadow-md transition-colors shrink-0 cursor-pointer flex items-center justify-center space-x-2"
+            className="w-full sm:w-auto px-5 py-3 bg-white hover:bg-neutral-200 text-black disabled:bg-[#1A1A1A] disabled:text-[#444444] disabled:border-[#222222] border border-transparent rounded-sm text-[10px] font-bold uppercase tracking-widest shadow-md transition-colors shrink-0 cursor-pointer flex items-center justify-center space-x-2"
           >
             {loading ? (
               <RefreshCw className="w-3.5 h-3.5 animate-spin" />
@@ -274,7 +277,7 @@ export const AiCopilotTab: React.FC<AiCopilotTabProps> = ({
                     cx="56"
                     cy="56"
                     r="48"
-                    stroke="#161616"
+                    stroke={isDark ? "#161616" : "#E2E8F0"}
                     strokeWidth="8"
                     fill="transparent"
                   />

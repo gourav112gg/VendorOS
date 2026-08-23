@@ -127,12 +127,13 @@ export const FooterSection: React.FC = () => {
 
       {/* Scroll-Driven Edge-to-Edge Sticky Typography: VENDOROS (Pinned at max scale) */}
       <div className="sticky top-1/4 my-auto w-full text-center overflow-visible py-4 select-none px-0 z-20">
-        <h1
+        <div
           ref={textRef}
+          aria-hidden="true"
           className="vendoros-text font-black tracking-tighter leading-none text-white uppercase text-center filter drop-shadow-2xl select-none block w-full px-0 mx-0 whitespace-nowrap origin-center"
         >
           VENDOROS
-        </h1>
+        </div>
       </div>
 
       {/* Bottom Legal Bar */}

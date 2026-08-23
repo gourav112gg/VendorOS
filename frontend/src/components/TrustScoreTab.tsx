@@ -15,6 +15,7 @@ import { Company, TrustScoreRecord } from "../types";
 import dbStore from "../services/store";
 import { hasFeatureAccess } from "../services/subscriptionService";
 import NoDataPlaceholder from "./NoDataPlaceholder";
+import { useAuth } from "../context/AuthContext";
 
 interface TrustScoreTabProps {
   company: Company;
@@ -25,6 +26,8 @@ export const TrustScoreTab: React.FC<TrustScoreTabProps> = ({
   company,
   onNavigateToBilling,
 }) => {
+  const { preferences } = useAuth();
+  const isDark = (preferences?.themeMode || "dark") !== "light";
   const access = hasFeatureAccess(company, "public_trust_score");
 
   const [record, setRecord] = useState<TrustScoreRecord | null>(null);
@@ -115,7 +118,7 @@ export const TrustScoreTab: React.FC<TrustScoreTabProps> = ({
                 cy="50"
                 r="42"
                 fill="none"
-                stroke="#1D1D1D"
+                stroke={isDark ? "#1D1D1D" : "#E2E8F0"}
                 strokeWidth="8"
               />
               <motion.circle

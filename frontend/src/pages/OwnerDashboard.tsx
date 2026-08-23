@@ -594,10 +594,10 @@ export const OwnerDashboard: React.FC = () => {
 
           {/* Domains list */}
           {domains.length === 0 ? (
-            <div className="p-12 text-center text-[#666666]">
-              <Layers className="w-10 h-10 text-[#333333] mx-auto mb-4" />
-              <p className="font-semibold text-sm">No domains registered yet</p>
-              <p className="text-xs text-[#555555] max-w-xs mx-auto mt-1">
+            <div className="p-12 text-center text-[#888888]">
+              <Layers className="w-10 h-10 text-[#555555] mx-auto mb-4" />
+              <p className="font-semibold text-sm text-white">No domains registered yet</p>
+              <p className="text-xs text-[#888888] max-w-xs mx-auto mt-1 font-mono">
                 Click "Create Domain" to register your first operational category.
               </p>
             </div>
@@ -689,7 +689,7 @@ export const OwnerDashboard: React.FC = () => {
                       value={domainName}
                       onChange={(e) => setDomainName(e.target.value)}
                       placeholder="e.g. Premium Heating & Boiler Service"
-                      className="w-full px-4 py-2 rounded-sm border border-[#222222] bg-[#0D0D0D] text-white focus:outline-none focus:ring-1 focus:ring-white text-xs font-mono placeholder-[#333333]"
+                      className="w-full px-4 py-2 rounded-sm border border-[#222222] bg-[#0D0D0D] text-white focus:outline-none focus:ring-1 focus:ring-emerald-500 text-xs font-mono placeholder-[#888888]"
                     />
                   </div>
 
@@ -928,7 +928,7 @@ export const OwnerDashboard: React.FC = () => {
                 </p>
 
                 <div className="bg-[#0D0D0D] p-3 rounded-sm border border-[#222222] text-center">
-                  <p className="text-[9px] text-[#444444] uppercase tracking-widest font-mono font-bold">Type the team member's exact name to confirm:</p>
+                  <p className="text-[9px] text-[#888888] uppercase tracking-widest font-mono font-bold">Type the team member's exact name to confirm:</p>
                   <p className="text-base font-bold font-mono text-white select-all mt-1">{removingMember.name}</p>
                 </div>
 
@@ -941,7 +941,7 @@ export const OwnerDashboard: React.FC = () => {
                       if (removeError) setRemoveError('');
                     }}
                     placeholder="Type name here..."
-                    className="w-full px-4 py-2 rounded-sm border border-[#222222] bg-[#0D0D0D] text-white focus:outline-none focus:ring-1 focus:ring-red-500 text-xs font-mono placeholder-[#333333]"
+                    className="w-full px-4 py-2 rounded-sm border border-[#222222] bg-[#0D0D0D] text-white focus:outline-none focus:ring-1 focus:ring-red-500 text-xs font-mono placeholder-[#888888]"
                   />
                   {removeError && (
                     <p className="text-xs text-red-400 mt-1.5 font-semibold flex items-center font-mono">
@@ -1372,7 +1372,7 @@ export const OwnerDashboard: React.FC = () => {
                           <option key={m.id} value={m.id}>{m.name}</option>
                         ))}
                       </select>
-                      <p className="text-[9px] text-[#555555] mt-1 font-mono leading-tight">
+                      <p className="text-[9px] text-[#888888] mt-1 font-mono leading-tight">
                         * Manager builds execution stages, checklist protocols, and assigns workers.
                       </p>
                     </div>
@@ -1391,7 +1391,7 @@ export const OwnerDashboard: React.FC = () => {
                           <option key={w.id} value={w.id}>{w.name}</option>
                         ))}
                       </select>
-                      <p className="text-[9px] text-[#555555] mt-1 font-mono leading-tight">
+                      <p className="text-[9px] text-[#888888] mt-1 font-mono leading-tight">
                         * Assign primary technician for the entire dispatch.
                       </p>
                     </div>
@@ -1402,7 +1402,7 @@ export const OwnerDashboard: React.FC = () => {
                     <span className="text-[10px] font-mono text-[#666666] uppercase tracking-wider block mb-3">Delivery Stages & Verification checklist</span>
                     
                     {(!viewingOrder.stages || viewingOrder.stages.length === 0) ? (
-                      <div className="bg-[#0D0D0D] border border-[#222222] p-4 text-center text-[#555555] text-xs font-mono rounded-sm">
+                      <div className="bg-[#0D0D0D] border border-[#222222] p-4 text-center text-[#888888] text-xs font-mono rounded-sm">
                         No delivery stages constructed yet. Assigned manager will build stages.
                       </div>
                     ) : (
@@ -1428,7 +1428,7 @@ export const OwnerDashboard: React.FC = () => {
                             <div className="flex justify-between items-center text-[10px] font-mono text-[#888888] border-b border-[#1A1A1A] pb-2">
                               <span>Tech: <strong className="text-white">{stg.assignedWorkerName || 'Unassigned'}</strong></span>
                               {stg.completedAt && (
-                                <span className="text-[9px] text-[#555555]">Closed {new Date(stg.completedAt).toLocaleDateString()}</span>
+                                <span className="text-[9px] text-[#888888]">Closed {new Date(stg.completedAt).toLocaleDateString()}</span>
                               )}
                             </div>
 
@@ -1442,7 +1442,7 @@ export const OwnerDashboard: React.FC = () => {
                                   }`}>
                                     ✓
                                   </span>
-                                  <span className={item.completed ? 'line-through text-[#555555]' : 'text-[#888888]'}>
+                                  <span className={item.completed ? 'line-through text-[#666666]' : 'text-[#888888]'}>
                                     {item.text}
                                   </span>
                                 </div>

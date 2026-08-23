@@ -270,7 +270,7 @@ export const AdminDashboard: React.FC = () => {
                   placeholder="Search company or owner..."
                   value={companySearch}
                   onChange={(e) => setCompanySearch(e.target.value)}
-                  className="w-full pl-9 pr-3 py-1.5 bg-[#09090B] border border-[#27272A] text-white placeholder-[#52525B] text-xs rounded-lg focus:outline-none focus:border-[#A1A1AA]"
+                  className="w-full pl-9 pr-3 py-1.5 bg-[#09090B] border border-[#27272A] text-white placeholder-[#A1A1AA] text-xs rounded-lg focus:outline-none focus:border-[#A1A1AA]"
                 />
               </div>
 
@@ -303,95 +303,103 @@ export const AdminDashboard: React.FC = () => {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-[#27272A]">
-                    {filteredCompanies.map(c => {
-                      const isSuspended = c.status === 'suspended';
-                      const isOverride = c.subscription?.manualOverride?.active;
-                      return (
-                        <tr key={c._id} className="hover:bg-[#27272A]/40 transition-colors">
-                          <td className="px-6 py-4 font-bold text-[#FAFAFA]">
-                            <span>{c.companyName}</span>
-                            <span className="block text-[9px] text-[#71717A] mt-0.5">ID: {c._id}</span>
-                          </td>
-                          <td className="px-6 py-4 text-[#A1A1AA]">
-                            {c.owner ? (
-                              <div>
-                                <span className="font-bold text-[#FAFAFA] block">{c.owner.name}</span>
-                                <span className="text-[10px] text-[#71717A] block">{c.owner.email}</span>
-                              </div>
-                            ) : (
-                              <span className="text-zinc-600 italic">No Owner</span>
-                            )}
-                          </td>
-                          <td className="px-6 py-4">
-                            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider border ${
-                              isSuspended
-                                ? 'bg-zinc-800 text-zinc-400 border-zinc-700'
-                                : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30'
-                            }`}>
-                              {isSuspended ? 'SUSPENDED' : 'ACTIVE'}
-                            </span>
-                          </td>
-                          <td className="px-6 py-4 font-bold uppercase">
-                            <span className={`px-2.5 py-1 rounded text-[10px] border ${
-                              c.subscription?.tier === 'scale'
-                                ? 'bg-purple-500/10 text-purple-300 border-purple-500/30'
-                                : c.subscription?.tier === 'growth'
-                                ? 'bg-amber-500/10 text-amber-300 border-amber-500/30'
-                                : 'bg-zinc-800 text-zinc-300 border-zinc-700'
-                            }`}>
-                              {c.subscription?.tier || 'free'}
-                            </span>
-                          </td>
-                          <td className="px-6 py-4">
-                            {isOverride ? (
-                              <div className="flex flex-col items-start space-y-1">
-                                <span className="px-2 py-0.5 bg-amber-500/10 border border-amber-500/30 text-amber-300 text-[9px] font-bold uppercase tracking-wider rounded">
-                                  MANUAL OVERRIDE
-                                </span>
-                                <button
-                                  onClick={() => handleClearOverride(c._id)}
-                                  className="text-[9px] text-[#A1A1AA] hover:text-white underline cursor-pointer"
-                                >
-                                  Clear Override
-                                </button>
-                              </div>
-                            ) : (
-                              <span className="text-[10px] text-[#71717A] uppercase">Webhook Driven</span>
-                            )}
-                          </td>
-                          <td className="px-6 py-4 text-right space-x-2">
-                            <button
-                              onClick={() => {
-                                setOverrideModalCompany(c);
-                                setSelectedTier(c.subscription?.tier || 'growth');
-                              }}
-                              className="px-3 py-1 bg-white hover:bg-zinc-200 text-[#09090B] text-[10px] font-bold uppercase tracking-wider rounded-md transition-all cursor-pointer shadow-sm"
-                            >
-                              Edit Tier
-                            </button>
-                            <button
-                              onClick={() => handleToggleSuspension(c._id)}
-                              className={`px-3 py-1 border text-[10px] uppercase font-bold tracking-wider rounded-md transition-all cursor-pointer ${
+                    {filteredCompanies.length === 0 ? (
+                      <tr>
+                        <td colSpan={6} className="px-6 py-8 text-center text-[#71717A]">
+                          No registered companies found
+                        </td>
+                      </tr>
+                    ) : (
+                      filteredCompanies.map(c => {
+                        const isSuspended = c.status === 'suspended';
+                        const isOverride = c.subscription?.manualOverride?.active;
+                        return (
+                          <tr key={c._id} className="hover:bg-[#27272A]/40 transition-colors">
+                            <td className="px-6 py-4 font-bold text-[#FAFAFA]">
+                              <span>{c.companyName}</span>
+                              <span className="block text-[9px] text-[#71717A] mt-0.5">ID: {c._id}</span>
+                            </td>
+                            <td className="px-6 py-4 text-[#A1A1AA]">
+                              {c.owner ? (
+                                <div>
+                                  <span className="font-bold text-[#FAFAFA] block">{c.owner.name}</span>
+                                  <span className="text-[10px] text-[#71717A] block">{c.owner.email}</span>
+                                </div>
+                              ) : (
+                                <span className="text-zinc-600 italic">No Owner</span>
+                              )}
+                            </td>
+                            <td className="px-6 py-4">
+                              <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider border ${
                                 isSuspended
-                                  ? 'bg-emerald-500/10 hover:bg-emerald-500/20 border-emerald-500/30 text-emerald-400'
-                                  : 'bg-zinc-800 hover:bg-zinc-700 border-zinc-700 text-zinc-300'
-                              }`}
-                            >
-                              {isSuspended ? 'Unsuspend' : 'Suspend'}
-                            </button>
-                            <button
-                              onClick={() => {
-                                setDeleteModalCompany(c);
-                                setConfirmDeleteName('');
-                              }}
-                              className="px-3 py-1 bg-red-950/40 hover:bg-red-900/60 border border-red-800/40 text-red-300 text-[10px] uppercase font-bold tracking-wider rounded-md transition-all cursor-pointer"
-                            >
-                              Delete
-                            </button>
-                          </td>
-                        </tr>
-                      );
-                    })}
+                                  ? 'bg-zinc-800 text-zinc-400 border-zinc-700'
+                                  : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30'
+                              }`}>
+                                {isSuspended ? 'SUSPENDED' : 'ACTIVE'}
+                              </span>
+                            </td>
+                            <td className="px-6 py-4 font-bold uppercase">
+                              <span className={`px-2.5 py-1 rounded text-[10px] border ${
+                                c.subscription?.tier === 'scale'
+                                  ? 'bg-purple-500/10 text-purple-300 border-purple-500/30'
+                                  : c.subscription?.tier === 'growth'
+                                  ? 'bg-amber-500/10 text-amber-300 border-amber-500/30'
+                                  : 'bg-zinc-800 text-zinc-300 border-zinc-700'
+                              }`}>
+                                {c.subscription?.tier || 'free'}
+                              </span>
+                            </td>
+                            <td className="px-6 py-4">
+                              {isOverride ? (
+                                <div className="flex flex-col items-start space-y-1">
+                                  <span className="px-2 py-0.5 bg-amber-500/10 border border-amber-500/30 text-amber-300 text-[9px] font-bold uppercase tracking-wider rounded">
+                                    MANUAL OVERRIDE
+                                  </span>
+                                  <button
+                                    onClick={() => handleClearOverride(c._id)}
+                                    className="text-[9px] text-[#A1A1AA] hover:text-white underline cursor-pointer"
+                                  >
+                                    Clear Override
+                                  </button>
+                                </div>
+                              ) : (
+                                <span className="text-[10px] text-[#71717A] uppercase">Webhook Driven</span>
+                              )}
+                            </td>
+                            <td className="px-6 py-4 text-right space-x-2">
+                              <button
+                                onClick={() => {
+                                  setOverrideModalCompany(c);
+                                  setSelectedTier(c.subscription?.tier || 'growth');
+                                }}
+                                className="px-3 py-1 bg-white hover:bg-zinc-200 text-[#09090B] text-[10px] font-bold uppercase tracking-wider rounded-md transition-all cursor-pointer shadow-sm"
+                              >
+                                Edit Tier
+                              </button>
+                              <button
+                                onClick={() => handleToggleSuspension(c._id)}
+                                className={`px-3 py-1 border text-[10px] uppercase font-bold tracking-wider rounded-md transition-all cursor-pointer ${
+                                  isSuspended
+                                    ? 'bg-emerald-500/10 hover:bg-emerald-500/20 border-emerald-500/30 text-emerald-400'
+                                    : 'bg-zinc-800 hover:bg-zinc-700 border-zinc-700 text-zinc-300'
+                                }`}
+                              >
+                                {isSuspended ? 'Unsuspend' : 'Suspend'}
+                              </button>
+                              <button
+                                onClick={() => {
+                                  setDeleteModalCompany(c);
+                                  setConfirmDeleteName('');
+                                }}
+                                className="px-3 py-1 bg-red-950/40 hover:bg-red-900/60 border border-red-800/40 text-red-300 text-[10px] uppercase font-bold tracking-wider rounded-md transition-all cursor-pointer"
+                              >
+                                Delete
+                              </button>
+                            </td>
+                          </tr>
+                        );
+                      })
+                    )}
                   </tbody>
                 </table>
               </div>
@@ -399,7 +407,7 @@ export const AdminDashboard: React.FC = () => {
           </motion.div>
         )}
 
-        {/* USERS DIRECTORY TAB */}
+        {/* USERS / SECURITY DIRECTORY TAB */}
         {activeTab === 'users' && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
             <div className="bg-[#18181B] border border-[#27272A] p-4 rounded-xl flex flex-col sm:flex-row justify-between items-center gap-4">
@@ -407,24 +415,27 @@ export const AdminDashboard: React.FC = () => {
                 <Search className="w-4 h-4 text-[#71717A] absolute left-3 top-2.5" />
                 <input
                   type="text"
-                  placeholder="Search user by name, email, or company..."
+                  placeholder="Search users..."
                   value={userSearch}
                   onChange={(e) => setUserSearch(e.target.value)}
-                  className="w-full pl-9 pr-3 py-1.5 bg-[#09090B] border border-[#27272A] text-white placeholder-[#52525B] text-xs rounded-lg focus:outline-none focus:border-[#A1A1AA]"
+                  className="w-full pl-9 pr-3 py-1.5 bg-[#09090B] border border-[#27272A] text-white placeholder-[#A1A1AA] text-xs rounded-lg focus:outline-none focus:border-[#A1A1AA]"
                 />
               </div>
 
-              <select
-                value={userRoleFilter}
-                onChange={(e) => setUserRoleFilter(e.target.value)}
-                className="bg-[#09090B] border border-[#27272A] text-white text-xs py-1.5 px-3 rounded-lg focus:outline-none focus:border-[#A1A1AA] font-mono"
-              >
-                <option value="all">All Roles</option>
-                <option value="owner">Owners</option>
-                <option value="manager">Managers</option>
-                <option value="worker">Technicians / Workers</option>
-                <option value="customer">Customers</option>
-              </select>
+              <div className="flex items-center space-x-3 w-full sm:w-auto">
+                <Filter className="w-4 h-4 text-[#71717A]" />
+                <select
+                  value={userRoleFilter}
+                  onChange={(e) => setUserRoleFilter(e.target.value)}
+                  className="bg-[#09090B] border border-[#27272A] text-white text-xs py-1.5 px-3 rounded-lg focus:outline-none focus:border-[#A1A1AA] font-mono"
+                >
+                  <option value="all">All Roles</option>
+                  <option value="owner">Owners</option>
+                  <option value="manager">Managers</option>
+                  <option value="worker">Workers</option>
+                  <option value="customer">Customers</option>
+                </select>
+              </div>
             </div>
 
             <div className="bg-[#18181B] border border-[#27272A] rounded-xl overflow-hidden shadow-lg">
@@ -432,62 +443,75 @@ export const AdminDashboard: React.FC = () => {
                 <table className="w-full text-left border-collapse font-mono text-xs">
                   <thead>
                     <tr className="bg-[#121215] text-[#A1A1AA] text-[10px] uppercase tracking-widest border-b border-[#27272A]">
-                      <th className="px-6 py-3.5">User Name & Email</th>
+                      <th className="px-6 py-3.5">User Identity</th>
                       <th className="px-6 py-3.5">Role</th>
-                      <th className="px-6 py-3.5">Associated Company</th>
-                      <th className="px-6 py-3.5">Phone</th>
-                      <th className="px-6 py-3.5">Status</th>
+                      <th className="px-6 py-3.5">Company Association</th>
+                      <th className="px-6 py-3.5">Phone Number</th>
+                      <th className="px-6 py-3.5">Security Status</th>
                       <th className="px-6 py-3.5 text-right">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-[#27272A]">
-                    {filteredUsers.map(u => {
-                      const isLocked = u.failedAttempts >= 5 || u.accountStatus === 'disabled' || (u.lockoutUntil && new Date(u.lockoutUntil) > new Date());
-                      return (
-                        <tr key={u._id} className="hover:bg-[#27272A]/40 transition-colors">
-                          <td className="px-6 py-4">
-                            <span className="font-bold text-[#FAFAFA] block">{u.name}</span>
-                            <span className="text-[10px] text-[#71717A] block">{u.email}</span>
-                          </td>
-                          <td className="px-6 py-4">
-                            <span className="px-2.5 py-0.5 bg-zinc-800 border border-zinc-700 text-zinc-300 text-[10px] font-bold uppercase tracking-wider rounded">
-                              {u.role}
-                            </span>
-                          </td>
-                          <td className="px-6 py-4 text-[#A1A1AA]">
-                            {u.company ? (
-                              <span className="font-bold text-white">{u.company.companyName}</span>
-                            ) : (
-                              <span className="text-zinc-600 italic">No Company</span>
-                            )}
-                          </td>
-                          <td className="px-6 py-4 text-[#71717A] font-mono">{u.phone || 'N/A'}</td>
-                          <td className="px-6 py-4">
-                            <span className={`px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider border ${
-                              isLocked
-                                ? 'bg-red-950/40 text-red-400 border-red-800/40'
-                                : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30'
-                            }`}>
-                              {isLocked ? 'DISABLED (LOCKOUT)' : 'ACTIVE'}
-                            </span>
-                          </td>
-                          <td className="px-6 py-4 text-right">
-                            <button
-                              onClick={() => {
-                                if (confirm(`Re-enable and unlock account access for ${u.name}?`)) {
-                                  dbStore.clearUserLockout(u._id || u.id || u.email);
-                                  setRefreshTrigger(prev => prev + 1);
-                                  alert(`Account for ${u.name} has been unlocked and re-enabled successfully.`);
-                                }
-                              }}
-                              className="px-3 py-1 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 text-[10px] font-bold uppercase tracking-wider rounded-md transition-all cursor-pointer shadow-sm"
-                            >
-                              Unlock / Re-Enable
-                            </button>
-                          </td>
-                        </tr>
-                      );
-                    })}
+                    {filteredUsers.length === 0 ? (
+                      <tr>
+                        <td colSpan={6} className="px-6 py-8 text-center text-[#71717A]">
+                          No user accounts found
+                        </td>
+                      </tr>
+                    ) : (
+                      filteredUsers.map(u => {
+                        const isLocked = u.failedAttempts >= 5 || u.accountStatus === 'disabled' || (u.lockoutUntil && new Date(u.lockoutUntil) > new Date());
+                        return (
+                          <tr key={u._id} className="hover:bg-[#27272A]/40 transition-colors">
+                            <td className="px-6 py-4">
+                              <span className="font-bold text-[#FAFAFA] block">{u.name}</span>
+                              <span className="text-[10px] text-[#71717A] block">{u.email}</span>
+                            </td>
+                            <td className="px-6 py-4">
+                              <span className="px-2.5 py-0.5 bg-zinc-800 border border-zinc-700 text-zinc-300 text-[10px] font-bold uppercase tracking-wider rounded">
+                                {u.role}
+                              </span>
+                            </td>
+                            <td className="px-6 py-4 text-[#A1A1AA]">
+                              {u.company ? (
+                                <span className="font-bold text-white">{u.company.companyName}</span>
+                              ) : (
+                                <span className="text-zinc-600 italic">No Company</span>
+                              )}
+                            </td>
+                            <td className="px-6 py-4 text-[#71717A] font-mono">{u.phone || 'N/A'}</td>
+                            <td className="px-6 py-4">
+                              <span className={`px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider border ${
+                                isLocked
+                                  ? 'bg-red-950/40 text-red-400 border-red-800/40'
+                                  : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30'
+                              }`}>
+                                {isLocked ? 'DISABLED (LOCKOUT)' : 'ACTIVE'}
+                              </span>
+                            </td>
+                            <td className="px-6 py-4 text-right">
+                              <button
+                                onClick={async () => {
+                                  if (confirm(`Re-enable and unlock account access for ${u.name}?`)) {
+                                    try {
+                                      await adminApi.unlockUser(u._id || u.id || u.email);
+                                    } catch (err) {
+                                      console.warn("Backend unlock user call failed, syncing local store:", err);
+                                    }
+                                    dbStore.clearUserLockout(u._id || u.id || u.email);
+                                    setRefreshTrigger(prev => prev + 1);
+                                    alert(`Account for ${u.name} has been unlocked and re-enabled successfully.`);
+                                  }
+                                }}
+                                className="px-3 py-1 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 text-[10px] font-bold uppercase tracking-wider rounded-md transition-all cursor-pointer shadow-sm"
+                              >
+                                Unlock / Re-Enable
+                              </button>
+                            </td>
+                          </tr>
+                        );
+                      })
+                    )}
                   </tbody>
                 </table>
               </div>
@@ -518,33 +542,41 @@ export const AdminDashboard: React.FC = () => {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-[#27272A]">
-                    {auditLogs.map(log => (
-                      <tr key={log._id} className="hover:bg-[#27272A]/40 transition-colors">
-                        <td className="px-6 py-4 text-[10px] text-[#71717A] font-mono">
-                          {new Date(log.timestamp).toLocaleString()}
-                        </td>
-                        <td className="px-6 py-4 font-bold">
-                          <span className={`px-2.5 py-0.5 rounded text-[9px] uppercase tracking-wider border ${
-                            log.action.includes('SUCCESS') || log.action.includes('UNSUSPEND')
-                              ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30'
-                              : log.action.includes('FAILED') || log.action.includes('LOCKOUT') || log.action.includes('DELETE') || log.action.includes('SUSPEND')
-                              ? 'bg-red-950/40 text-red-300 border-red-800/40'
-                              : 'bg-amber-500/10 text-amber-300 border-amber-500/30'
-                          }`}>
-                            {log.action}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4 font-bold text-[#FAFAFA]">
-                          {log.targetName || log.targetId || 'System'}
-                        </td>
-                        <td className="px-6 py-4 text-[#71717A] font-mono text-[11px]">{log.ipAddress}</td>
-                        <td className="px-6 py-4 text-[10px] text-[#A1A1AA] font-mono">
-                          <pre className="whitespace-pre-wrap max-w-xs overflow-hidden">
-                            {JSON.stringify(log.details || {})}
-                          </pre>
+                    {auditLogs.length === 0 ? (
+                      <tr>
+                        <td colSpan={5} className="px-6 py-8 text-center text-[#71717A]">
+                          No audit trail records found
                         </td>
                       </tr>
-                    ))}
+                    ) : (
+                      auditLogs.map(log => (
+                        <tr key={log._id} className="hover:bg-[#27272A]/40 transition-colors">
+                          <td className="px-6 py-4 text-[10px] text-[#71717A] font-mono">
+                            {new Date(log.timestamp).toLocaleString()}
+                          </td>
+                          <td className="px-6 py-4 font-bold">
+                            <span className={`px-2.5 py-0.5 rounded text-[9px] uppercase tracking-wider border ${
+                              log.action.includes('SUCCESS') || log.action.includes('UNSUSPEND')
+                                ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30'
+                                : log.action.includes('FAILED') || log.action.includes('LOCKOUT') || log.action.includes('DELETE') || log.action.includes('SUSPEND')
+                                ? 'bg-red-950/40 text-red-300 border-red-800/40'
+                                : 'bg-amber-500/10 text-amber-300 border-amber-500/30'
+                            }`}>
+                              {log.action}
+                            </span>
+                          </td>
+                          <td className="px-6 py-4 font-bold text-[#FAFAFA]">
+                            {log.targetName || log.targetId || 'System'}
+                          </td>
+                          <td className="px-6 py-4 text-[#71717A] font-mono text-[11px]">{log.ipAddress}</td>
+                          <td className="px-6 py-4 text-[10px] text-[#A1A1AA] font-mono">
+                            <pre className="whitespace-pre-wrap max-w-sm max-h-24 overflow-y-auto font-mono text-[10px] break-all bg-black/40 p-2 rounded border border-[#27272A] text-zinc-300">
+                              {JSON.stringify(log.details || {}, null, 2)}
+                            </pre>
+                          </td>
+                        </tr>
+                      ))
+                    )}
                   </tbody>
                 </table>
               </div>

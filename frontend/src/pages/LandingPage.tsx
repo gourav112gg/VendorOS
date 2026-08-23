@@ -15,7 +15,7 @@ gsap.registerPlugin(ScrollTrigger);
 
 interface LandingPageProps {
   onNavigateToLogin: () => void;
-  onNavigateToSignUp: () => void;
+  onNavigateToSignUp: (tier?: string) => void;
   onNavigateToPublic?: () => void;
 }
 
@@ -94,7 +94,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
       <BentoGridSection />
 
       {/* 6. Glassmorphism Pricing Section — Budget: +=120% */}
-      <PricingSection onSelectPlan={() => onNavigateToSignUp()} />
+      <PricingSection onSelectPlan={(tier) => onNavigateToSignUp(tier)} />
 
       {/* 7. Integration Logo Cloud Section */}
       <LogoCloudSection />

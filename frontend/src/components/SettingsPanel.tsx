@@ -533,7 +533,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ initialTab = 'prof
                     required
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="w-full bg-black text-xs text-white placeholder-[#444444] px-3 py-2.5 rounded-sm border border-[#222222] focus:outline-none focus:border-[#444444] transition-colors"
+                    className="w-full bg-black text-xs text-white placeholder-[#888888] px-3 py-2.5 rounded-sm border border-[#222222] focus:outline-none focus:border-emerald-500 transition-colors"
                     placeholder="Your full name"
                   />
                 </div>
@@ -550,7 +550,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ initialTab = 'prof
                     type="text"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
-                    className="w-full bg-black text-xs text-white placeholder-[#444444] px-3 py-2.5 rounded-sm border border-[#222222] focus:outline-none focus:border-[#444444] transition-colors"
+                    className="w-full bg-black text-xs text-white placeholder-[#888888] px-3 py-2.5 rounded-sm border border-[#222222] focus:outline-none focus:border-emerald-500 transition-colors"
                     placeholder="Phone number"
                   />
                 </div>
@@ -566,7 +566,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ initialTab = 'prof
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full bg-black text-xs text-white placeholder-[#444444] px-3 py-2.5 rounded-sm border border-[#222222] focus:outline-none focus:border-[#444444] transition-colors"
+                  className="w-full bg-black text-xs text-white placeholder-[#888888] px-3 py-2.5 rounded-sm border border-[#222222] focus:outline-none focus:border-emerald-500 transition-colors"
                   placeholder="Email address"
                 />
               </div>
@@ -661,7 +661,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ initialTab = 'prof
                     rows={3}
                     value={companyDescription}
                     onChange={(e) => setCompanyDescription(e.target.value)}
-                    className="w-full bg-black text-xs text-white placeholder-[#444444] px-3 py-2.5 rounded-sm border border-[#222222] focus:outline-none focus:border-[#444444] transition-colors resize-none"
+                    className="w-full bg-black text-xs text-white placeholder-[#888888] px-3 py-2.5 rounded-sm border border-[#222222] focus:outline-none focus:border-emerald-500 transition-colors resize-none"
                     placeholder="Short description of your services..."
                   />
                 </div>
@@ -676,7 +676,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ initialTab = 'prof
                       type="text"
                       value={companyAddress}
                       onChange={(e) => setCompanyAddress(e.target.value)}
-                      className="w-full bg-black text-xs text-white placeholder-[#444444] px-3 py-2.5 rounded-sm border border-[#222222] focus:outline-none focus:border-[#444444] transition-colors"
+                      className="w-full bg-black text-xs text-white placeholder-[#888888] px-3 py-2.5 rounded-sm border border-[#222222] focus:outline-none focus:border-emerald-500 transition-colors"
                       placeholder="Company address"
                     />
                   </div>
@@ -690,7 +690,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ initialTab = 'prof
                       type="number"
                       value={companyMinOrder}
                       onChange={(e) => setCompanyMinOrder(Number(e.target.value))}
-                      className="w-full bg-black text-xs text-white placeholder-[#444444] px-3 py-2.5 rounded-sm border border-[#222222] focus:outline-none focus:border-[#444444] transition-colors"
+                      className="w-full bg-black text-xs text-white placeholder-[#888888] px-3 py-2.5 rounded-sm border border-[#222222] focus:outline-none focus:border-emerald-500 transition-colors"
                       placeholder="e.g. 5000"
                     />
                   </div>

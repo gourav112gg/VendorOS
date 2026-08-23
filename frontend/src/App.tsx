@@ -64,6 +64,7 @@ const MainLayout: React.FC = () => {
   const [authScreen, setAuthScreen] = useState<
     "landing" | "login" | "signup" | "public"
   >("landing");
+  const [selectedTier, setSelectedTier] = useState<string | undefined>(undefined);
   const [showShortcutsHelp, setShowShortcutsHelp] = useState(false);
   const [toastMsg, setToastMsg] = useState<string | null>(null);
   const toastTimeoutRef = useRef<number | null>(null);
@@ -242,7 +243,10 @@ const MainLayout: React.FC = () => {
     return (
       <LandingPage
         onNavigateToLogin={() => setAuthScreen("login")}
-        onNavigateToSignUp={() => setAuthScreen("signup")}
+        onNavigateToSignUp={(tier) => {
+          setSelectedTier(tier);
+          setAuthScreen("signup");
+        }}
         onNavigateToPublic={() => setAuthScreen("public")}
       />
     );
@@ -268,7 +272,10 @@ const MainLayout: React.FC = () => {
               transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
             >
               <Login
-                onNavigateToSignUp={() => setAuthScreen("signup")}
+                onNavigateToSignUp={() => {
+                  setSelectedTier(undefined);
+                  setAuthScreen("signup");
+                }}
                 onNavigateToPublic={() => setAuthScreen("public")}
                 onNavigateToLanding={() => setAuthScreen("landing")}
               />
@@ -278,12 +285,13 @@ const MainLayout: React.FC = () => {
               key="signup"
               initial={{ opacity: 0, x: 12 }}
               animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -12 }}
+              exit={{ opacity: 0, x: 12 }}
               transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
             >
               <SignUp
                 onNavigateToLogin={() => setAuthScreen("login")}
                 onNavigateToLanding={() => setAuthScreen("landing")}
+                initialTier={selectedTier}
               />
             </motion.div>
           )}

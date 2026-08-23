@@ -6,6 +6,7 @@ const {
   getCompaniesList,
   getUsersList,
   getAuditLogs,
+  unlockUserAccount,
 } = require("../controllers/adminDashboard.controller");
 const {
   updateCompanySubscriptionOverride,
@@ -22,6 +23,7 @@ router.get("/stats", getPlatformStats);
 router.get("/companies", getCompaniesList);
 router.get("/users", getUsersList);
 router.get("/audit-logs", getAuditLogs);
+router.patch("/users/:id/unlock", unlockUserAccount);
 
 // Subscription Override Controls
 router.patch("/companies/:id/subscription", updateCompanySubscriptionOverride);

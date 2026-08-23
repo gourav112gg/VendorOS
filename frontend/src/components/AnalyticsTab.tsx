@@ -26,7 +26,8 @@ import {
 import { Company, SpendIntelligenceRecord } from "../types";
 import dbStore from "../services/store";
 import { hasFeatureAccess } from "../services/subscriptionService";
-import NoDataPlaceholder from "./NoDataPlaceholder";
+import { NoDataPlaceholder } from "./NoDataPlaceholder";
+import { useAuth } from "../context/AuthContext";
 
 interface AnalyticsTabProps {
   company: Company;
@@ -37,6 +38,15 @@ export const AnalyticsTab: React.FC<AnalyticsTabProps> = ({
   company,
   onNavigateToBilling,
 }) => {
+  const { preferences } = useAuth();
+  const isDark = (preferences?.themeMode || "dark") !== "light";
+  const gridColor = isDark ? "#1E293B" : "#E2E8F0";
+  const axisColor = isDark ? "#64748B" : "#94A3B8";
+  const tooltipBg = isDark ? "#0A0A0A" : "#FFFFFF";
+  const tooltipBorder = isDark ? "#222222" : "#CBD5E1";
+  const tooltipText = isDark ? "#FFFFFF" : "#0F172A";
+  const primaryStroke = isDark ? "#FFFFFF" : "#0F172A";
+
   const access = hasFeatureAccess(company, "supplier_spend_intelligence");
 
   const [spendRecords, setSpendRecords] = useState<SpendIntelligenceRecord[]>(
@@ -184,30 +194,30 @@ export const AnalyticsTab: React.FC<AnalyticsTabProps> = ({
                     <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
                   </linearGradient>
                 </defs>
-                <CartesianGrid stroke="#1A1A1A" strokeDasharray="3 3" />
+                <CartesianGrid stroke={gridColor} strokeDasharray="3 3" />
                 <XAxis
                   dataKey="name"
-                  stroke="#444444"
+                  stroke={axisColor}
                   fontSize={10}
                   className="font-mono"
                 />
                 <YAxis
-                  stroke="#444444"
+                  stroke={axisColor}
                   fontSize={10}
                   className="font-mono"
                 />
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: "#0A0A0A",
-                    border: "1px solid #222222",
+                    backgroundColor: tooltipBg,
+                    border: `1px solid ${tooltipBorder}`,
                     fontSize: "11px",
-                    color: "#fff",
+                    color: tooltipText,
                   }}
                 />
                 <Area
                   type="monotone"
                   dataKey="spend"
-                  stroke="#ffffff"
+                  stroke={primaryStroke}
                   fillOpacity={1}
                   fill="url(#colorSpend)"
                   strokeWidth={2}
@@ -285,29 +295,29 @@ export const AnalyticsTab: React.FC<AnalyticsTabProps> = ({
                 data={supplierPerformanceData}
                 margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
               >
-                <CartesianGrid stroke="#1A1A1A" strokeDasharray="3 3" />
+                <CartesianGrid stroke={gridColor} strokeDasharray="3 3" />
                 <XAxis
                   dataKey="name"
-                  stroke="#444444"
+                  stroke={axisColor}
                   fontSize={10}
                   className="font-mono"
                 />
                 <YAxis
-                  stroke="#444444"
+                  stroke={axisColor}
                   fontSize={10}
                   className="font-mono"
                 />
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: "#0A0A0A",
-                    border: "1px solid #222222",
+                    backgroundColor: tooltipBg,
+                    border: `1px solid ${tooltipBorder}`,
                     fontSize: "11px",
-                    color: "#fff",
+                    color: tooltipText,
                   }}
                 />
                 <Bar
                   dataKey="delayHours"
-                  fill="#ffffff"
+                  fill={primaryStroke}
                   radius={[2, 2, 0, 0]}
                   name="Lead Delay (Hrs)"
                 />
@@ -333,24 +343,24 @@ export const AnalyticsTab: React.FC<AnalyticsTabProps> = ({
                 data={workerCompletionData}
                 margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
               >
-                <CartesianGrid stroke="#1A1A1A" strokeDasharray="3 3" />
+                <CartesianGrid stroke={gridColor} strokeDasharray="3 3" />
                 <XAxis
                   dataKey="name"
-                  stroke="#444444"
+                  stroke={axisColor}
                   fontSize={10}
                   className="font-mono"
                 />
                 <YAxis
-                  stroke="#444444"
+                  stroke={axisColor}
                   fontSize={10}
                   className="font-mono"
                 />
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: "#0A0A0A",
-                    border: "1px solid #222222",
+                    backgroundColor: tooltipBg,
+                    border: `1px solid ${tooltipBorder}`,
                     fontSize: "11px",
-                    color: "#fff",
+                    color: tooltipText,
                   }}
                 />
                 <Bar

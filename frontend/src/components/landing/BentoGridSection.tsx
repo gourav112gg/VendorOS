@@ -92,7 +92,7 @@ export const BentoGridSection: React.FC = () => {
               </div>
             </div>
 
-            {/* Download Now PWA / Web App Button */}
+            {/* Launch / Install Web App Button */}
             <div className="w-full pt-6 flex items-center justify-center">
               <button
                 type="button"
@@ -100,13 +100,16 @@ export const BentoGridSection: React.FC = () => {
                   if ('serviceWorker' in navigator && (window as any).deferredPwaPrompt) {
                     (window as any).deferredPwaPrompt.prompt();
                   } else {
-                    alert("Downloading VendorOS Application... Google Play auto-verification initialized.");
+                    const pricingEl = document.getElementById('pricing');
+                    if (pricingEl) {
+                      pricingEl.scrollIntoView({ behavior: 'smooth' });
+                    }
                   }
                 }}
                 className="w-full max-w-[200px] py-2.5 px-4 bg-black text-white hover:bg-neutral-800 border border-neutral-700 rounded-2xl font-mono text-[10px] font-bold flex items-center justify-center space-x-2 shadow-xl transition-all cursor-pointer hover:scale-105"
               >
                 <span>⚡</span>
-                <span>Download Now</span>
+                <span>Launch Web App</span>
               </button>
             </div>
           </motion.div>

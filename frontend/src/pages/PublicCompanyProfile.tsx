@@ -371,7 +371,7 @@ export const PublicCompanyProfile: React.FC<PublicCompanyProfileProps> = ({
                         Min Threshold
                       </span>
                       <span className="text-xs text-amber-400 font-mono font-bold">
-                        ₹{selectedCompany.minOrderValue.toLocaleString()} / $500
+                        ₹{selectedCompany.minOrderValue.toLocaleString()}
                       </span>
                     </div>
                   )}
@@ -426,7 +426,7 @@ export const PublicCompanyProfile: React.FC<PublicCompanyProfileProps> = ({
                           <strong>
                             ₹
                             {(
-                              selectedCompany.minOrderValue || 2000
+                              selectedCompany.minOrderValue || 2500
                             ).toLocaleString()}
                           </strong>
                           . It is held on the Owner's desk for acceptance before
@@ -438,7 +438,7 @@ export const PublicCompanyProfile: React.FC<PublicCompanyProfileProps> = ({
                     <div className="pt-2">
                       <button
                         onClick={() => setSuccessOrder(null)}
-                        className="px-5 py-2.5 bg-white hover:bg-[#F0EAD8] text-black text-xs font-bold font-mono uppercase tracking-wider rounded-sm transition-all cursor-pointer"
+                        className="px-5 py-2.5 bg-white hover:bg-neutral-200 text-black text-xs font-bold font-mono uppercase tracking-wider rounded-sm transition-all cursor-pointer"
                       >
                         Submit Another Order
                       </button>
@@ -454,7 +454,7 @@ export const PublicCompanyProfile: React.FC<PublicCompanyProfileProps> = ({
 
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
-                          <label className="block text-[10px] font-mono font-medium text-[#666666] uppercase tracking-wider mb-1.5">
+                          <label htmlFor="customer-name-input" className="block text-[10px] font-mono font-medium text-[#888888] uppercase tracking-wider mb-1.5">
                             Full Name *
                           </label>
                           <div className="relative">
@@ -462,18 +462,19 @@ export const PublicCompanyProfile: React.FC<PublicCompanyProfileProps> = ({
                               <User className="w-3.5 h-3.5" />
                             </span>
                             <input
+                              id="customer-name-input"
                               type="text"
                               required
                               value={customerName}
                               onChange={(e) => setCustomerName(e.target.value)}
                               placeholder="Jane Doe"
-                              className="w-full pl-9 pr-4 py-2 bg-[#111111] border border-[#222222] text-xs font-mono text-white rounded-sm focus:outline-none focus:ring-1 focus:ring-white placeholder-[#333333]"
+                              className="w-full pl-9 pr-4 py-2 bg-[#111111] border border-[#222222] text-xs font-mono text-white rounded-sm focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 placeholder-[#888888]"
                             />
                           </div>
                         </div>
 
                         <div>
-                          <label className="block text-[10px] font-mono font-medium text-[#666666] uppercase tracking-wider mb-1.5">
+                          <label htmlFor="customer-email-input" className="block text-[10px] font-mono font-medium text-[#888888] uppercase tracking-wider mb-1.5">
                             Email Address *
                           </label>
                           <div className="relative">
@@ -481,12 +482,13 @@ export const PublicCompanyProfile: React.FC<PublicCompanyProfileProps> = ({
                               <Mail className="w-3.5 h-3.5" />
                             </span>
                             <input
+                              id="customer-email-input"
                               type="email"
                               required
                               value={customerEmail}
                               onChange={(e) => setCustomerEmail(e.target.value)}
                               placeholder="jane@example.com"
-                              className="w-full pl-9 pr-4 py-2 bg-[#111111] border border-[#222222] text-xs font-mono text-white rounded-sm focus:outline-none focus:ring-1 focus:ring-white placeholder-[#333333]"
+                              className="w-full pl-9 pr-4 py-2 bg-[#111111] border border-[#222222] text-xs font-mono text-white rounded-sm focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 placeholder-[#888888]"
                             />
                           </div>
                         </div>
@@ -500,35 +502,37 @@ export const PublicCompanyProfile: React.FC<PublicCompanyProfileProps> = ({
                       </span>
 
                       <div>
-                        <label className="block text-[10px] font-mono font-medium text-[#888888] uppercase tracking-wider mb-1.5">
+                        <label htmlFor="order-title-input" className="block text-[10px] font-mono font-medium text-[#888888] uppercase tracking-wider mb-1.5">
                           Job Title / Request Summary *
                         </label>
                         <input
+                          id="order-title-input"
                           type="text"
                           required
                           value={title}
                           onChange={(e) => setTitle(e.target.value)}
                           placeholder="e.g. Commercial Fuse Box Replacement"
-                          className="w-full px-3 py-2 bg-[#0D0D0D] border border-[#222222] text-xs font-mono text-white rounded-sm focus:outline-none focus:ring-1 focus:ring-white placeholder-[#333333]"
+                          className="w-full px-3 py-2 bg-[#0D0D0D] border border-[#222222] text-xs font-mono text-white rounded-sm focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 placeholder-[#888888]"
                         />
                       </div>
 
                       <div>
-                        <label className="block text-[10px] font-mono font-medium text-[#888888] uppercase tracking-wider mb-1.5">
+                        <label htmlFor="order-desc-input" className="block text-[10px] font-mono font-medium text-[#888888] uppercase tracking-wider mb-1.5">
                           Problem / Job Specifications
                         </label>
                         <textarea
+                          id="order-desc-input"
                           value={description}
                           onChange={(e) => setDescription(e.target.value)}
                           placeholder="Describe the exact requirements: stage instructions, access hours, specific tools needed..."
                           rows={4}
-                          className="w-full px-3 py-2 bg-[#0D0D0D] border border-[#222222] text-xs font-mono text-white rounded-sm focus:outline-none focus:ring-1 focus:ring-white placeholder-[#333333]"
+                          className="w-full px-3 py-2 bg-[#0D0D0D] border border-[#222222] text-xs font-mono text-white rounded-sm focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 placeholder-[#888888]"
                         />
                       </div>
 
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
-                          <label className="block text-[10px] font-mono font-medium text-[#888888] uppercase tracking-wider mb-1.5">
+                          <label htmlFor="order-address-input" className="block text-[10px] font-mono font-medium text-[#888888] uppercase tracking-wider mb-1.5">
                             Service Location Address *
                           </label>
                           <div className="relative">
@@ -536,21 +540,22 @@ export const PublicCompanyProfile: React.FC<PublicCompanyProfileProps> = ({
                               <MapPin className="w-3.5 h-3.5" />
                             </span>
                             <input
+                              id="order-address-input"
                               type="text"
                               required
                               value={address}
                               onChange={(e) => setAddress(e.target.value)}
                               placeholder="e.g. 101 Pine St, Seattle, WA"
-                              className="w-full pl-9 pr-4 py-2 bg-[#0D0D0D] border border-[#222222] text-xs font-mono text-white rounded-sm focus:outline-none focus:ring-1 focus:ring-white placeholder-[#333333]"
+                              className="w-full pl-9 pr-4 py-2 bg-[#0D0D0D] border border-[#222222] text-xs font-mono text-white rounded-sm focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 placeholder-[#888888]"
                             />
                           </div>
                         </div>
 
                         <div>
-                          <label className="block text-[10px] font-mono font-medium text-[#888888] uppercase tracking-wider mb-1.5 flex justify-between">
+                          <label htmlFor="order-budget-input" className="block text-[10px] font-mono font-medium text-[#888888] uppercase tracking-wider mb-1.5 flex justify-between">
                             <span>Job Budget *</span>
                             {selectedCompany.minOrderValue && (
-                              <span className="text-[9px] text-[#555555] font-mono">
+                              <span className="text-[9px] text-[#888888] font-mono">
                                 Min: ₹{selectedCompany.minOrderValue}
                               </span>
                             )}
@@ -560,12 +565,13 @@ export const PublicCompanyProfile: React.FC<PublicCompanyProfileProps> = ({
                               <DollarSign className="w-3.5 h-3.5" />
                             </span>
                             <input
+                              id="order-budget-input"
                               type="number"
                               required
                               value={value}
                               onChange={(e) => setValue(Number(e.target.value))}
                               min={100}
-                              className="w-full pl-9 pr-4 py-2 bg-[#0D0D0D] border border-[#222222] text-xs font-mono text-white rounded-sm focus:outline-none focus:ring-1 focus:ring-white"
+                              className="w-full pl-9 pr-4 py-2 bg-[#0D0D0D] border border-[#222222] text-xs font-mono text-white rounded-sm focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500"
                             />
                           </div>
                         </div>

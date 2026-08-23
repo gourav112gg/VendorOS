@@ -106,7 +106,12 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onGetStarted }) => {
         )}
 
         {/* SVG Connector Lines Layer */}
-        <svg className="absolute inset-0 w-full h-full pointer-events-none z-10 hidden md:block">
+        <svg
+          viewBox="0 0 1280 620"
+          preserveAspectRatio="none"
+          aria-hidden="true"
+          className="absolute inset-0 w-full h-full pointer-events-none z-10 hidden md:block"
+        >
           {/* Path 1: Top-Left (Owner) */}
           <path
             d="M 0 110 H 260"

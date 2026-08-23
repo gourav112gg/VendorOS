@@ -406,6 +406,10 @@ export const ThemeManager: React.FC = () => {
 
   const textPrimaryClasses = [
     "text-white",
+    "text-white/90",
+    "text-white/80",
+    "text-white/70",
+    "text-white/60",
     "text-[#FFFFFF]",
     "text-[#FAFAFA]",
     "text-[#F5F5F5]",
@@ -499,13 +503,13 @@ export const ThemeManager: React.FC = () => {
     ${
       mode === "light"
         ? `
-      ${scope} ${selAll("", textPrimaryClasses)}${notChatbot}:not(.keep-white):not([class*="bg-emerald"]):not([class*="bg-blue"]):not([class*="bg-indigo"]):not([class*="bg-amber"]):not([class*="bg-rose"]):not([class*="bg-red"]) {
+      ${scope} ${selAll("", textPrimaryClasses)}${notChatbot}:not(.keep-white):not([class*="bg-emerald"]):not([class*="bg-blue"]):not([class*="bg-indigo"]):not([class*="bg-amber"]):not([class*="bg-rose"]):not([class*="bg-red"]):not([class*="text-emerald"]):not([class*="text-amber"]):not([class*="text-red"]):not([class*="text-green"]):not([class*="text-blue"]):not([class*="text-indigo"]):not([class*="text-rose"]) {
         color: ${colors.textPrimary} !important;
       }
-      ${scope} ${selAll("", textSecondaryClasses)}${notChatbot}:not(.keep-white) {
+      ${scope} ${selAll("", textSecondaryClasses)}${notChatbot}:not(.keep-white):not([class*="text-emerald"]):not([class*="text-amber"]):not([class*="text-red"]):not([class*="text-green"]):not([class*="text-blue"]):not([class*="text-indigo"]):not([class*="text-rose"]) {
         color: ${colors.textSecondary} !important;
       }
-      ${scope} ${selAll("", textMutedClasses)}${notChatbot}:not(.keep-white) {
+      ${scope} ${selAll("", textMutedClasses)}${notChatbot}:not(.keep-white):not([class*="text-emerald"]):not([class*="text-amber"]):not([class*="text-red"]):not([class*="text-green"]):not([class*="text-blue"]):not([class*="text-indigo"]):not([class*="text-rose"]) {
         color: ${colors.textMuted} !important;
       }
 
@@ -516,6 +520,18 @@ export const ThemeManager: React.FC = () => {
         background-color: ${colors.buttonPrimaryBg} !important;
         color: ${colors.buttonPrimaryText} !important;
         border-color: ${colors.buttonPrimaryBg} !important;
+      }
+
+      /* Primary Inverted Button Hover States in Light Mode */
+      ${scope} .hover\\:bg-\\[\\#E5E5E5\\]:hover${notChatbot},
+      ${scope} .hover\\:bg-\\[\\#F0EAD8\\]:hover${notChatbot},
+      ${scope} .hover\\:bg-\\[\\#F5F5F5\\]:hover${notChatbot},
+      ${scope} .hover\\:bg-\\[\\#EEEEEE\\]:hover${notChatbot},
+      ${scope} .hover\\:bg-neutral-200:hover${notChatbot},
+      ${scope} .hover\\:bg-stone-200:hover${notChatbot},
+      ${scope} .hover\\:bg-slate-200:hover${notChatbot} {
+        background-color: ${colors.accentHover || '#1E293B'} !important;
+        color: #FFFFFF !important;
       }
 
       /* Inputs, Textareas, Selects in Light Mode */

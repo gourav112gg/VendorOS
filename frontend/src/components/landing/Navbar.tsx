@@ -21,6 +21,7 @@ const LANDING_LANGUAGES: { id: Language; label: string; code: string }[] = [
 export const Navbar: React.FC<NavbarProps> = ({
   onNavigateToLogin,
   onNavigateToSignUp,
+  onNavigateToPublic,
 }) => {
   const { language, setLanguage, t } = useTranslation();
   const { updatePreference } = useAuth();
@@ -70,6 +71,14 @@ export const Navbar: React.FC<NavbarProps> = ({
           <a href="#pricing" className="hover:text-white transition-colors">
             {t("pricing", "Pricing")}
           </a>
+          {onNavigateToPublic && (
+            <button
+              onClick={onNavigateToPublic}
+              className="hover:text-white transition-colors cursor-pointer text-left"
+            >
+              {t("publicPortal", "Directory")}
+            </button>
+          )}
         </div>
 
         {/* Right CTA & Controls Group */}
@@ -103,7 +112,8 @@ export const Navbar: React.FC<NavbarProps> = ({
           {/* Mobile Hamburger Toggle */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden p-1 text-neutral-400 hover:text-white"
+            aria-label="Toggle navigation menu"
+            className="md:hidden p-1 text-neutral-400 hover:text-white cursor-pointer"
           >
             {mobileMenuOpen ? (
               <CloseIcon className="w-5 h-5" />
@@ -158,6 +168,17 @@ export const Navbar: React.FC<NavbarProps> = ({
             >
               {t("pricing", "Pricing")}
             </a>
+            {onNavigateToPublic && (
+              <button
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  onNavigateToPublic();
+                }}
+                className="block w-full text-left py-1 text-emerald-400 hover:text-emerald-300 cursor-pointer"
+              >
+                {t("publicPortal", "Browse Vendor Directory")}
+              </button>
+            )}
             <div className="pt-2 border-t border-[#222222] flex flex-col gap-2">
               <button
                 onClick={() => {

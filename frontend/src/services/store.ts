@@ -946,7 +946,7 @@ class SimulatedStore {
     return newOrder;
   }
 
-  public updateOrderStage(orderId: string, stage: ServiceOrder['stage'], performingUserId?: string): void {
+  public updateOrderStage(orderId: string, stage: ServiceOrder['stage'], performingUserId?: string, notes?: string): void {
     const order = this.state.orders.find(o => o.id === orderId);
     if (order) {
       order.stage = stage;
@@ -954,6 +954,13 @@ class SimulatedStore {
         order.completedAt = new Date().toISOString();
       } else {
         delete order.completedAt;
+      }
+      if (notes && notes.trim()) {
+        order.notes = notes.trim();
+        const noteHeader = `\n\n[Technician Notes]: ${notes.trim()}`;
+        if (!order.description.includes(noteHeader.trim())) {
+          order.description += noteHeader;
+        }
       }
       if (performingUserId) {
         const actor = this.state.users.find(u => u.id === performingUserId);
@@ -965,7 +972,7 @@ class SimulatedStore {
             userRole: actor.role,
             companyId: actor.companyId,
             action: 'Order Stage',
-            details: `Transitioned order "${order.title}" stage to "${stage}".`,
+            details: `Transitioned order "${order.title}" stage to "${stage}".${notes ? ` Notes: ${notes.trim()}` : ''}`,
             createdAt: new Date().toISOString()
           });
         }

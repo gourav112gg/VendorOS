@@ -12,6 +12,7 @@ import { VendorOSLogo } from "../components/VendorOSLogo";
 interface SignUpProps {
   onNavigateToLogin: () => void;
   onNavigateToLanding?: () => void;
+  initialTier?: string;
 }
 
 const sanitizeErrorMessage = (message: string): string => {
@@ -34,6 +35,7 @@ const sanitizeErrorMessage = (message: string): string => {
 export const SignUp: React.FC<SignUpProps> = ({
   onNavigateToLogin,
   onNavigateToLanding,
+  initialTier,
 }) => {
   const {
     registerOwner,

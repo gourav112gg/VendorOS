@@ -1,5 +1,8 @@
 const Company = require("../models/Company");
 const User = require("../models/User");
+const LoginAttempt = require("../models/LoginAttempt");
+const RateLimit = require("../models/RateLimit");
+const admin = require("../config/firebase");
 const SuperAdminAuditLog = require("../models/SuperAdminAuditLog");
 const logAdminAction = require("../utils/auditLogger");
 
@@ -143,9 +146,56 @@ const getAuditLogs = async (req, res) => {
   }
 };
 
+/**
+ * Unlock and Re-Enable User Account (Clear Lockouts and Login Failures)
+ */
+const unlockUserAccount = async (req, res) => {
+  try {
+    const { id } = req.params;
+    let user = null;
+    if (id.includes("@")) {
+      user = await User.findOne({ email: id.toLowerCase().trim() });
+    } else {
+      user = await User.findById(id);
+    }
+
+    const email = user ? user.email.toLowerCase().trim() : id.toLowerCase().trim();
+    await LoginAttempt.deleteMany({ email });
+    await RateLimit.deleteMany({ key: `email_fail:${email}` });
+
+    try {
+      const fbUser = await admin.auth().getUserByEmail(email);
+      await admin.auth().updateUser(fbUser.uid, { disabled: false });
+    } catch (fbErr) {
+      // Firebase lookup ignore if demo/simulated
+    }
+
+    await logAdminAction({
+      action: "ADMIN_UNLOCK_USER",
+      targetType: "User",
+      targetId: user ? String(user._id) : id,
+      targetName: user ? user.name : email,
+      details: { email },
+      req,
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: `Account ${user ? user.name : email} has been unlocked successfully.`,
+    });
+  } catch (error) {
+    console.error("Error unlocking user account:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to unlock user account",
+    });
+  }
+};
+
 module.exports = {
   getPlatformStats,
   getCompaniesList,
   getUsersList,
   getAuditLogs,
+  unlockUserAccount,
 };

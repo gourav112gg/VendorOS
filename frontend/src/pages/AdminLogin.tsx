@@ -80,7 +80,7 @@ export const AdminLogin: React.FC = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="admin@vendoros.com"
-                className="w-full pl-9 pr-3 py-2 bg-[#09090B] border border-[#27272A] text-[#FAFAFA] placeholder-[#52525B] text-xs rounded-lg focus:outline-none focus:border-[#A1A1AA] transition-colors"
+                className="w-full pl-9 pr-3 py-2 bg-[#09090B] border border-[#27272A] text-[#FAFAFA] placeholder-[#A1A1AA] text-xs rounded-lg focus:outline-none focus:border-[#A1A1AA] transition-colors"
               />
             </div>
           </div>
@@ -98,7 +98,7 @@ export const AdminLogin: React.FC = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••••••••••"
-                className="w-full pl-9 pr-3 py-2 bg-[#09090B] border border-[#27272A] text-[#FAFAFA] placeholder-[#52525B] text-xs rounded-lg focus:outline-none focus:border-[#A1A1AA] transition-colors"
+                className="w-full pl-9 pr-3 py-2 bg-[#09090B] border border-[#27272A] text-[#FAFAFA] placeholder-[#A1A1AA] text-xs rounded-lg focus:outline-none focus:border-[#A1A1AA] transition-colors"
               />
             </div>
           </div>
@@ -116,7 +116,7 @@ export const AdminLogin: React.FC = () => {
                 value={passphrase}
                 onChange={(e) => setPassphrase(e.target.value)}
                 placeholder="••••••••••••••••"
-                className="w-full pl-9 pr-3 py-2 bg-[#09090B] border border-[#27272A] text-[#FAFAFA] placeholder-[#52525B] text-xs rounded-lg focus:outline-none focus:border-[#A1A1AA] transition-colors"
+                className="w-full pl-9 pr-3 py-2 bg-[#09090B] border border-[#27272A] text-[#FAFAFA] placeholder-[#A1A1AA] text-xs rounded-lg focus:outline-none focus:border-[#A1A1AA] transition-colors"
               />
             </div>
           </div>
