@@ -22,13 +22,13 @@ import {
 import { useAuth } from "../context/AuthContext";
 import { useTranslation } from "../context/LanguageContext";
 import api from "../services/api";
-import dbStore from "../services/store";
 
 interface ChatMessage {
   id: string;
   role: "user" | "assistant";
   content: string;
   isVoice?: boolean;
+  isError?: boolean;
   timestamp: string;
 }
 
@@ -125,47 +125,6 @@ export const FloatingChatbot: React.FC = () => {
     }
   };
 
-  // Offline simulated fallback response generator matching origin data
-  const getSimulatedReply = (query: string): string => {
-    const q = query.toLowerCase();
-    const role = user?.role || "Customer";
-
-    if (q.includes("hi") || q.includes("hello") || q.includes("hey")) {
-      return `Hey ${user?.name || "there"}! I'm your VendorOS AI assistant. I can help you check real-time order status, evaluate delay risk scores, view worker availability, or monitor inventory levels. What would you like to check?`;
-    }
-
-    if (q.includes("order") || q.includes("status")) {
-      const orders = dbStore.getOrders();
-      if (!orders.length) return "You have no active orders in the system right now.";
-      const sample = orders.slice(0, 3);
-      return `Here are your recent orders:\n` + sample.map(o => `• **${o.title}** (Stage: *${o.stage}*, Value: ₹${o.value})`).join("\n") + `\n\nAll workflows are progressing on schedule.`;
-    }
-
-    if (q.includes("risk") || q.includes("delay") || q.includes("late")) {
-      if (role !== "Owner" && role !== "Manager") {
-        return "Risk score analytics are restricted to Owners and Managers.";
-      }
-      return `📊 **Order Risk Analysis**:\n• Active Orders: 3\n• High Risk Orders: 0\n• Average Expected Delay: 0.0 Days\n• Health Status: **Optimal (SLA Compliant)**`;
-    }
-
-    if (q.includes("worker") || q.includes("team") || q.includes("availability")) {
-      if (role !== "Owner" && role !== "Manager") {
-        return "Worker availability logs are only accessible to Owners and Managers.";
-      }
-      const users = dbStore.getUsers().filter(u => u.role === "Worker" || u.role === "Manager");
-      return `👥 **Team Availability Status**:\n` + users.map(u => `• **${u.name}** (${u.role}): Active & Available`).join("\n");
-    }
-
-    if (q.includes("inventory") || q.includes("stock") || q.includes("material")) {
-      if (role !== "Owner" && role !== "Manager") {
-        return "Inventory stock levels are only accessible to Owners and Managers.";
-      }
-      return `🧱 **Current Stock Summary**:\n• Standard PVC Pipe Fittings: 120 Units (In Stock)\n• High-Pressure Valves: 45 Units (In Stock)\n• Copper Tubing 1/2": 80 Meters (In Stock)\n\nNo low-stock alerts detected.`;
-    }
-
-    return `I checked our records for "${query}". All operational parameters are nominal. Feel free to ask about specific orders, risk evaluations, worker schedules, or inventory levels!`;
-  };
-
   // Send text query
   const handleSendMessage = async (textToSend?: string) => {
     const query = (textToSend || inputMessage).trim();
@@ -183,34 +142,30 @@ export const FloatingChatbot: React.FC = () => {
     setLoading(true);
 
     try {
-      if (api.getToken()) {
-        const res = await api.chatbot.query(query);
-        if (res.success && res.reply) {
-          const assistantMsg: ChatMessage = {
-            id: `asst_${Date.now()}`,
-            role: "assistant",
-            content: res.reply,
-            timestamp: new Date().toISOString(),
-          };
-          setMessages(prev => [...prev, assistantMsg]);
-          setLoading(false);
-          return;
-        }
+      if (!api.getToken()) {
+        throw new Error("You're not signed in, so I can't securely look up your company's live data. Please log in and try again.");
       }
-      throw new Error("Fallback required");
-    } catch (err) {
-      // Offline fallback simulation
-      setTimeout(() => {
-        const fallbackReply = getSimulatedReply(query);
-        const assistantMsg: ChatMessage = {
-          id: `asst_${Date.now()}`,
-          role: "assistant",
-          content: fallbackReply,
-          timestamp: new Date().toISOString(),
-        };
-        setMessages(prev => [...prev, assistantMsg]);
-        setLoading(false);
-      }, 500);
+
+      const res = await api.chatbot.query(query);
+      const assistantMsg: ChatMessage = {
+        id: `asst_${Date.now()}`,
+        role: "assistant",
+        content: res.reply || "I couldn't produce an answer for that — please try rephrasing your question.",
+        timestamp: new Date().toISOString(),
+      };
+      setMessages(prev => [...prev, assistantMsg]);
+    } catch (err: any) {
+      // Surface the REAL reason honestly instead of inventing data.
+      const assistantMsg: ChatMessage = {
+        id: `asst_err_${Date.now()}`,
+        role: "assistant",
+        isError: true,
+        content: `⚠️ ${err?.message || "I couldn't reach the assistant service just now. Please check your connection and try again in a moment."}`,
+        timestamp: new Date().toISOString(),
+      };
+      setMessages(prev => [...prev, assistantMsg]);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -275,46 +230,40 @@ export const FloatingChatbot: React.FC = () => {
     setLoading(true);
 
     try {
-      if (api.getToken()) {
-        const res = await api.chatbot.voiceQuery(blob);
-        if (res.success) {
-          const userMsg: ChatMessage = {
-            id: `user_voice_${Date.now()}`,
-            role: "user",
-            content: res.transcript ? `🎙️ "${res.transcript}"` : "🎙️ [Spoken audio query]",
-            isVoice: true,
-            timestamp: new Date().toISOString(),
-          };
-
-          const assistantMsg: ChatMessage = {
-            id: `asst_voice_${Date.now()}`,
-            role: "assistant",
-            content: res.reply,
-            timestamp: new Date().toISOString(),
-          };
-
-          setMessages(prev => [...prev, userMsg, assistantMsg]);
-          setLoading(false);
-          return;
-        }
+      if (!api.getToken()) {
+        throw new Error("You're not signed in, so I can't transcribe and answer against your company's live data. Please log in and try again.");
       }
-      throw new Error("Voice API offline");
-    } catch (err) {
-      // Fallback response for simulated voice
+
+      const res = await api.chatbot.voiceQuery(blob);
+      const transcript = res.transcript?.trim();
+
       const userMsg: ChatMessage = {
         id: `user_voice_${Date.now()}`,
         role: "user",
-        content: "🎙️ \"Check order status and team load\"",
+        content: transcript ? `🎙️ "${transcript}"` : "🎙️ [Spoken audio query]",
         isVoice: true,
         timestamp: new Date().toISOString(),
       };
+
       const assistantMsg: ChatMessage = {
         id: `asst_voice_${Date.now()}`,
         role: "assistant",
-        content: getSimulatedReply("order status and team load"),
+        content: res.reply || "I couldn't produce an answer for that — please try again.",
         timestamp: new Date().toISOString(),
       };
+
       setMessages(prev => [...prev, userMsg, assistantMsg]);
+    } catch (err: any) {
+      // Never fabricate what the user "said" — report the real failure.
+      const errorMsg: ChatMessage = {
+        id: `asst_voice_err_${Date.now()}`,
+        role: "assistant",
+        isError: true,
+        content: `⚠️ ${err?.message || "Couldn't process that voice note. Please try again, or type your question instead."}`,
+        timestamp: new Date().toISOString(),
+      };
+      setMessages(prev => [...prev, errorMsg]);
+    } finally {
       setLoading(false);
     }
   };
@@ -587,6 +536,8 @@ export const FloatingChatbot: React.FC = () => {
                       className={`max-w-[85%] rounded-2xl px-3.5 py-2.5 text-xs font-mono shadow-sm leading-relaxed whitespace-pre-wrap ${
                         m.role === "user"
                           ? "bg-[#27272A] text-white rounded-br-none border border-white/20"
+                          : m.isError
+                          ? "bg-amber-950/30 text-amber-200 rounded-bl-none border border-amber-500/40 shadow-md"
                           : "bg-[#18181B] text-neutral-100 rounded-bl-none border border-white/15 shadow-md"
                       }`}
                     >

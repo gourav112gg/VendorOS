@@ -88,6 +88,15 @@ const tools = [
       },
     },
   },
+  {
+    type: "function",
+    function: {
+      name: "get_company_stats",
+      description:
+        "Get an at-a-glance summary of the company's LIVE operational stats (owner/manager only): total & active orders, a breakdown of orders by status, total order value, how many workers are Free vs Busy, and how many inventory items are low on stock. Use this for aggregate 'how many / how much / overall' questions such as 'how many orders are pending', 'how many workers are free', 'what is my total order value', or 'give me a company overview'.",
+      parameters: { type: "object", properties: {} },
+    },
+  },
 ];
 
 async function executeTool(toolName, args, user) {
@@ -256,6 +265,71 @@ async function executeTool(toolName, args, user) {
     };
   }
 
+  if (toolName === "get_company_stats") {
+    if (!["owner", "manager"].includes(user.role)) {
+      return { allowed: false, message: "Only owners and managers can view company-wide stats." };
+    }
+
+    // Orders are scoped to the manager's own assigned orders; owners see the whole company.
+    const orderFilter = { company: user.company };
+    if (user.role === "manager") orderFilter.assignedManager = user._id;
+
+    const CLOSED_STATUSES = ["Delivered", "Cancelled"];
+
+    const [statusAgg, workerAgg, inventoryItems] = await Promise.all([
+      Order.aggregate([
+        { $match: orderFilter },
+        { $group: { _id: "$status", count: { $sum: 1 }, value: { $sum: "$totalAmount" } } },
+      ]),
+      User.aggregate([
+        { $match: { role: "worker", company: user.company } },
+        { $group: { _id: "$isAvailable", count: { $sum: 1 } } },
+      ]),
+      Inventory.find({ company: user.company }).select("quantity minimumStock").lean(),
+    ]);
+
+    const ordersByStatus = {};
+    let totalOrders = 0;
+    let activeOrders = 0;
+    let totalOrderValue = 0;
+    for (const row of statusAgg) {
+      ordersByStatus[row._id] = row.count;
+      totalOrders += row.count;
+      totalOrderValue += row.value || 0;
+      if (!CLOSED_STATUSES.includes(row._id)) activeOrders += row.count;
+    }
+
+    let freeWorkers = 0;
+    let busyWorkers = 0;
+    for (const row of workerAgg) {
+      if (row._id === true) freeWorkers = row.count;
+      else busyWorkers += row.count;
+    }
+
+    const lowStockItems = inventoryItems.filter(
+      (p) => typeof p.minimumStock === "number" && p.quantity <= p.minimumStock
+    ).length;
+
+    return {
+      scope: user.role === "manager" ? "orders assigned to you" : "your whole company",
+      orders: {
+        total: totalOrders,
+        active: activeOrders,
+        byStatus: ordersByStatus,
+        totalValue: totalOrderValue,
+      },
+      workers: {
+        total: freeWorkers + busyWorkers,
+        free: freeWorkers,
+        busy: busyWorkers,
+      },
+      inventory: {
+        totalItems: inventoryItems.length,
+        lowStockItems,
+      },
+    };
+  }
+
   return { error: `Unknown tool: ${toolName}` };
 }
 
@@ -282,7 +356,11 @@ GREETINGS & SMALL TALK:
   orders, risk scores, worker availability, or stock — what do you need?").
 
 DATA QUESTIONS:
-You can look up real order, risk, worker, and inventory data using the provided tools.
+You can look up real order, risk, worker, inventory, and company-wide summary
+data using the provided tools. For aggregate "how many / how much / overall"
+questions (e.g. "how many orders are pending", "how many workers are free right
+now", "what is my total order value", "give me a company overview"), use
+get_company_stats — it returns live, company-scoped numbers.
 
 STRICT ANTI-HALLUCINATION RULES — follow these exactly:
 1. NEVER state a fact (a status, a name, an amount, a date, a payment detail, anything)
@@ -375,4 +453,4 @@ Keep answers short and conversational, not robotic.`;
   return finalReply;
 }
 
-module.exports = { handleChatQuery };
+module.exports = { handleChatQuery, executeTool };

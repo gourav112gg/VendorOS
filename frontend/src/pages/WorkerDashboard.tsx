@@ -182,7 +182,7 @@ export const WorkerDashboard: React.FC = () => {
   const startSpeechRecognition = (stageId: string) => {
     const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
     if (!SpeechRecognition) {
-      alert("Local browser Speech Recognition API is not supported in this environment. Please type or use our Quick Voice presets in the Assist panel!");
+      setVoiceLog(prev => [...prev, "[Voice Unavailable] Your browser doesn't support in-page speech recognition (it works best in Chrome or Edge). Type your update in the box below, or use the quick presets."]);
       return;
     }
 
@@ -201,7 +201,7 @@ export const WorkerDashboard: React.FC = () => {
         console.error("Speech Recognition error:", event.error);
         setIsRecording(false);
         setActiveRecordingStageId(null);
-        alert(`Mic input error: ${event.error}. Please type in our smart assist panel instead!`);
+        setVoiceLog(prev => [...prev, `[Mic Error] ${event.error}. You can type your update in the box below instead.`]);
       };
 
       recognition.onend = () => {
@@ -229,32 +229,61 @@ export const WorkerDashboard: React.FC = () => {
     if (!stage) return;
 
     const text = transcript.toLowerCase();
-    let matchedAny = false;
+
+    // Negation detection so "the valve is NOT checked" never marks the item done.
+    // Mirrors the backend voice-update matcher (English + Hindi/Hinglish/Punjabi).
+    const words = text.split(/[^a-z'ऀ-ॿ]+/i).filter(Boolean);
+    const NEG_WORDS = new Set([
+      "not", "no", "never", "incomplete", "pending", "unfinished", "dont", "doesnt",
+      "havent", "hasnt", "isnt", "cant", "na", "nahi", "nahin", "nhi", "nai", "mat",
+      "baaki", "adhura", "adhoora",
+    ]);
+    const NEG_PHRASES = ["n't", "not yet", "abhi nahi", "nahi hua", "nahi kiya", "baaki hai", "nahi hai"];
+    const isNegative = words.some(w => NEG_WORDS.has(w)) || NEG_PHRASES.some(p => text.includes(p));
+
+    let changed = false;
+    let understood = false;
 
     const updatedChecklist = stage.checklist.map(item => {
       const itemText = item.text.toLowerCase();
       // Extract keywords for comparison (ignore small filler words)
       const keywords = itemText.split(/\s+/).filter(w => w.length > 3);
-      
+
       const directMatch = text.includes(itemText);
       const kwMatchCount = keywords.filter(kw => text.includes(kw)).length;
-      
-      // If we match direct statement OR most of the keywords, mark as complete
+
+      // If we match direct statement OR most of the keywords, this item is referenced
       const isMatch = directMatch || (keywords.length > 0 && kwMatchCount >= Math.min(2, keywords.length));
 
-      if (isMatch && !item.completed) {
-        matchedAny = true;
-        setVoiceLog(prev => [...prev, `[Auto-Verified]: Checked "${item.text}"`]);
+      if (!isMatch) return item;
+      understood = true;
+
+      if (isNegative) {
+        // Worker explicitly said this is NOT done — never auto-complete it.
+        if (item.completed) {
+          changed = true;
+          setVoiceLog(prev => [...prev, `[Marked Pending] "${item.text}" — heard a "not done" update`]);
+          return { ...item, completed: false };
+        }
+        setVoiceLog(prev => [...prev, `[Kept Pending] "${item.text}" — heard a "not done" update`]);
+        return item;
+      }
+
+      if (!item.completed) {
+        changed = true;
+        setVoiceLog(prev => [...prev, `[Auto-Verified] Checked "${item.text}"`]);
         return { ...item, completed: true };
       }
+      setVoiceLog(prev => [...prev, `[Already Done] "${item.text}"`]);
       return item;
     });
 
-    if (matchedAny) {
+    if (changed) {
       dbStore.updateOrderStageDetails(selectedOrder.id, stageId, {
         checklist: updatedChecklist
       });
-    } else {
+    }
+    if (!understood) {
       setVoiceLog(prev => [...prev, `[No Match] Speech received: "${transcript}"`]);
     }
   };

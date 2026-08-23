@@ -141,6 +141,39 @@ const orders = {
   updateStatus: (id: string, status: string) =>
     request('PATCH', `/api/orders/worker/${id}/status`, { status }, getToken() || undefined),
 
+  /**
+   * Worker/Manager/Owner: submit a SPOKEN checklist update for an order.
+   * Sends the recorded audio to the backend, which transcribes it with Groq
+   * Whisper and matches it to checklist items with negation-aware logic
+   * (server-side, browser-independent). Returns the transcript + matched items.
+   */
+  voiceUpdate: async (
+    orderId: string,
+    audioBlob: Blob
+  ): Promise<{
+    transcript: string;
+    matches: Array<{ id: string; label: string; newStatus: string; confidence: number; method: string }>;
+    message?: string;
+  }> => {
+    const formData = new FormData();
+    formData.append('audio', audioBlob, 'update.webm');
+    const headers: Record<string, string> = {};
+    const token = getToken();
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+    const res = await fetch(`${BASE_URL}/api/orders/${orderId}/voice-update`, {
+      method: 'POST',
+      headers,
+      body: formData,
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({ error: 'Voice update failed' }));
+      throw new Error(err.error || err.message || 'Voice update failed');
+    }
+    return res.json();
+  },
+
   /** Customer: get my orders */
   getCustomerOrders: () =>
     request('GET', '/api/customers/my-orders', undefined, getToken() || undefined),
