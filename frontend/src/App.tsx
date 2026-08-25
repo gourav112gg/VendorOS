@@ -16,6 +16,7 @@ import { AdminLogin } from "./pages/AdminLogin";
 import { AdminDashboard } from "./pages/AdminDashboard";
 import { ShortcutBadge } from "./components/ShortcutBadge";
 import { FloatingChatbot } from "./components/FloatingChatbot";
+import { NotFoundPage } from "@/components/ui/404-page-not-found";
 import { motion, AnimatePresence } from "motion/react";
 import {
   Layers,
@@ -55,15 +56,35 @@ const SuperAdminPortalApp: React.FC = () => {
 
 import Lenis from "lenis";
 
+const isKnownPath = (path: string) => {
+  return (
+    path === "/" ||
+    path === "" ||
+    path.startsWith("/super-admin") ||
+    path.startsWith("/profile") ||
+    path.startsWith("/portal") ||
+    path.startsWith("/order/") ||
+    path.startsWith("/dispatch/")
+  );
+};
+
 const MainLayout: React.FC = () => {
-  if (window.location.pathname.startsWith('/super-admin')) {
+  const [currentPath, setCurrentPath] = useState(window.location.pathname);
+
+  useEffect(() => {
+    const handlePopState = () => setCurrentPath(window.location.pathname);
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
+  }, []);
+
+  if (currentPath.startsWith('/super-admin')) {
     return <SuperAdminPortalApp />;
   }
   const { user, loading } = useAuth();
   const { t } = useTranslation();
   const [authScreen, setAuthScreen] = useState<
-    "landing" | "login" | "signup" | "public"
-  >("landing");
+    "landing" | "login" | "signup" | "public" | "404"
+  >(!isKnownPath(currentPath) ? "404" : "landing");
   const [selectedTier, setSelectedTier] = useState<string | undefined>(undefined);
   const [showShortcutsHelp, setShowShortcutsHelp] = useState(false);
   const [toastMsg, setToastMsg] = useState<string | null>(null);
@@ -240,6 +261,18 @@ const MainLayout: React.FC = () => {
   }
 
   if (!user) {
+    if (authScreen === "404") {
+      return (
+        <>
+          <ThemeManager />
+          <NotFoundPage onNavigateHome={() => {
+            setAuthScreen(user ? "landing" : "landing");
+            window.history.pushState({}, "", "/");
+          }} />
+        </>
+      );
+    }
+
     if (authScreen === "public") {
       return (
         <PublicCompanyProfile onBackToLogin={() => setAuthScreen("login")} />
@@ -296,6 +329,18 @@ const MainLayout: React.FC = () => {
             </motion.div>
           )}
         </AnimatePresence>
+      </>
+    );
+  }
+
+  if (authScreen === "404") {
+    return (
+      <>
+        <ThemeManager />
+        <NotFoundPage onNavigateHome={() => {
+          setAuthScreen("landing");
+          window.history.pushState({}, "", "/");
+        }} />
       </>
     );
   }

@@ -177,6 +177,12 @@ export interface TranslationDictionary {
   pendingChecklists: string;
   trackMyOrder: string;
   myOrders: string;
+  http404: string;
+  lostTitle: string;
+  lostDesc: string;
+  returnDashboard: string;
+  goToHome: string;
+  goBack: string;
 }
 
 export const translations: Record<Language, TranslationDictionary> = {
@@ -343,6 +349,12 @@ export const translations: Record<Language, TranslationDictionary> = {
     pendingChecklists: "Pending Checklists",
     trackMyOrder: "Track My Order",
     myOrders: "My Orders",
+    http404: "HTTP 404 • Resource Not Found",
+    lostTitle: "Looks like you're lost",
+    lostDesc: "The operational dispatch, entity view, or route you are looking for is unavailable or has been archived.",
+    returnDashboard: "Return to Dashboard",
+    goToHome: "Go to Home",
+    goBack: "Go Back",
   },
   hi: {
     vendorOS: "वेंडर-ओएस",
@@ -507,6 +519,12 @@ export const translations: Record<Language, TranslationDictionary> = {
     pendingChecklists: "लंबित चेकलिस्ट",
     trackMyOrder: "मेरा आदेश ट्रैक करें",
     myOrders: "मेरे आदेश",
+    http404: "HTTP 404 • पृष्ठ नहीं मिला",
+    lostTitle: "लगता है आप भटक गए हैं",
+    lostDesc: "आप जिस कार्य, दृश्य या पृष्ठ की तलाश कर रहे हैं वह अनुपलब्ध है।",
+    returnDashboard: "डैशबोर्ड पर वापस जाएं",
+    goToHome: "होम पर जाएं",
+    goBack: "पीछे जाएं",
   },
   pa: {
     vendorOS: "ਵੇਂਡਰ-ਓ.ਐਸ",
@@ -671,5 +689,11 @@ export const translations: Record<Language, TranslationDictionary> = {
     pendingChecklists: "ਬਕਾਇਆ ਚੈੱਕਲਿਸਟਾਂ",
     trackMyOrder: "ਮੇਰਾ ਆਰਡਰ ਟ੍ਰੈਕ ਕਰੋ",
     myOrders: "ਮੇਰੇ ਆਰਡਰ",
+    http404: "HTTP 404 • ਪੰਨਾ ਨਹੀਂ ਮਿਲਿਆ",
+    lostTitle: "ਲੱਗਦਾ ਹੈ ਤੁਸੀਂ ਗੁਆਚ ਗਏ ਹੋ",
+    lostDesc: "ਜਿਸ ਕਾਰਜ ਜਾਂ ਪੰਨੇ ਦੀ ਤੁਸੀਂ ਭਾਲ ਕਰ ਰਹੇ ਹੋ ਉਹ ਉਪਲਬਧ ਨਹੀਂ ਹੈ।",
+    returnDashboard: "ਡੈਸ਼ਬੋਰਡ 'ਤੇ ਵਾਪਸ ਜਾਓ",
+    goToHome: "ਹੋਮ 'ਤੇ ਜਾਓ",
+    goBack: "ਪਿੱਛੇ ਜਾਓ",
   },
 };
