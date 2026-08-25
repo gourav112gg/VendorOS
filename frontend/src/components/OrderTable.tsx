@@ -127,14 +127,16 @@ export const OrderTable: React.FC<OrderTableProps> = ({
                   <td className="p-3.5 font-bold text-white">{formatCurrency(ord.value || 0)}</td>
                   <td className="p-3.5">
                     <span
-                      className={`px-2 py-0.5 rounded-sm text-[9px] uppercase tracking-wider font-bold border ${
+                      className={`px-2.5 py-1 rounded-sm text-xs font-mono uppercase tracking-wider font-semibold border ${
                         ord.stage === "Completed"
                           ? "bg-[#0D2A1D] text-emerald-400 border-emerald-950/40"
                           : ord.stage === "In Progress"
                           ? "bg-[#0D1D2D] text-blue-400 border-blue-950/40"
-                          : ord.stage === "Assigned"
-                          ? "bg-[#2D1F0D] text-amber-400 border-amber-950/40"
-                          : "bg-[#1A1A1A] text-[#888888] border-[#262626]"
+                          : ord.stage === "Dispatched"
+                          ? "bg-[#1D122D] text-purple-400 border-purple-950/40"
+                          : ord.stage === "Scheduled"
+                          ? "bg-[#1D122D] text-purple-400 border-purple-950/40"
+                          : "bg-[#2D220D] text-amber-400 border-amber-950/40"
                       }`}
                     >
                       {ord.stage}

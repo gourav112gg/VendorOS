@@ -100,60 +100,72 @@ export const AnalyticsTab: React.FC<AnalyticsTabProps> = ({
     <motion.div
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+      transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] as const }}
       className="space-y-6"
       id="scale-analytics-dashboard"
     >
-      {/* Top metrics bar */}
+      {/* Top Headline Metrics Bar */}
       <div className="vos-stagger grid grid-cols-1 md:grid-cols-3 gap-6">
         <motion.div
           whileHover={{ y: -3 }}
           transition={{ type: "spring", stiffness: 300, damping: 22 }}
-          className="bg-[#111111] border border-[#222222] p-5 rounded-sm shadow-md hover:border-[#333333]"
+          className="bg-[#111111] border border-[#222222] p-5 rounded-sm shadow-md hover:border-[#333333] transition-all"
         >
-          <span className="text-[9px] font-mono text-[#555555] uppercase tracking-widest block">
-            Consolidated Category Spend
-          </span>
-          <span className="text-2xl font-mono font-bold text-white mt-1.5 block">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-mono font-bold text-[#A1A1AA] uppercase tracking-wider block">
+              Consolidated Category Spend
+            </span>
+            <span className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded-sm text-[10px] font-mono font-semibold uppercase">
+              Target Met
+            </span>
+          </div>
+          <span className="text-2xl font-mono font-bold text-white mt-2 block">
             ₹2,20,000
           </span>
-          <p className="text-[10px] text-emerald-400 mt-1 flex items-center gap-1 font-mono font-semibold">
-            <TrendingUp className="w-3 h-3" /> -12.5% reduction via AI
-            recommendations
+          <p className="text-xs text-emerald-400 mt-1.5 flex items-center gap-1 font-mono font-semibold">
+            <TrendingUp className="w-3.5 h-3.5" /> ▼ 12.5% vs Prior Month (AI Optimized)
           </p>
         </motion.div>
 
         <motion.div
           whileHover={{ y: -3 }}
           transition={{ type: "spring", stiffness: 300, damping: 22 }}
-          className="bg-[#111111] border border-[#222222] p-5 rounded-sm shadow-md hover:border-[#333333]"
+          className="bg-[#111111] border border-[#222222] p-5 rounded-sm shadow-md hover:border-[#333333] transition-all"
         >
-          <span className="text-[9px] font-mono text-[#555555] uppercase tracking-widest block">
-            Average Supplier Lead Delay
-          </span>
-          <span className="text-2xl font-mono font-bold text-white mt-1.5 block">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-mono font-bold text-[#A1A1AA] uppercase tracking-wider block">
+              Average Supplier Lead Delay
+            </span>
+            <span className="bg-amber-500/10 text-amber-400 border border-amber-500/20 px-2 py-0.5 rounded-sm text-[10px] font-mono font-semibold uppercase">
+              Alert Trigger
+            </span>
+          </div>
+          <span className="text-2xl font-mono font-bold text-white mt-2 block">
             12.5 hrs
           </span>
-          <p className="text-[10px] text-amber-500 mt-1 flex items-center gap-1 font-mono font-semibold">
-            <AlertCircle className="w-3 h-3" /> Slight delivery delays from
-            RapidHVAC Whsl
+          <p className="text-xs text-amber-400 mt-1.5 flex items-center gap-1 font-mono font-semibold">
+            <AlertCircle className="w-3.5 h-3.5" /> ▲ 2.1 hrs above 10h SLA threshold
           </p>
         </motion.div>
 
         <motion.div
           whileHover={{ y: -3 }}
           transition={{ type: "spring", stiffness: 300, damping: 22 }}
-          className="bg-[#111111] border border-[#222222] p-5 rounded-sm shadow-md hover:border-[#333333]"
+          className="bg-[#111111] border border-[#222222] p-5 rounded-sm shadow-md hover:border-[#333333] transition-all"
         >
-          <span className="text-[9px] font-mono text-[#555555] uppercase tracking-widest block">
-            Worker Job Response Speed
-          </span>
-          <span className="text-2xl font-mono font-bold text-white mt-1.5 block">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-mono font-bold text-[#A1A1AA] uppercase tracking-wider block">
+              Technician Job Response Speed
+            </span>
+            <span className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded-sm text-[10px] font-mono font-semibold uppercase">
+              100% SLA
+            </span>
+          </div>
+          <span className="text-2xl font-mono font-bold text-white mt-2 block">
             3.9 hrs
           </span>
-          <p className="text-[10px] text-emerald-400 mt-1 flex items-center gap-1 font-mono font-semibold">
-            <CheckCircle className="w-3 h-3" /> 100% of workers meeting SLA
-            bounds
+          <p className="text-xs text-emerald-400 mt-1.5 flex items-center gap-1 font-mono font-semibold">
+            <CheckCircle className="w-3.5 h-3.5" /> 100% of dispatched orders within SLA bounds
           </p>
         </motion.div>
       </div>
@@ -162,14 +174,15 @@ export const AnalyticsTab: React.FC<AnalyticsTabProps> = ({
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Supplier Spend Chart */}
         <div className="bg-[#111111] border border-[#222222] p-6 rounded-sm space-y-4 shadow-md">
-          <div>
-            <h3 className="text-[10px] font-mono font-bold text-[#666666] uppercase tracking-widest">
-              SUPPLIER SPEND ANALYSIS
-            </h3>
-            <span className="text-xs text-[#555555] mt-1 block">
-              Historical cost vectors comparing standard spend versus
-              AI-optimized spending.
-            </span>
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-xs font-mono font-bold text-[#A1A1AA] uppercase tracking-wider">
+                Supplier Spend Analysis & Forecast
+              </h3>
+              <span className="text-xs text-[#888888] mt-1 block">
+                Historical cost vectors comparing standard spend versus AI-optimized procurement.
+              </span>
+            </div>
           </div>
 
           <div className="h-64 w-full">
@@ -198,20 +211,21 @@ export const AnalyticsTab: React.FC<AnalyticsTabProps> = ({
                 <XAxis
                   dataKey="name"
                   stroke={axisColor}
-                  fontSize={10}
+                  fontSize={11}
                   className="font-mono"
                 />
                 <YAxis
                   stroke={axisColor}
-                  fontSize={10}
+                  fontSize={11}
                   className="font-mono"
                 />
                 <Tooltip
                   contentStyle={{
                     backgroundColor: tooltipBg,
                     border: `1px solid ${tooltipBorder}`,
-                    fontSize: "11px",
+                    fontSize: "12px",
                     color: tooltipText,
+                    borderRadius: "4px",
                   }}
                 />
                 <Area
@@ -240,12 +254,11 @@ export const AnalyticsTab: React.FC<AnalyticsTabProps> = ({
         {/* AI Spend Optimization Actions */}
         <div className="bg-[#111111] border border-[#222222] p-6 rounded-sm space-y-4 shadow-md">
           <div>
-            <h3 className="text-[10px] font-mono font-bold text-[#666666] uppercase tracking-widest">
+            <h3 className="text-xs font-mono font-bold text-[#A1A1AA] uppercase tracking-wider">
               AI Spend Optimization Feed
             </h3>
-            <span className="text-xs text-[#555555] mt-1 block">
-              Immediate actions to consolidate orders and reduce procurement
-              leakage.
+            <span className="text-xs text-[#888888] mt-1 block">
+              Immediate actions to consolidate orders and eliminate procurement leakage.
             </span>
           </div>
 
@@ -257,16 +270,16 @@ export const AnalyticsTab: React.FC<AnalyticsTabProps> = ({
                     {rec.category}
                   </span>
                   <span
-                    className={`text-[10px] font-mono font-bold ${rec.changePercent > 0 ? "text-amber-500" : "text-emerald-400"}`}
+                    className={`text-xs font-mono font-bold ${rec.changePercent > 0 ? "text-amber-400" : "text-emerald-400"}`}
                   >
                     {rec.changePercent > 0
                       ? `+${rec.changePercent}%`
                       : `${rec.changePercent}%`}
                   </span>
                 </div>
-                <div className="bg-[#0A0A0A] border border-[#1C1C1C] p-2.5 rounded-sm flex items-start gap-2 text-xs hover:border-[#2A2A2A] transition-colors">
+                <div className="bg-[#0A0A0A] border border-[#1C1C1C] p-3 rounded-sm flex items-start gap-2.5 text-xs hover:border-[#2A2A2A] transition-colors">
                   <Sparkles className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
-                  <p className="text-[#888888] leading-relaxed">
+                  <p className="text-[#E5E5E5] leading-relaxed">
                     {rec.suggestedAction}
                   </p>
                 </div>
@@ -281,11 +294,11 @@ export const AnalyticsTab: React.FC<AnalyticsTabProps> = ({
         {/* Supplier Lead Delay Chart */}
         <div className="bg-[#111111] border border-[#222222] p-6 rounded-sm space-y-4 shadow-md">
           <div>
-            <h3 className="text-[10px] font-mono font-bold text-[#666666] uppercase tracking-widest">
+            <h3 className="text-xs font-mono font-bold text-[#A1A1AA] uppercase tracking-wider">
               Supplier Lead Time Delays (Hours)
             </h3>
-            <span className="text-xs text-[#555555] mt-1 block">
-              Lower values indicate faster warehouse-to-site supply cycles.
+            <span className="text-xs text-[#888888] mt-1 block">
+              Lower values indicate faster warehouse-to-site fulfillment cycles.
             </span>
           </div>
 
@@ -299,20 +312,21 @@ export const AnalyticsTab: React.FC<AnalyticsTabProps> = ({
                 <XAxis
                   dataKey="name"
                   stroke={axisColor}
-                  fontSize={10}
+                  fontSize={11}
                   className="font-mono"
                 />
                 <YAxis
                   stroke={axisColor}
-                  fontSize={10}
+                  fontSize={11}
                   className="font-mono"
                 />
                 <Tooltip
                   contentStyle={{
                     backgroundColor: tooltipBg,
                     border: `1px solid ${tooltipBorder}`,
-                    fontSize: "11px",
+                    fontSize: "12px",
                     color: tooltipText,
+                    borderRadius: "4px",
                   }}
                 />
                 <Bar
@@ -329,10 +343,10 @@ export const AnalyticsTab: React.FC<AnalyticsTabProps> = ({
         {/* Worker SLA speeds */}
         <div className="bg-[#111111] border border-[#222222] p-6 rounded-sm space-y-4 shadow-md">
           <div>
-            <h3 className="text-[10px] font-mono font-bold text-[#666666] uppercase tracking-widest">
+            <h3 className="text-xs font-mono font-bold text-[#A1A1AA] uppercase tracking-wider">
               Technician Average Job Completion (Hours)
             </h3>
-            <span className="text-xs text-[#555555] mt-1 block">
+            <span className="text-xs text-[#888888] mt-1 block">
               Speed benchmark per technician on completed work orders.
             </span>
           </div>
@@ -347,20 +361,21 @@ export const AnalyticsTab: React.FC<AnalyticsTabProps> = ({
                 <XAxis
                   dataKey="name"
                   stroke={axisColor}
-                  fontSize={10}
+                  fontSize={11}
                   className="font-mono"
                 />
                 <YAxis
                   stroke={axisColor}
-                  fontSize={10}
+                  fontSize={11}
                   className="font-mono"
                 />
                 <Tooltip
                   contentStyle={{
                     backgroundColor: tooltipBg,
                     border: `1px solid ${tooltipBorder}`,
-                    fontSize: "11px",
+                    fontSize: "12px",
                     color: tooltipText,
+                    borderRadius: "4px",
                   }}
                 />
                 <Bar
