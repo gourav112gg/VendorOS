@@ -16,12 +16,7 @@ import {
   TrendingUp,
   AlertCircle,
   Sparkles,
-  Building,
-  Award,
   CheckCircle,
-  Package,
-  ArrowUpRight,
-  DollarSign,
 } from "lucide-react";
 import { Company, SpendIntelligenceRecord } from "../types";
 import dbStore from "../services/store";

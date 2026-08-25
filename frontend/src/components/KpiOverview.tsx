@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import dbStore from '../services/store';
 import { InventoryItem, Shipment, ServiceOrder, UserProfile } from '../types';
 import { 
-  AlertTriangle, Package, Truck, ClipboardList, Check, Plus, 
-  Activity, ArrowUpRight, TrendingUp, RefreshCw, Layers, ShieldCheck, 
-  ChevronRight, Calendar, MapPin, Sparkles, PlusCircle, HelpCircle
+  AlertTriangle, Truck, ClipboardList, Check, Plus, 
+  Activity, TrendingUp, RefreshCw, ShieldCheck, 
+  ChevronRight, Sparkles, HelpCircle, PlusCircle, MapPin
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useAuth } from '../context/AuthContext';
@@ -20,20 +20,13 @@ export const KpiOverview: React.FC<KpiOverviewProps> = ({ companyId, currentUser
   const { t } = useTranslation();
   const [inventory, setInventory] = useState<InventoryItem[]>([]);
 
-  const formatCurrency = (amount: number) => {
-    if (preferences.currency === 'INR') {
-      return new Intl.NumberFormat('en-IN', {
-        style: 'currency',
-        currency: 'INR',
-        maximumFractionDigits: 0
-      }).format(amount);
-    }
-    return new Intl.NumberFormat('en-US', {
+  const formatCurrency = (amount: number) => 
+    new Intl.NumberFormat(preferences.currency === 'INR' ? 'en-IN' : 'en-US', {
       style: 'currency',
-      currency: 'USD',
+      currency: preferences.currency === 'INR' ? 'INR' : 'USD',
       maximumFractionDigits: 0
     }).format(amount);
-  };
+
   const [shipments, setShipments] = useState<Shipment[]>([]);
   const [orders, setOrders] = useState<ServiceOrder[]>([]);
   const [lastRefreshed, setLastRefreshed] = useState<string>(new Date().toLocaleTimeString());
@@ -68,8 +61,7 @@ export const KpiOverview: React.FC<KpiOverviewProps> = ({ companyId, currentUser
   const loadKpis = () => {
     setInventory(dbStore.getInventory(companyId));
     setShipments(dbStore.getShipments(companyId));
-    const companyOrders = dbStore['state'].orders.filter((o: ServiceOrder) => o.companyId === companyId);
-    setOrders(companyOrders);
+    setOrders(dbStore.getOrders(companyId));
     setLastRefreshed(new Date().toLocaleTimeString());
   };
 
