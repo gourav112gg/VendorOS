@@ -501,26 +501,26 @@ export const OwnerDashboard: React.FC = () => {
                 <Building className="w-96 h-96" />
               </div>
               <div className="relative z-10">
-                <span className="bg-[#1A1A1A] text-[#888888] px-3 py-1 rounded-sm text-[9px] font-mono uppercase tracking-widest border border-[#222222]">
+                <span className="bg-[#1A1A1A] text-[#A1A1AA] px-3 py-1 rounded-sm text-xs font-mono uppercase tracking-wider border border-[#222222] font-semibold">
                   {t('adminSystemProfile', 'Admin System Profile')}
                 </span>
                 <h3 className="text-2xl font-serif italic font-light mt-4 tracking-tight text-white">{t('realtimeArchitecture', 'VendorOS Real-Time Architecture')}</h3>
-                <p className="text-[#888888] mt-2 text-sm max-w-md leading-relaxed">
+                <p className="text-[#A1A1AA] mt-2 text-xs font-sans max-w-md leading-relaxed">
                   {t('realtimeArchitectureDesc', 'Your team, operational domains, and field service requests are managed via local persistence.')} 
                   All permissions rules listed in <code className="font-mono bg-[#0A0A0A] border border-[#222222] px-1.5 py-0.5 rounded-sm text-[#E5E5E5]">firestore.rules</code> are actively simulated inside the React state router.
                 </p>
 
                 <div className="grid grid-cols-2 gap-4 mt-6 pt-6 border-t border-[#1D1D1D]">
                   <div>
-                    <span className="text-[10px] font-mono text-[#666666] uppercase tracking-widest block">{t('sessionStatus', 'Session Status')}</span>
-                    <span className="text-xs font-semibold font-sans mt-1 block flex items-center text-[#888888]">
-                      <span className="w-2 h-2 bg-emerald-500 rounded-full mr-2 inline-block"></span>
+                    <span className="text-xs font-mono text-[#888888] uppercase tracking-wider block">{t('sessionStatus', 'Session Status')}</span>
+                    <span className="text-xs font-semibold font-sans mt-1.5 block flex items-center text-white">
+                      <span className="w-2 h-2 bg-emerald-500 rounded-full mr-2 inline-block animate-pulse"></span>
                       {t('localActiveSimulation', 'Local Active Simulation')}
                     </span>
                   </div>
                   <div>
-                    <span className="text-[10px] font-mono text-[#666666] uppercase tracking-widest block">{t('systemClaimsState', 'System Claims State')}</span>
-                    <span className="text-xs font-mono mt-1 block truncate text-[#888888]">
+                    <span className="text-xs font-mono text-[#888888] uppercase tracking-wider block">{t('systemClaimsState', 'System Claims State')}</span>
+                    <span className="text-xs font-mono mt-1.5 block truncate text-[#A1A1AA]">
                       role: 'Owner' • companyId: {user.companyId}
                     </span>
                   </div>
@@ -529,39 +529,39 @@ export const OwnerDashboard: React.FC = () => {
             </div>
 
             {/* Quick Actions List */}
-            <div className="bg-[#111111] p-6 rounded-sm border border-[#222222]">
-              <h3 className="text-[10px] font-mono font-bold text-[#666666] uppercase tracking-widest mb-4 block">{t('ownerQuickOps', 'Owner Quick Operations')}</h3>
+            <div className="bg-[#111111] p-6 rounded-sm border border-[#222222] shadow-md">
+              <h3 className="text-xs font-mono font-bold text-[#A1A1AA] uppercase tracking-wider mb-4 block">{t('ownerQuickOps', 'Owner Quick Operations')}</h3>
               <div className="space-y-3">
                 <button 
                   onClick={() => { setActiveSubTab('domains'); handleOpenAddDomain(); }}
-                  className="w-full flex items-center justify-between p-4 rounded-sm border border-[#222222] bg-[#0A0A0A] hover:bg-[#1A1A1A] text-left transition-all cursor-pointer"
+                  className="w-full flex items-center justify-between p-4 rounded-sm border border-[#222222] bg-[#0A0A0A] hover:bg-[#1A1A1A] text-left transition-all cursor-pointer min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/80"
                 >
                   <div className="flex items-center space-x-3">
-                    <div className="p-2 bg-[#111111] border border-[#222222] text-[#888888] rounded-sm">
+                    <div className="p-2.5 bg-[#111111] border border-[#222222] text-emerald-400 rounded-sm">
                       <Layers className="w-4 h-4" />
                     </div>
                     <div>
-                      <span className="block text-xs font-semibold text-white uppercase tracking-widest">{t('addOpDomain', 'Add Operational Domain')}</span>
-                      <span className="block text-[11px] text-[#666666] mt-0.5">{t('addOpDomainDesc', 'Add categories like HVAC, Plumbing, or custom specializations.')}</span>
+                      <span className="block text-xs font-semibold text-white uppercase tracking-wider">{t('addOpDomain', 'Add Operational Domain')}</span>
+                      <span className="block text-xs text-[#888888] mt-0.5">{t('addOpDomainDesc', 'Add categories like HVAC, Plumbing, or custom specializations.')}</span>
                     </div>
                   </div>
-                  <Plus className="w-4 h-4 text-[#444444]" />
+                  <Plus className="w-4 h-4 text-[#888888]" />
                 </button>
 
                 <button 
                   onClick={() => setActiveSubTab('team')}
-                  className="w-full flex items-center justify-between p-4 rounded-sm border border-[#222222] bg-[#0A0A0A] hover:bg-[#1A1A1A] text-left transition-all cursor-pointer"
+                  className="w-full flex items-center justify-between p-4 rounded-sm border border-[#222222] bg-[#0A0A0A] hover:bg-[#1A1A1A] text-left transition-all cursor-pointer min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/80"
                 >
                   <div className="flex items-center space-x-3">
-                    <div className="p-2 bg-[#111111] border border-[#222222] text-[#888888] rounded-sm">
+                    <div className="p-2.5 bg-[#111111] border border-[#222222] text-blue-400 rounded-sm">
                       <Users className="w-4 h-4" />
                     </div>
                     <div>
-                      <span className="block text-xs font-semibold text-white uppercase tracking-widest">{t('manageTeamMembers', 'Manage Team Members')}</span>
-                      <span className="block text-[11px] text-[#666666] mt-0.5">{t('manageTeamDesc', 'View registered Managers and Workers, or simulate session deletion.')}</span>
+                      <span className="block text-xs font-semibold text-white uppercase tracking-wider">{t('manageTeamMembers', 'Manage Team Members')}</span>
+                      <span className="block text-xs text-[#888888] mt-0.5">{t('manageTeamDesc', 'View registered Managers and Workers, or simulate session deletion.')}</span>
                     </div>
                   </div>
-                  <Users className="w-4 h-4 text-[#444444]" />
+                  <Users className="w-4 h-4 text-[#888888]" />
                 </button>
               </div>
             </div>
