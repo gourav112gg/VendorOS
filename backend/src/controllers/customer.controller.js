@@ -1,6 +1,6 @@
 const admin = require("../config/firebaseAdmin");
 const User = require("../models/User");
-const generateToken = require("../utils/generateToken");
+const { generateToken } = require("../utils/jwt");
 
 // ================= CUSTOMER SIGNUP =================
 const customerSignup = async (req, res) => {
