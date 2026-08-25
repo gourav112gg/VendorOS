@@ -14,6 +14,7 @@ import { ActivityLog } from '../components/ActivityLog';
 import { KpiOverview } from '../components/KpiOverview';
 import { ShortcutBadge } from '../components/ShortcutBadge';
 import { NotificationCenter } from '../components/NotificationCenter';
+import { OrderTable } from '../components/OrderTable';
 
 // Subscription Gated Tabs
 import { AiCopilotTab } from '../components/AiCopilotTab';
@@ -997,102 +998,14 @@ export const OwnerDashboard: React.FC = () => {
               </button>
             </div>
 
-            {orders.length === 0 ? (
-              <div className="p-12 text-center text-[#666666] text-xs font-mono">
-                No orders logged for this company.
-              </div>
-            ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full text-left border-collapse">
-                  <thead>
-                    <tr className="bg-[#0D0D0D] text-[#666666] font-mono text-[9px] uppercase tracking-widest border-b border-[#222222]">
-                      <th className="px-6 py-4">Order ID</th>
-                      <th className="px-6 py-4">Title / Request</th>
-                      <th className="px-6 py-4">Customer</th>
-                      <th className="px-6 py-4">Assigned Manager</th>
-                      <th className="px-6 py-4">Assigned Tech</th>
-                      <th className="px-6 py-4">Stage</th>
-                      <th className="px-6 py-4">Value</th>
-                      <th className="px-6 py-4 text-right">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-[#1A1A1A] text-xs">
-                    {orders.map((order) => {
-                      const isGated = order.belowMinimumThreshold && order.thresholdApprovalStatus === 'Pending';
-                      return (
-                        <tr 
-                          key={order.id} 
-                          className={`hover:bg-[#0D0D0D] transition-colors cursor-pointer ${
-                            isGated ? 'bg-[#1A1208]/20 hover:bg-[#1A1208]/40' : ''
-                          }`}
-                          onClick={() => setViewingOrder(order)}
-                        >
-                          <td className="px-6 py-4 font-mono text-xs text-[#666666]">
-                            <div className="flex items-center space-x-1.5">
-                              <span>{order.id}</span>
-                              {order.belowMinimumThreshold && (
-                                <span className="w-2 h-2 rounded-full bg-amber-500" title="Below Minimum Threshold" />
-                              )}
-                            </div>
-                          </td>
-                          <td className="px-6 py-4">
-                            <span className="font-semibold text-white block">{order.title}</span>
-                            <span className="text-xs text-[#666666] flex items-center mt-0.5 font-mono">
-                              <MapPin className="w-3.5 h-3.5 mr-1 text-[#444444]" /> {order.address}
-                            </span>
-                          </td>
-                          <td className="px-6 py-4 text-[#888888]">{order.customerName}</td>
-                          <td className="px-6 py-4">
-                            {order.managerId ? (
-                              <span className="font-mono text-xs text-white bg-[#222222] border border-[#333333] px-2 py-0.5 rounded-sm">
-                                {order.managerName}
-                              </span>
-                            ) : (
-                              <span className="font-mono text-xs text-[#555555] italic">Unassigned</span>
-                            )}
-                          </td>
-                          <td className="px-6 py-4">
-                            {order.workerId ? (
-                              <span className="font-mono font-bold text-emerald-400 bg-[#0D2A1D] border border-emerald-950/40 px-2 py-0.5 rounded-sm text-[10px] uppercase tracking-widest">
-                                {order.workerName}
-                              </span>
-                            ) : (
-                              <span className="font-mono font-bold text-[#555555] bg-[#111111] border border-[#222222] px-2 py-0.5 rounded-sm text-[10px] uppercase tracking-widest">
-                                Unassigned
-                              </span>
-                            )}
-                          </td>
-                          <td className="px-6 py-4">
-                            <span className={`inline-flex items-center px-2 py-0.5 rounded-sm text-[10px] font-mono uppercase tracking-widest font-semibold ${
-                              order.stage === 'Completed'
-                                ? 'bg-[#0D2A1D] text-emerald-400 border border-emerald-950/40'
-                                : order.stage === 'In Progress'
-                                ? 'bg-[#0D1D2D] text-blue-400 border border-blue-950/40'
-                                : order.stage === 'Scheduled'
-                                ? 'bg-[#1D122D] text-purple-400 border border-purple-950/40'
-                                : 'bg-[#2D220D] text-amber-400 border border-amber-950/40'
-                            }`}>
-                              {order.stage}
-                            </span>
-                          </td>
-                          <td className="px-6 py-4 font-mono font-semibold text-white">
-                            {formatCurrency(order.value)}
-                          </td>
-                          <td className="px-6 py-4 text-right" onClick={(e) => e.stopPropagation()}>
-                            <button
-                              onClick={() => setViewingOrder(order)}
-                              className="text-[10px] uppercase font-mono tracking-wider bg-[#1A1A1A] hover:bg-[#2A2A2A] border border-[#222222] hover:border-[#444444] text-[#888888] hover:text-white font-semibold px-2.5 py-1.5 rounded-sm transition-colors cursor-pointer"
-                            >
-                              Manage
-                            </button>
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
-            )}
+            <div className="p-6">
+              <OrderTable
+                orders={orders}
+                onViewOrder={(ord) => setViewingOrder(ord)}
+                currency={preferences.currency}
+                userRole="Owner"
+              />
+            </div>
           </motion.div>
 
           {/* MANUAL ORDER ENTRY POPUP MODAL */}
