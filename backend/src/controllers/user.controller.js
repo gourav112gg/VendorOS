@@ -20,7 +20,7 @@ const getProfile = async (req, res) => {
 
 const updateProfile = async (req, res) => {
   try {
-    const { name, phone } = req.body;
+    const { name, phone, email, role, companyId } = req.body;
     
     if (!name || !name.trim()) {
       return res.status(400).json({
@@ -35,6 +35,18 @@ const updateProfile = async (req, res) => {
 
     if (phone !== undefined) {
       updateFields.phone = phone && phone.trim() ? phone.trim() : undefined;
+    }
+
+    if (email && email.trim()) {
+      updateFields.email = email.trim().toLowerCase();
+    }
+
+    if (role && ['owner', 'manager', 'worker', 'customer'].includes(role.toLowerCase())) {
+      updateFields.role = role.toLowerCase();
+    }
+
+    if (companyId !== undefined) {
+      updateFields.company = companyId || null;
     }
 
     const updatedUser = await User.findByIdAndUpdate(

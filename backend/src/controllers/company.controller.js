@@ -20,12 +20,14 @@ const updateMyCompany = async (req, res) => {
   try {
     const { description, address, minimumOrderValue } = req.body;
 
-    // Find company where owner is req.user._id
-    const company = await Company.findOne({ owner: req.user._id });
+    // Find company where owner is req.user._id or company id matches req.user.company
+    const company = await Company.findOne({
+      $or: [{ owner: req.user._id }, { _id: req.user.company }]
+    });
     if (!company) {
       return res.status(404).json({
         success: false,
-        message: "Company not found for this owner",
+        message: "Company not found for this user",
       });
     }
 

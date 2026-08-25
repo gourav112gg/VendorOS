@@ -239,26 +239,26 @@ const MainLayout: React.FC = () => {
     );
   }
 
-  if (authScreen === "landing") {
-    return (
-      <LandingPage
-        onNavigateToLogin={() => setAuthScreen("login")}
-        onNavigateToSignUp={(tier) => {
-          setSelectedTier(tier);
-          setAuthScreen("signup");
-        }}
-        onNavigateToPublic={() => setAuthScreen("public")}
-      />
-    );
-  }
-
-  if (authScreen === "public") {
-    return (
-      <PublicCompanyProfile onBackToLogin={() => setAuthScreen("login")} />
-    );
-  }
-
   if (!user) {
+    if (authScreen === "public") {
+      return (
+        <PublicCompanyProfile onBackToLogin={() => setAuthScreen("login")} />
+      );
+    }
+
+    if (authScreen === "landing") {
+      return (
+        <LandingPage
+          onNavigateToLogin={() => setAuthScreen("login")}
+          onNavigateToSignUp={(tier) => {
+            setSelectedTier(tier);
+            setAuthScreen("signup");
+          }}
+          onNavigateToPublic={() => setAuthScreen("public")}
+        />
+      );
+    }
+
     return (
       <>
         <ThemeManager />

@@ -761,12 +761,15 @@ class SimulatedStore {
     return this.state.activeSessions.includes(userId);
   }
 
-  public updateUserProfile(userId: string, name: string, phone?: string): void {
-    const user = this.state.users.find(u => u.id === userId);
+  public updateUserProfile(userId: string, name: string, phone?: string, email?: string): void {
+    const user = this.state.users.find(
+      u => u.id === userId || (email && u.email.toLowerCase() === email.toLowerCase())
+    );
     if (user) {
       const oldName = user.name;
       user.name = name.trim();
-      user.phone = phone?.trim();
+      if (phone !== undefined) user.phone = phone ? phone.trim() : undefined;
+      if (email) user.email = email.trim();
       
       this.pushLog({
         id: 'log_' + generateId(),
@@ -1164,6 +1167,16 @@ class SimulatedStore {
     const company = this.state.companies.find(c => c.id === companyId);
     if (company) {
       company.minOrderValue = threshold;
+      this.save();
+    }
+  }
+
+  public updateCompanyProfile(companyId: string, details: { description?: string; address?: string; minimumOrderValue?: number }): void {
+    const company = this.state.companies.find(c => c.id === companyId);
+    if (company) {
+      if (details.description !== undefined) company.description = details.description;
+      if (details.address !== undefined) company.address = details.address;
+      if (details.minimumOrderValue !== undefined) company.minOrderValue = details.minimumOrderValue;
       this.save();
     }
   }

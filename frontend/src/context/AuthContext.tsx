@@ -229,20 +229,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const savedUserId = localStorage.getItem('vendoros_current_user_id');
       const hasToken = !!api.getToken();
 
-      // If session is persisted in localStorage, never forcibly log out on store updates
+      // If session is active and persisted in localStorage, never forcibly log out or overwrite user state
       if (hasToken || savedUserProfile || savedUserId) {
-        const allUsers = dbStore.getUsers();
-        const stillExists = allUsers.find(u => u.id === user.id || u.email.toLowerCase() === user.email.toLowerCase());
-        if (stillExists) {
-          setUser(prev => {
-            if (!prev) return null;
-            return {
-              ...prev,
-              name: stillExists.name,
-              phone: stillExists.phone
-            };
-          });
-        }
         return;
       }
 
@@ -251,7 +239,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const isSessionActive = dbStore.isSessionActive(user.id);
 
       if (!stillExists || !isSessionActive) {
-        // Force immediate logout only if explicitly revoked and no local session stored
         setUser(null);
         setCompany(null);
         localStorage.removeItem('vendoros_current_user_id');
@@ -625,73 +612,111 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const updateProfile = async (name: string, phone?: string, role?: string, companyId?: string, email?: string): Promise<void> => {
-    if (api.getToken() && user) {
-      const res = await api.users.updateProfile({ name, phone, role, companyId, email });
-      if (res.success && res.user) {
-        const updatedUser: UserProfile = {
-          id: res.user._id,
-          name: res.user.name,
-          email: res.user.email,
-          phone: res.user.phone,
-          role: normalizeRole(res.user.role),
-          companyId: res.user.company ? (res.user.company._id || res.user.company) : undefined,
-          createdAt: res.user.createdAt,
-        };
-        setUser(updatedUser);
-        dbStore.updateUserProfile(user.id, name, phone);
-        
-        // Sync local database store email, role and company updates
-        const localU = dbStore.getUsers().find(u => u.id === user.id);
-        if (localU && email) {
-          localU.email = email;
-        }
-        dbStore.updateUserRoleAndCompany(
-          user.id, 
-          role ? (role.charAt(0).toUpperCase() + role.slice(1) as any) : undefined, 
-          companyId
-        );
+    const trimmedName = name.trim();
+    const trimmedPhone = phone ? phone.trim() : undefined;
+    const trimmedEmail = email ? email.trim() : undefined;
 
-        if (res.user.company) {
-          const companyObj: Company = {
-            id: res.user.company._id,
-            name: res.user.company.companyName,
-            createdAt: res.user.company.createdAt,
-            minOrderValue: res.user.company.minimumOrderValue,
-            subscription: res.user.company.subscription,
-            description: res.user.company.description,
-            address: res.user.company.address,
+    let updatedUser: UserProfile | null = null;
+    let updatedCompany: Company | null = company;
+
+    if (api.getToken() && user) {
+      try {
+        const res = await api.users.updateProfile({ 
+          name: trimmedName, 
+          phone: trimmedPhone, 
+          role, 
+          companyId, 
+          email: trimmedEmail 
+        });
+        if (res.success && res.user) {
+          updatedUser = {
+            id: res.user._id,
+            name: res.user.name,
+            email: res.user.email,
+            phone: res.user.phone,
+            role: normalizeRole(res.user.role),
+            companyId: res.user.company ? (res.user.company._id || res.user.company) : undefined,
+            createdAt: res.user.createdAt,
           };
-          setCompany(companyObj);
+          if (res.user.company && typeof res.user.company === 'object') {
+            updatedCompany = {
+              id: res.user.company._id,
+              name: res.user.company.companyName,
+              createdAt: res.user.company.createdAt,
+              minOrderValue: res.user.company.minimumOrderValue,
+              subscription: res.user.company.subscription,
+              description: res.user.company.description,
+              address: res.user.company.address,
+            };
+          }
+        }
+      } catch (err) {
+        console.error("Backend updateProfile error, syncing locally:", err);
+      }
+    }
+
+    if (!updatedUser && user) {
+      updatedUser = {
+        ...user,
+        name: trimmedName,
+        phone: trimmedPhone,
+        email: trimmedEmail || user.email,
+        role: role ? normalizeRole(role) : user.role,
+        companyId: companyId !== undefined ? (companyId || undefined) : user.companyId,
+      };
+    }
+
+    if (updatedUser) {
+      setUser(updatedUser);
+      if (updatedCompany) setCompany(updatedCompany);
+
+      if (user) {
+        dbStore.updateUserProfile(user.id, trimmedName, trimmedPhone, trimmedEmail);
+        if (role || companyId !== undefined) {
+          dbStore.updateUserRoleAndCompany(
+            user.id,
+            role ? (role.charAt(0).toUpperCase() + role.slice(1) as any) : undefined,
+            companyId
+          );
         }
       }
-    } else {
-      return new Promise((resolve) => {
-        setTimeout(() => {
-          if (user) {
-            dbStore.updateUserProfile(user.id, name, phone);
-          }
-          resolve();
-        }, 500);
-      });
+
+      saveSession(updatedUser, updatedCompany);
     }
   };
 
   const updateCompany = async (companyDetails: { description?: string; address?: string; minimumOrderValue?: number }): Promise<void> => {
-    if (api.getToken() && company) {
-      const res = await api.companies.updateMe(companyDetails);
-      if (res.success && res.company) {
-        const companyObj: Company = {
-          id: res.company._id,
-          name: res.company.companyName,
-          createdAt: res.company.createdAt,
-          minOrderValue: res.company.minimumOrderValue,
-          subscription: res.company.subscription,
-          description: res.company.description,
-          address: res.company.address,
-        };
-        setCompany(companyObj);
+    if (!company) return;
+
+    let updatedComp: Company = {
+      ...company,
+      description: companyDetails.description !== undefined ? companyDetails.description : company.description,
+      address: companyDetails.address !== undefined ? companyDetails.address : company.address,
+      minOrderValue: companyDetails.minimumOrderValue !== undefined ? companyDetails.minimumOrderValue : company.minOrderValue,
+    };
+
+    if (api.getToken()) {
+      try {
+        const res = await api.companies.updateMe(companyDetails);
+        if (res.success && res.company) {
+          updatedComp = {
+            id: res.company._id,
+            name: res.company.companyName,
+            createdAt: res.company.createdAt,
+            minOrderValue: res.company.minimumOrderValue,
+            subscription: res.company.subscription,
+            description: res.company.description,
+            address: res.company.address,
+          };
+        }
+      } catch (err) {
+        console.error("Backend updateCompany error, syncing locally:", err);
       }
     }
+
+    setCompany(updatedComp);
+    dbStore.updateCompanyProfile(company.id, companyDetails);
+    saveSession(user, updatedComp);
   };
 
   return (
