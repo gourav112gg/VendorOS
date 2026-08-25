@@ -3,7 +3,7 @@
  * Completely isolated from regular user API calls and token storage.
  */
 
-const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001';
 
 const getAdminToken = (): string | null => localStorage.getItem('vendoros_admin_token');
 const saveAdminToken = (token: string) => localStorage.setItem('vendoros_admin_token', token);

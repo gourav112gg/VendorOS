@@ -3,14 +3,14 @@
  *
  * Connects the React frontend to the Node/Express/MongoDB backend.
  * Base URL is configured via VITE_API_URL environment variable.
- * Falls back to localhost:5000 for local development.
+ * Falls back to localhost:5001 for local development.
  *
  * Usage:
  *   import api from './services/api';
  *   const { data } = await api.auth.ownerLogin({ email, password });
  */
 
-const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001';
 
 // ─── HTTP Helper ───────────────────────────────────────────────────────────────
 

@@ -17,7 +17,7 @@ import { NoDataPlaceholder } from "./NoDataPlaceholder";
 import api from "../services/api";
 import { useAuth } from "../context/AuthContext";
 
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5001';
 
 export interface AiCopilotTabProps {
   company: Company;

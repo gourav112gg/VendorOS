@@ -2,7 +2,7 @@ const Company = require("../models/Company");
 const User = require("../models/User");
 const LoginAttempt = require("../models/LoginAttempt");
 const RateLimit = require("../models/RateLimit");
-const admin = require("../config/firebase");
+const admin = require("../config/firebaseAdmin");
 const SuperAdminAuditLog = require("../models/SuperAdminAuditLog");
 const logAdminAction = require("../utils/auditLogger");
 
