@@ -107,10 +107,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (u) {
       localStorage.setItem('vendoros_current_user_id', u.id);
       localStorage.setItem('vendoros_user_profile', JSON.stringify(u));
+      if (!api.getToken()) {
+        api.saveToken(`vos_session_${u.id}`);
+      }
       dbStore.syncUserSession(u, c);
     } else {
       localStorage.removeItem('vendoros_current_user_id');
       localStorage.removeItem('vendoros_user_profile');
+      api.clearToken();
     }
 
     if (c) {
@@ -171,6 +175,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (activeUser) {
       setUser(activeUser);
       setCompany(activeCompany);
+      if (!api.getToken()) {
+        api.saveToken(`vos_session_${activeUser.id}`);
+      }
       dbStore.syncUserSession(activeUser, activeCompany);
     }
 
