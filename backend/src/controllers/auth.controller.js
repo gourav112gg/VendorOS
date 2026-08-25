@@ -1,6 +1,6 @@
 const User = require("../models/User");
 const Company = require("../models/Company");
-const generateToken = require("../utils/generateToken");
+const { generateToken } = require("../utils/jwt");
 const admin = require("../config/firebaseAdmin");
 const LoginAttempt = require("../models/LoginAttempt");
 const RateLimit = require("../models/RateLimit");

@@ -156,29 +156,29 @@ export const AiCopilotTab: React.FC<AiCopilotTabProps> = ({
     <motion.div
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+      transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] as const }}
       className="space-y-6"
       id="ai-copilot-panel"
     >
       <div className="bg-[#111111] border border-[#222222] p-6 rounded-sm shadow-md">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h3 className="text-[10px] font-mono font-bold text-[#666666] uppercase tracking-widest">
-              AI OPERATIONS COPILOT COMMAND CENTER
+            <h3 className="text-xs font-mono font-bold text-[#A1A1AA] uppercase tracking-wider">
+              AI Operations Copilot Command Center
             </h3>
-            <p className="text-xs text-[#555555] mt-1">
+            <p className="text-xs text-[#888888] mt-1">
               Select an active field service order to evaluate operational
               hazards with real-time AI.
             </p>
           </div>
-          <span className="bg-[#1D120D] text-amber-500 border border-amber-950 px-2.5 py-1 rounded-sm text-[9px] font-mono uppercase tracking-widest flex items-center gap-1">
-            <Cpu className="w-3 h-3" /> Live Gemini Analysis Enabled
+          <span className="bg-[#1D120D] text-amber-400 border border-amber-950/60 px-3 py-1 rounded-sm text-xs font-mono uppercase tracking-wider font-semibold flex items-center gap-1.5">
+            <Cpu className="w-3.5 h-3.5" /> Live Gemini Analysis Enabled
           </span>
         </div>
 
         <div className="flex flex-col sm:flex-row gap-4 items-end">
           <div className="flex-grow space-y-1.5 w-full">
-            <label className="text-[9px] font-mono text-[#555555] uppercase tracking-widest">
+            <label className="text-xs font-mono font-semibold text-[#A1A1AA] uppercase tracking-wider">
               Select Work Order
             </label>
             <select
@@ -188,7 +188,7 @@ export const AiCopilotTab: React.FC<AiCopilotTabProps> = ({
                 setAnalysisResult(null);
                 setError("");
               }}
-              className="w-full px-4 py-2.5 rounded-sm border border-[#222222] bg-[#0A0A0A] text-white text-xs font-mono focus:outline-none focus:border-[#444444]"
+              className="w-full px-4 py-2.5 rounded-sm border border-[#222222] bg-[#0A0A0A] text-white text-xs font-mono focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/80 cursor-pointer"
             >
               <option value="">-- Choose an active order --</option>
               {orders.map((o) => (
@@ -207,14 +207,14 @@ export const AiCopilotTab: React.FC<AiCopilotTabProps> = ({
             whileTap={{ scale: selectedOrderId && !loading ? 0.97 : 1 }}
             onClick={handleRunAnalysis}
             disabled={!selectedOrderId || loading}
-            className="w-full sm:w-auto px-5 py-3 bg-white hover:bg-neutral-200 text-black disabled:bg-[#1A1A1A] disabled:text-[#444444] disabled:border-[#222222] border border-transparent rounded-sm text-[10px] font-bold uppercase tracking-widest shadow-md transition-colors shrink-0 cursor-pointer flex items-center justify-center space-x-2"
+            className="w-full sm:w-auto px-5 py-2.5 bg-white hover:bg-neutral-200 text-black disabled:bg-[#1A1A1A] disabled:text-[#888888] disabled:border-[#222222] border border-transparent rounded-sm text-xs font-bold uppercase tracking-wider shadow-md transition-colors shrink-0 cursor-pointer flex items-center justify-center space-x-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/80 min-h-[40px]"
           >
             {loading ? (
               <RefreshCw className="w-3.5 h-3.5 animate-spin" />
             ) : (
               <Bot className="w-3.5 h-3.5" />
             )}
-            <span>Analyze operational Risk</span>
+            <span>Analyze Operational Risk</span>
           </motion.button>
         </div>
       </div>
@@ -225,16 +225,18 @@ export const AiCopilotTab: React.FC<AiCopilotTabProps> = ({
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0 }}
+            role="status"
+            aria-live="polite"
             className="bg-[#111111] border border-[#222222] p-12 text-center rounded-sm space-y-4 shadow-md"
           >
             <div className="flex justify-center">
-              <Bot className="w-8 h-8 text-white animate-bounce" />
+              <Bot className="w-8 h-8 text-emerald-400 animate-bounce" />
             </div>
             <p className="text-xs text-white font-mono font-semibold">
               {loadingTip}
             </p>
-            <p className="text-[9px] text-[#444444] uppercase tracking-widest font-mono">
-              Leveraging Gemini flash context parsing
+            <p className="text-xs text-[#888888] uppercase tracking-wider font-mono">
+              Leveraging Gemini Flash Context Parsing
             </p>
           </motion.div>
         )}
@@ -243,14 +245,15 @@ export const AiCopilotTab: React.FC<AiCopilotTabProps> = ({
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="bg-red-950/10 border border-red-900/40 p-4 rounded-sm text-red-400 text-xs flex items-start gap-2.5"
+            role="alert"
+            className="bg-red-950/20 border border-red-900/40 p-4 rounded-sm text-red-400 text-xs flex items-start gap-2.5"
           >
             <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5" />
             <div>
-              <span className="font-mono font-bold uppercase text-[9px] tracking-wider block">
+              <span className="font-mono font-bold uppercase text-xs tracking-wider block">
                 Analysis Failed
               </span>
-              <p className="mt-1 leading-relaxed">{error}</p>
+              <p className="mt-1 leading-relaxed text-[#E5E5E5]">{error}</p>
             </div>
           </motion.div>
         )}
@@ -266,13 +269,13 @@ export const AiCopilotTab: React.FC<AiCopilotTabProps> = ({
             <div
               className={`bg-[#111111] border rounded-sm p-6 flex flex-col items-center justify-center text-center shadow-md ${getScoreColor(analysisResult.score).border} ${getScoreColor(analysisResult.score).glow}`}
             >
-              <span className="text-[9px] font-mono text-[#555555] uppercase tracking-widest block mb-4">
-                Operational risk Index
+              <span className="text-xs font-mono font-bold text-[#A1A1AA] uppercase tracking-wider block mb-4">
+                Operational Risk Index
               </span>
 
               <div className="relative flex items-center justify-center w-28 h-28">
                 {/* SVG Ring */}
-                <svg className="w-full h-full transform -rotate-90">
+                <svg className="w-full h-full transform -rotate-90" aria-hidden="true">
                   <circle
                     cx="56"
                     cy="56"
@@ -297,7 +300,7 @@ export const AiCopilotTab: React.FC<AiCopilotTabProps> = ({
                     }}
                     transition={{
                       duration: 1,
-                      ease: [0.22, 1, 0.36, 1],
+                      ease: [0.22, 1, 0.36, 1] as const,
                       delay: 0.1,
                     }}
                     className={getScoreColor(analysisResult.score).text}
@@ -309,14 +312,14 @@ export const AiCopilotTab: React.FC<AiCopilotTabProps> = ({
                   >
                     {analysisResult.score}
                   </span>
-                  <span className="text-[8px] font-mono text-[#444444] uppercase tracking-widest">
+                  <span className="text-[11px] font-mono text-[#888888] uppercase tracking-wider font-semibold">
                     of 100
                   </span>
                 </div>
               </div>
 
               <span
-                className={`mt-4 inline-flex px-2.5 py-0.5 rounded-sm text-[9px] font-mono uppercase tracking-widest font-bold ${getScoreColor(analysisResult.score).bg} ${getScoreColor(analysisResult.score).text}`}
+                className={`mt-4 inline-flex px-3 py-1 rounded-sm text-xs font-mono uppercase tracking-wider font-bold ${getScoreColor(analysisResult.score).bg} ${getScoreColor(analysisResult.score).text}`}
               >
                 {analysisResult.score < 35
                   ? "Low Hazard"
@@ -330,30 +333,30 @@ export const AiCopilotTab: React.FC<AiCopilotTabProps> = ({
             <div className="lg:col-span-2 bg-[#111111] border border-[#222222] rounded-sm p-6 flex flex-col justify-between shadow-md">
               <div className="space-y-4">
                 <div>
-                  <span className="text-[9px] font-mono text-[#555555] uppercase tracking-widest block">
+                  <span className="text-xs font-mono font-bold text-[#A1A1AA] uppercase tracking-wider block">
                     AI Copilot Diagnosis
                   </span>
-                  <p className="text-sm text-white italic font-serif leading-relaxed mt-2 pl-4 border-l border-[#333333]">
+                  <p className="text-sm text-white italic font-serif leading-relaxed mt-2 pl-4 border-l-2 border-emerald-500/50">
                     "{analysisResult.reason}"
                   </p>
                 </div>
 
                 <div className="pt-4 border-t border-[#1D1D1D]">
-                  <span className="text-[9px] font-mono text-[#555555] uppercase tracking-widest block">
+                  <span className="text-xs font-mono font-bold text-[#A1A1AA] uppercase tracking-wider block">
                     Recommended Mitigation Step
                   </span>
-                  <div className="bg-[#0A0A0A] border border-[#1D1D1D] p-3 rounded-sm mt-2 flex items-start gap-2.5">
+                  <div className="bg-[#0A0A0A] border border-[#1D1D1D] p-3.5 rounded-sm mt-2 flex items-start gap-2.5">
                     <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
-                    <p className="text-xs text-[#888888] leading-relaxed">
+                    <p className="text-xs text-[#E5E5E5] leading-relaxed">
                       {analysisResult.action}
                     </p>
                   </div>
                 </div>
               </div>
 
-              <div className="pt-4 border-t border-[#1D1D1D] flex items-center justify-between text-[10px] text-[#444444] font-mono uppercase tracking-widest">
+              <div className="pt-4 border-t border-[#1D1D1D] flex items-center justify-between text-xs text-[#888888] font-mono uppercase tracking-wider">
                 <span>Evaluated order: {selectedOrder.id}</span>
-                <span>Powered by Gemini 3.5 Flash</span>
+                <span>Powered by Gemini Flash</span>
               </div>
             </div>
           </motion.div>

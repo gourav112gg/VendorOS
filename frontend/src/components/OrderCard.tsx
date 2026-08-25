@@ -65,7 +65,7 @@ export const OrderCard: React.FC<OrderCardProps> = ({
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
-            <span className="font-mono text-[10px] text-[#666666]">
+            <span className="font-mono text-xs text-[#888888] font-medium">
               {order.id}
             </span>
             <span
@@ -73,39 +73,39 @@ export const OrderCard: React.FC<OrderCardProps> = ({
               title={riskInfo.label}
             />
             {order.belowMinimumThreshold && (
-              <span className="flex items-center gap-1 px-1.5 py-0.5 rounded-sm bg-amber-500/10 text-amber-400 border border-amber-500/20 text-[8px] font-mono font-bold uppercase">
-                <AlertTriangle className="w-2.5 h-2.5" /> Below Min
+              <span className="flex items-center gap-1 px-1.5 py-0.5 rounded-sm bg-amber-500/15 text-amber-400 border border-amber-500/30 text-[10px] font-mono font-bold uppercase tracking-wider">
+                <AlertTriangle className="w-3 h-3" /> Below Min
               </span>
             )}
           </div>
           <h4 className="text-sm font-semibold text-white mt-1.5 truncate">
             {order.title}
           </h4>
-          <p className="text-xs text-[#888888] mt-0.5 truncate">
+          <p className="text-xs text-[#A1A1AA] mt-0.5 truncate">
             {order.customerName}
           </p>
         </div>
 
         <span
-          className={`shrink-0 inline-flex items-center px-2 py-0.5 rounded-sm text-[9px] font-mono uppercase tracking-widest font-semibold ${statusStyles[order.stage]}`}
+          className={`shrink-0 inline-flex items-center px-2.5 py-1 rounded-sm text-xs font-mono uppercase tracking-wider font-semibold ${statusStyles[order.stage]}`}
         >
           {order.stage}
         </span>
       </div>
 
-      <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-[10px] font-mono text-[#555555] mt-3 pt-3 border-t border-[#1D1D1D]">
+      <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs font-mono text-[#A1A1AA] mt-3 pt-3 border-t border-[#1D1D1D]">
         <span className="flex items-center">
-          <MapPin className="w-3 h-3 mr-1" /> {order.address || "No address"}
+          <MapPin className="w-3.5 h-3.5 mr-1 text-[#888888]" /> {order.address || "No address"}
         </span>
         <span>
-          DELIVERY: <span className="text-[#888888]">{deliveryDateLabel}</span>
+          DELIVERY: <span className="text-white font-medium">{deliveryDateLabel}</span>
         </span>
         {order.quantity !== undefined && (
           <span>
-            QTY: <span className="text-[#888888]">{order.quantity}</span>
+            QTY: <span className="text-white font-medium">{order.quantity}</span>
           </span>
         )}
-        <span>
+        <span className="text-white font-bold">
           {currency === "INR" ? "₹" : "$"}
           {order.value.toLocaleString()}
         </span>
@@ -116,9 +116,11 @@ export const OrderCard: React.FC<OrderCardProps> = ({
           e.stopPropagation();
           onViewDetails(order);
         }}
-        className="mt-3 w-full flex items-center justify-center gap-1 text-[9px] uppercase font-bold font-mono tracking-widest bg-[#0A0A0A] hover:bg-[#1A1A1A] border border-[#222222] hover:border-[#333333] text-[#888888] hover:text-white px-2.5 py-1.5 rounded-sm transition-colors cursor-pointer"
+        className="mt-3.5 w-full flex items-center justify-center gap-1.5 text-xs font-semibold bg-[#0A0A0A] hover:bg-[#1A1A1A] border border-[#222222] hover:border-[#333333] text-[#A1A1AA] hover:text-white px-3 py-2 rounded-sm transition-colors cursor-pointer min-h-[36px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/80"
+        aria-label={`View details for order ${order.id} - ${order.title}`}
       >
-        View Details <ChevronRight className="w-3 h-3" />
+        <span>View details</span>
+        <ChevronRight className="w-3.5 h-3.5" />
       </button>
     </motion.div>
   );

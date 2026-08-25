@@ -103,7 +103,7 @@ export const TrustScoreTab: React.FC<TrustScoreTabProps> = ({
     <motion.div
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+      transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] as const }}
       className="space-y-6"
       id="trust-score-dashboard"
     >
@@ -112,7 +112,7 @@ export const TrustScoreTab: React.FC<TrustScoreTabProps> = ({
         {/* Visual Badge */}
         <div className="flex flex-col items-center justify-center p-6 bg-[#0A0A0A] border border-[#222222] rounded-sm text-center">
           <div className="relative w-28 h-28 flex items-center justify-center mb-1">
-            <svg className="w-28 h-28 -rotate-90" viewBox="0 0 100 100">
+            <svg className="w-28 h-28 -rotate-90" viewBox="0 0 100 100" aria-hidden="true">
               <circle
                 cx="50"
                 cy="50"
@@ -137,7 +137,7 @@ export const TrustScoreTab: React.FC<TrustScoreTabProps> = ({
                 }}
                 transition={{
                   duration: 1,
-                  ease: [0.22, 1, 0.36, 1],
+                  ease: [0.22, 1, 0.36, 1] as const,
                   delay: 0.15,
                 }}
               />
@@ -149,11 +149,11 @@ export const TrustScoreTab: React.FC<TrustScoreTabProps> = ({
               </span>
             </div>
           </div>
-          <span className="text-[9px] font-mono text-[#555555] uppercase tracking-widest block">
+          <span className="text-xs font-mono text-[#888888] uppercase tracking-wider font-semibold block mt-1">
             VendorOS trust index
           </span>
           <span
-            className={`text-[10px] font-mono uppercase font-bold tracking-widest mt-2 ${getScoreDescription(score).color}`}
+            className={`text-xs font-mono uppercase font-bold tracking-wider mt-1.5 ${getScoreDescription(score).color}`}
           >
             {getScoreDescription(score).label}
           </span>
@@ -162,7 +162,7 @@ export const TrustScoreTab: React.FC<TrustScoreTabProps> = ({
         {/* Factors list */}
         <div className="lg:col-span-2 space-y-4 flex flex-col justify-between">
           <div>
-            <h3 className="text-[10px] font-mono font-bold text-[#666666] uppercase tracking-widest mb-1.5">
+            <h3 className="text-xs font-mono font-bold text-[#A1A1AA] uppercase tracking-wider mb-1.5">
               Live Reputation Analytics
             </h3>
             <p className="text-xs text-[#888888] leading-relaxed">
@@ -172,8 +172,8 @@ export const TrustScoreTab: React.FC<TrustScoreTabProps> = ({
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="bg-[#0A0A0A] p-3 border border-[#1D1D1D] rounded-sm hover:border-[#333333] transition-colors">
-              <span className="text-[9px] font-mono text-[#555555] uppercase tracking-widest block">
+            <div className="bg-[#0A0A0A] p-3.5 border border-[#1D1D1D] rounded-sm hover:border-[#333333] transition-colors">
+              <span className="text-[11px] font-mono text-[#888888] uppercase tracking-wider font-semibold block">
                 Fulfillment Rate
               </span>
               <span className="text-lg font-mono font-bold text-white mt-1 block">
@@ -181,8 +181,8 @@ export const TrustScoreTab: React.FC<TrustScoreTabProps> = ({
               </span>
             </div>
 
-            <div className="bg-[#0A0A0A] p-3 border border-[#1D1D1D] rounded-sm hover:border-[#333333] transition-colors">
-              <span className="text-[9px] font-mono text-[#555555] uppercase tracking-widest block">
+            <div className="bg-[#0A0A0A] p-3.5 border border-[#1D1D1D] rounded-sm hover:border-[#333333] transition-colors">
+              <span className="text-[11px] font-mono text-[#888888] uppercase tracking-wider font-semibold block">
                 Inventory Balance
               </span>
               <span className="text-lg font-mono font-bold text-white mt-1 block">
@@ -190,8 +190,8 @@ export const TrustScoreTab: React.FC<TrustScoreTabProps> = ({
               </span>
             </div>
 
-            <div className="bg-[#0A0A0A] p-3 border border-[#1D1D1D] rounded-sm hover:border-[#333333] transition-colors">
-              <span className="text-[9px] font-mono text-[#555555] uppercase tracking-widest block">
+            <div className="bg-[#0A0A0A] p-3.5 border border-[#1D1D1D] rounded-sm hover:border-[#333333] transition-colors">
+              <span className="text-[11px] font-mono text-[#888888] uppercase tracking-wider font-semibold block">
                 Worker Engagement
               </span>
               <span className="text-lg font-mono font-bold text-white mt-1 block">
@@ -204,26 +204,27 @@ export const TrustScoreTab: React.FC<TrustScoreTabProps> = ({
 
       {/* Public Trust Link Sharing Card */}
       <div className="bg-[#111111] border border-[#222222] p-6 rounded-sm shadow-md">
-        <h3 className="text-[10px] font-mono font-bold text-[#666666] uppercase tracking-widest mb-2 flex items-center gap-1">
-          <Globe className="w-3.5 h-3.5" /> Standalone Public Profile Profile
+        <h3 className="text-xs font-mono font-bold text-[#A1A1AA] uppercase tracking-wider mb-2 flex items-center gap-1.5">
+          <Globe className="w-4 h-4 text-emerald-400" /> Standalone Public Profile
         </h3>
-        <p className="text-xs text-[#555555] leading-relaxed mb-4">
-          Enable external clients, general contractors, or banks to view your
+        <p className="text-xs text-[#888888] leading-relaxed mb-4">
+          Enable external clients, general contractors, or financial partners to view your
           certified operations credentials directly.
         </p>
 
-        <div className="flex flex-col sm:flex-row items-stretch gap-2 font-mono text-xs">
-          <div className="flex-grow bg-[#0A0A0A] border border-[#222222] px-4 py-3 rounded-sm text-[#888888] flex items-center select-all truncate">
+        <div className="flex flex-col sm:flex-row items-stretch gap-2.5 font-mono text-xs">
+          <div className="flex-grow bg-[#0A0A0A] border border-[#222222] px-4 py-3 rounded-sm text-[#A1A1AA] flex items-center select-all truncate">
             https://vendoros.com/public/trust/{company.id}
           </div>
           <motion.button
             whileHover={{ y: -1 }}
             whileTap={{ scale: 0.97 }}
             onClick={handleCopyLink}
-            className="px-5 py-3 bg-white hover:bg-[#F0EAD8] text-black rounded-sm text-[10px] font-bold uppercase tracking-widest shadow-md transition-colors cursor-pointer shrink-0 flex items-center justify-center space-x-1.5"
+            className="px-5 py-3 bg-white hover:bg-[#F0EAD8] text-black rounded-sm text-xs font-bold uppercase tracking-wider shadow-md transition-colors cursor-pointer shrink-0 flex items-center justify-center space-x-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/80 min-h-[40px]"
+            aria-label="Copy public trust score URL"
           >
             <Share2 className="w-3.5 h-3.5" />
-            <span>{copied ? "Copied!" : "Copy Public URL"}</span>
+            <span>{copied ? "Copied to Clipboard!" : "Copy Public URL"}</span>
           </motion.button>
         </div>
       </div>

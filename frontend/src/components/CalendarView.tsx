@@ -99,11 +99,12 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
             <>
               <button
                 onClick={() => navigate(-1)}
-                className="p-1.5 rounded-sm border border-[#222222] bg-[#111111] text-[#888888] hover:text-white hover:border-[#333333] cursor-pointer"
+                className="p-1.5 rounded-sm border border-[#222222] bg-[#111111] text-[#888888] hover:text-white hover:border-[#333333] cursor-pointer min-w-[32px] min-h-[32px] flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/80"
+                aria-label="Previous time period"
               >
-                <ChevronLeft className="w-3.5 h-3.5" />
+                <ChevronLeft className="w-4 h-4" />
               </button>
-              <span className="text-xs font-mono font-bold text-white uppercase tracking-widest min-w-[130px] text-center">
+              <span className="text-xs font-mono font-bold text-white uppercase tracking-wider min-w-[140px] text-center">
                 {mode === "month"
                   ? cursor.toLocaleDateString(undefined, {
                       month: "long",
@@ -113,26 +114,33 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
               </span>
               <button
                 onClick={() => navigate(1)}
-                className="p-1.5 rounded-sm border border-[#222222] bg-[#111111] text-[#888888] hover:text-white hover:border-[#333333] cursor-pointer"
+                className="p-1.5 rounded-sm border border-[#222222] bg-[#111111] text-[#888888] hover:text-white hover:border-[#333333] cursor-pointer min-w-[32px] min-h-[32px] flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/80"
+                aria-label="Next time period"
               >
-                <ChevronRight className="w-3.5 h-3.5" />
+                <ChevronRight className="w-4 h-4" />
               </button>
             </>
           )}
         </div>
 
-        <div className="flex bg-[#111111] p-1 border border-[#222222] rounded-sm space-x-1">
+        <div 
+          role="tablist" 
+          aria-label="Calendar layout options" 
+          className="flex bg-[#111111] p-1 border border-[#222222] rounded-sm space-x-1"
+        >
           {(["month", "week", "list"] as const).map((m) => (
             <button
               key={m}
+              role="tab"
+              aria-selected={mode === m}
               onClick={() => {
                 setMode(m);
                 setSelectedDay(null);
               }}
-              className={`px-3 py-1.5 text-[9px] font-bold uppercase tracking-widest rounded-sm cursor-pointer transition-colors ${
+              className={`px-3.5 py-1.5 text-xs font-semibold rounded-sm cursor-pointer transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/80 capitalize ${
                 mode === m
-                  ? "bg-white text-black"
-                  : "text-[#666666] hover:text-white"
+                  ? "bg-white text-black font-bold shadow-sm"
+                  : "text-[#888888] hover:text-white"
               }`}
             >
               {m}
@@ -148,7 +156,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
             {WEEKDAY_LABELS.map((d) => (
               <div
                 key={d}
-                className="p-2 text-center text-[9px] font-mono text-[#555555] uppercase tracking-widest"
+                className="p-2 text-center text-xs font-mono text-[#888888] uppercase tracking-wider font-semibold"
               >
                 {d}
               </div>
@@ -167,30 +175,30 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
                   key={idx}
                   disabled={!day}
                   onClick={() => day && setSelectedDay(isSelected ? null : day)}
-                  className={`h-20 border-b border-r border-[#1A1A1A] p-1.5 text-left align-top transition-colors ${
+                  className={`h-22 border-b border-r border-[#1A1A1A] p-2 text-left align-top transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/80 ${
                     !day
                       ? "bg-[#080808] cursor-default"
-                      : "hover:bg-[#111111] cursor-pointer"
-                  } ${isSelected ? "bg-[#1A1A1A]" : ""}`}
+                      : "hover:bg-[#141414] cursor-pointer"
+                  } ${isSelected ? "bg-[#1A1A1A] ring-1 ring-white/10" : ""}`}
                 >
                   {day && (
                     <>
                       <span
-                        className={`text-[10px] font-mono ${isToday ? "text-white font-bold" : "text-[#666666]"}`}
+                        className={`text-xs font-mono block ${isToday ? "text-emerald-400 font-bold" : "text-[#A1A1AA]"}`}
                       >
                         {day.getDate()}
                       </span>
                       {dayOrders.length > 0 && (
-                        <div className="flex flex-wrap gap-0.5 mt-1">
+                        <div className="flex flex-wrap gap-1 mt-1.5">
                           {dayOrders.slice(0, 4).map((o) => (
                             <span
                               key={o.id}
-                              className={`w-1.5 h-1.5 rounded-full ${riskDotClass(o)}`}
+                              className={`w-2 h-2 rounded-full ${riskDotClass(o)}`}
                               title={o.title}
                             />
                           ))}
                           {dayOrders.length > 4 && (
-                            <span className="text-[8px] text-[#666666] font-mono">
+                            <span className="text-[10px] text-[#A1A1AA] font-mono font-bold leading-none">
                               +{dayOrders.length - 4}
                             </span>
                           )}
@@ -213,9 +221,9 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
             return (
               <div
                 key={day.toISOString()}
-                className="border border-[#222222] rounded-sm bg-[#0A0A0A] p-2 min-h-[120px]"
+                className="border border-[#222222] rounded-sm bg-[#0A0A0A] p-2.5 min-h-[130px]"
               >
-                <span className="text-[9px] font-mono text-[#666666] uppercase tracking-widest block mb-2">
+                <span className="text-xs font-mono font-bold text-[#888888] uppercase tracking-wider block mb-2">
                   {day.toLocaleDateString(undefined, {
                     weekday: "short",
                     day: "numeric",
@@ -226,18 +234,18 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
                     <button
                       key={o.id}
                       onClick={() => onSelectOrder(o)}
-                      className="w-full flex items-center gap-1.5 text-left px-2 py-1.5 rounded-sm bg-[#111111] border border-[#1D1D1D] hover:border-[#333333] cursor-pointer"
+                      className="w-full flex items-center gap-2 text-left px-2.5 py-2 rounded-sm bg-[#111111] border border-[#1D1D1D] hover:border-[#333333] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/80"
                     >
                       <span
-                        className={`w-1.5 h-1.5 rounded-full shrink-0 ${riskDotClass(o)}`}
+                        className={`w-2 h-2 rounded-full shrink-0 ${riskDotClass(o)}`}
                       />
-                      <span className="text-[10px] text-[#AAAAAA] truncate">
+                      <span className="text-xs text-[#E5E5E5] truncate font-medium">
                         {o.title}
                       </span>
                     </button>
                   ))}
                   {dayOrders.length === 0 && (
-                    <span className="text-[9px] text-[#333333] font-mono">
+                    <span className="text-xs text-[#666666] font-mono block py-1">
                       No orders
                     </span>
                   )}
@@ -252,7 +260,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
       {mode === "list" && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {orders.length === 0 ? (
-            <div className="col-span-full text-center py-12 text-[#444444] font-mono text-xs uppercase tracking-widest">
+            <div className="col-span-full text-center py-12 text-[#888888] font-mono text-xs uppercase tracking-wider">
               No orders to display.
             </div>
           ) : (
@@ -276,8 +284,8 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
 
       {/* Selected day detail panel (month view) */}
       {mode === "month" && selectedDay && (
-        <div className="space-y-3">
-          <span className="text-[10px] font-mono text-[#666666] uppercase tracking-widest">
+        <div className="space-y-3 pt-2">
+          <span className="text-xs font-mono font-bold text-[#A1A1AA] uppercase tracking-wider block">
             Orders due{" "}
             {selectedDay.toLocaleDateString(undefined, {
               month: "long",
@@ -287,7 +295,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
             ({selectedDayOrders.length})
           </span>
           {selectedDayOrders.length === 0 ? (
-            <div className="text-center py-8 border border-dashed border-[#222222] rounded-sm text-[#444444] font-mono text-xs uppercase tracking-widest">
+            <div className="text-center py-8 border border-dashed border-[#222222] rounded-sm text-[#888888] font-mono text-xs uppercase tracking-wider">
               No orders due this day.
             </div>
           ) : (

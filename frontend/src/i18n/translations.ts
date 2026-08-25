@@ -3,6 +3,7 @@ export type Language = 'en' | 'hi' | 'pa';
 export interface TranslationDictionary {
   // Navigation & General
   vendorOS: string;
+  publicPortal: string;
   signOut: string;
   signIn: string;
   signUp: string;
@@ -181,6 +182,7 @@ export interface TranslationDictionary {
 export const translations: Record<Language, TranslationDictionary> = {
   en: {
     vendorOS: "VendorOS",
+    publicPortal: "Directory",
     signOut: "Sign Out",
     signIn: "Sign In",
     signUp: "Sign Up Now",
@@ -344,6 +346,7 @@ export const translations: Record<Language, TranslationDictionary> = {
   },
   hi: {
     vendorOS: "वेंडर-ओएस",
+    publicPortal: "निर्देशिका",
     signOut: "साइन आउट",
     signIn: "साइन इन करें",
     signUp: "अभी साइन अप करें",
@@ -507,6 +510,7 @@ export const translations: Record<Language, TranslationDictionary> = {
   },
   pa: {
     vendorOS: "ਵੇਂਡਰ-ਓ.ਐਸ",
+    publicPortal: "ਡਾਇਰੈਕਟਰੀ",
     signOut: "ਸਾਈਨ ਆਊਟ",
     signIn: "ਸਾਈਨ ਇਨ ਕਰੋ",
     signUp: "ਹੁਣੇ ਸਾਈਨ ਅੱਪ ਕਰੋ",

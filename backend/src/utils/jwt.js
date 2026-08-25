@@ -1,7 +1,18 @@
 const jwt = require("jsonwebtoken");
 
 /**
- * Sign a new JWT token
+ * Generate a JWT token for user id & role
+ */
+const generateToken = (id, role, expiresIn = "7d") => {
+  const secret = process.env.JWT_SECRET;
+  if (!secret) {
+    throw new Error("JWT_SECRET environment variable is not defined");
+  }
+  return jwt.sign({ id, role }, secret, { expiresIn });
+};
+
+/**
+ * Sign a new JWT token with custom payload
  */
 const signToken = (payload, expiresIn = "7d") => {
   return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn });
@@ -15,6 +26,7 @@ const verifyToken = (token) => {
 };
 
 module.exports = {
+  generateToken,
   signToken,
   verifyToken,
 };

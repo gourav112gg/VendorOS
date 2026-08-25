@@ -485,28 +485,36 @@ export const WorkerDashboard: React.FC = () => {
             </button>
           </div>
 
-          <div className="flex bg-[#111111] p-1 border border-[#222222] rounded-sm space-x-1">
+          <div 
+            role="tablist" 
+            aria-label="Worker Dashboard Navigation" 
+            className="flex bg-[#111111] p-1 border border-[#222222] rounded-sm space-x-1 shadow-md"
+          >
             <button
+              role="tab"
+              aria-selected={activeTab === 'jobs'}
               onClick={() => setActiveTab('jobs')}
-              className={`px-4 py-2 text-[10px] font-bold rounded-sm uppercase tracking-widest transition-all duration-150 cursor-pointer flex items-center space-x-1.5 group ${
+              className={`px-4 py-2 text-xs font-semibold rounded-sm transition-all duration-150 cursor-pointer flex items-center space-x-1.5 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/80 min-h-[36px] ${
                 activeTab === 'jobs'
-                  ? 'bg-white text-black'
-                  : 'text-[#666666] hover:text-[#888888]'
+                  ? 'bg-white text-black font-bold shadow-sm'
+                  : 'text-[#888888] hover:text-white'
               }`}
             >
-              <span>{t('myJobs', 'MY JOBS')}</span>
+              <span>{t('myJobs', 'My Jobs')}</span>
               <ShortcutBadge tab="jobs" className="opacity-0 group-hover:opacity-100 transition-opacity ml-1.5" />
             </button>
             <button
+              role="tab"
+              aria-selected={activeTab === 'settings'}
               onClick={() => setActiveTab('settings')}
-              className={`px-4 py-2 text-[10px] font-bold rounded-sm uppercase tracking-widest transition-all duration-150 cursor-pointer flex items-center space-x-1.5 group ${
+              className={`px-4 py-2 text-xs font-semibold rounded-sm transition-all duration-150 cursor-pointer flex items-center space-x-1.5 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/80 min-h-[36px] ${
                 activeTab === 'settings'
-                  ? 'bg-white text-black'
-                  : 'text-[#666666] hover:text-[#888888]'
+                  ? 'bg-white text-black font-bold shadow-sm'
+                  : 'text-[#888888] hover:text-white'
               }`}
             >
               <Settings className="w-3.5 h-3.5" />
-              <span>{t('settings', 'SETTINGS')}</span>
+              <span>{t('settings', 'Settings')}</span>
               <ShortcutBadge tab="settings" className="opacity-0 group-hover:opacity-100 transition-opacity ml-1.5" />
             </button>
           </div>
@@ -520,23 +528,23 @@ export const WorkerDashboard: React.FC = () => {
           {/* Summary Section */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Card 1: Assigned Orders */}
-            <div className="bg-[#111111] p-6 rounded-sm border border-[#222222] flex items-start justify-between">
+            <div className="bg-[#111111] p-6 rounded-sm border border-[#222222] flex items-start justify-between shadow-md">
               <div>
-                <span className="text-[10px] font-mono font-medium text-[#666666] uppercase tracking-widest block">Total Assigned Orders</span>
+                <span className="text-xs font-mono font-bold text-[#A1A1AA] uppercase tracking-wider block">Total Assigned Orders</span>
                 <span className="text-4xl font-sans font-extrabold text-white mt-2 block">{totalAssignedCount}</span>
                 <span className="text-xs font-mono text-[#888888] mt-1.5 inline-block">
                   Assigned Value: <span className="text-white font-bold">{formatIndianCurrency(totalAssignedValue)}</span>
                 </span>
               </div>
-              <div className="p-3 bg-[#1A1A1A] border border-[#222222] text-[#888888] rounded-sm">
+              <div className="p-3 bg-[#1A1A1A] border border-[#222222] text-[#A1A1AA] rounded-sm">
                 <Briefcase className="w-5 h-5" />
               </div>
             </div>
 
             {/* Card 2: Completed Today */}
-            <div className="bg-[#111111] p-6 rounded-sm border border-[#222222] flex items-start justify-between">
+            <div className="bg-[#111111] p-6 rounded-sm border border-[#222222] flex items-start justify-between shadow-md">
               <div>
-                <span className="text-[10px] font-mono font-medium text-[#666666] uppercase tracking-widest block">Completed Today</span>
+                <span className="text-xs font-mono font-bold text-[#A1A1AA] uppercase tracking-wider block">Completed Today</span>
                 <span className="text-4xl font-sans font-extrabold text-white mt-2 block">{completedTodayCount}</span>
                 <span className="text-xs font-mono text-emerald-400 mt-1.5 inline-block">
                   Completed Value: <span className="text-emerald-400 font-bold">{formatIndianCurrency(completedTodayValue)}</span>

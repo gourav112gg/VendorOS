@@ -358,9 +358,9 @@ export const FloatingChatbot: React.FC = () => {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: 10 }}
             onClick={() => setIsOpen(true)}
-            className="hidden sm:flex items-center space-x-2 px-3.5 py-1.5 bg-[#09090B] hover:bg-[#18181B] border border-white/20 rounded-full shadow-2xl text-xs font-mono text-white cursor-pointer transition-all hover:border-white/40"
+            className="hidden sm:flex items-center space-x-2 px-4 py-2 bg-[#09090B] hover:bg-[#18181B] border border-white/25 rounded-full shadow-2xl text-xs font-mono text-white cursor-pointer transition-all hover:border-white/45 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/80"
           >
-            <Sparkles className="w-3.5 h-3.5 text-white animate-pulse" />
+            <Sparkles className="w-3.5 h-3.5 text-emerald-400 animate-pulse" />
             <span className="font-bold text-white">VendorOS Copilot</span>
           </motion.div>
         )}
@@ -372,26 +372,29 @@ export const FloatingChatbot: React.FC = () => {
           transition={{ repeat: Infinity, duration: 3.5, ease: "easeInOut" }}
           whileHover={{ scale: 1.08 }}
           whileTap={{ scale: 0.94 }}
-          className={`relative p-3.5 rounded-full shadow-2xl transition-all cursor-pointer flex items-center justify-center ${
+          className={`relative p-3.5 rounded-full shadow-2xl transition-all cursor-pointer flex items-center justify-center min-w-[48px] min-h-[48px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/80 ${
             isOpen
               ? "bg-[#18181B] text-white border border-white/30"
               : "bg-[#09090B] text-white border border-white/25 hover:border-white/50 shadow-black/80"
           }`}
           title={isOpen ? "Close AI Copilot" : "Open VendorOS AI Copilot"}
+          aria-label={isOpen ? "Close AI Copilot" : "Open VendorOS AI Copilot"}
+          aria-expanded={isOpen}
+          aria-haspopup="dialog"
         >
           {isOpen ? (
             <X className="w-5 h-5 text-white" />
           ) : (
             <>
               <Bot className="w-6 h-6 text-white" />
-              <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-white rounded-full border-2 border-black animate-ping" />
-              <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-white rounded-full border-2 border-black" />
+              <span className="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-emerald-400 rounded-full border-2 border-black animate-ping" />
+              <span className="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-emerald-400 rounded-full border-2 border-black" />
             </>
           )}
         </motion.button>
       </div>
 
-      {/* Floating Chat Modal Panel (Origin Monochrome Obsidian Palette) */}
+      {/* Floating Chat Modal Panel (Origin Monochrome Obsidian Palette with Liquid Glass Diffusion) */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -399,52 +402,57 @@ export const FloatingChatbot: React.FC = () => {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.88, y: 30 }}
             transition={{ type: "spring", stiffness: 360, damping: 28 }}
-            className="floating-chatbot-root fixed bottom-22 right-6 z-50 w-[92vw] sm:w-[410px] h-[580px] max-h-[82vh] bg-[#09090B] border border-white/20 rounded-2xl shadow-[0_25px_60px_rgba(0,0,0,0.95)] flex flex-col overflow-hidden font-sans text-white"
+            role="dialog"
+            aria-label="VendorOS AI Copilot Assistant"
+            className="floating-chatbot-root fixed bottom-22 right-6 z-50 w-[92vw] sm:w-[420px] h-[600px] max-h-[82vh] bg-[#09090B]/95 backdrop-blur-xl border border-white/20 rounded-2xl shadow-[0_25px_60px_rgba(0,0,0,0.95)] flex flex-col overflow-hidden font-sans text-white ring-1 ring-white/10"
           >
             {/* Header */}
             <div className="p-3.5 bg-[#121215] border-b border-white/10 flex items-center justify-between">
               <div className="flex items-center space-x-2.5">
                 <div className="w-8 h-8 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-white shadow-sm">
-                  <Bot className="w-4 h-4 text-white" />
+                  <Bot className="w-4 h-4 text-emerald-400" />
                 </div>
                 <div>
                   <div className="flex items-center space-x-1.5">
                     <span className="text-xs font-bold text-white font-mono tracking-tight">
                       VendorOS Copilot
                     </span>
-                    <span className="px-1.5 py-0.2 bg-white/10 border border-white/20 text-[9px] font-mono text-neutral-300 rounded-sm">
-                      Llama 3.3
+                    <span className="px-1.5 py-0.5 bg-white/10 border border-white/20 text-[10px] font-mono text-neutral-200 rounded-sm font-semibold">
+                      Gemini Live
                     </span>
                   </div>
-                  <span className="text-[10px] text-neutral-400 font-mono block">
+                  <span className="text-[11px] text-[#A1A1AA] font-mono block">
                     Whisper Voice & Multi-Tool
                   </span>
                 </div>
               </div>
 
               {/* Action Icons */}
-              <div className="flex items-center space-x-1 text-neutral-400">
+              <div className="flex items-center space-x-1 text-neutral-300">
                 <button
                   onClick={() => {
                     setShowHistory(prev => !prev);
                     if (!showHistory) loadSessions();
                   }}
-                  title="Past Conversations"
-                  className="p-1.5 hover:bg-white/10 rounded-md hover:text-white transition-colors cursor-pointer"
+                  title="Past conversations"
+                  aria-label="Past conversations"
+                  className="p-2 hover:bg-white/10 rounded-md hover:text-white transition-colors cursor-pointer min-w-[36px] min-h-[36px] flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/80"
                 >
                   <History className="w-4 h-4" />
                 </button>
                 <button
                   onClick={handleNewChat}
-                  title="New Conversation"
-                  className="p-1.5 hover:bg-white/10 rounded-md hover:text-white transition-colors cursor-pointer"
+                  title="New conversation"
+                  aria-label="Start new conversation"
+                  className="p-2 hover:bg-white/10 rounded-md hover:text-white transition-colors cursor-pointer min-w-[36px] min-h-[36px] flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/80"
                 >
                   <Plus className="w-4 h-4" />
                 </button>
                 <button
                   onClick={() => setIsOpen(false)}
-                  title="Minimize"
-                  className="p-1.5 hover:bg-white/10 rounded-md hover:text-white transition-colors cursor-pointer"
+                  title="Minimize assistant"
+                  aria-label="Minimize assistant"
+                  className="p-2 hover:bg-white/10 rounded-md hover:text-white transition-colors cursor-pointer min-w-[36px] min-h-[36px] flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/80"
                 >
                   <Minimize2 className="w-4 h-4" />
                 </button>
@@ -460,24 +468,24 @@ export const FloatingChatbot: React.FC = () => {
                   exit={{ opacity: 0, height: 0 }}
                   className="bg-[#121215] border-b border-white/10 p-3 max-h-[220px] overflow-y-auto space-y-2"
                 >
-                  <div className="flex items-center justify-between text-[11px] font-mono text-neutral-400 pb-1 border-b border-white/5">
+                  <div className="flex items-center justify-between text-xs font-mono text-neutral-300 pb-1 border-b border-white/5 font-semibold">
                     <span>Recent Conversations</span>
                     <button
                       onClick={handleNewChat}
-                      className="text-white hover:text-neutral-300 text-[10px] flex items-center space-x-1 cursor-pointer font-bold"
+                      className="text-white hover:text-neutral-300 text-xs flex items-center space-x-1 cursor-pointer font-bold py-1 px-1.5 rounded-sm"
                     >
-                      <Plus className="w-3 h-3" />
+                      <Plus className="w-3.5 h-3.5 text-emerald-400" />
                       <span>Start Fresh</span>
                     </button>
                   </div>
 
                   {loadingSessions ? (
-                    <div className="py-4 text-center text-xs text-neutral-400 font-mono flex items-center justify-center space-x-2">
+                    <div className="py-4 text-center text-xs text-neutral-300 font-mono flex items-center justify-center space-x-2">
                       <RefreshCw className="w-3.5 h-3.5 animate-spin text-white" />
                       <span>Loading history...</span>
                     </div>
                   ) : sessions.length === 0 ? (
-                    <div className="py-3 text-center text-xs text-neutral-500 font-mono">
+                    <div className="py-3 text-center text-xs text-neutral-400 font-mono">
                       No previous sessions recorded.
                     </div>
                   ) : (
@@ -486,10 +494,10 @@ export const FloatingChatbot: React.FC = () => {
                         <button
                           key={sess.id}
                           onClick={() => selectSession(sess.id)}
-                          className="w-full text-left p-2 rounded-lg bg-[#18181B] hover:bg-[#27272A] border border-white/10 text-xs font-mono text-white transition-all flex items-center justify-between cursor-pointer"
+                          className="w-full text-left p-2.5 rounded-lg bg-[#18181B] hover:bg-[#27272A] border border-white/10 text-xs font-mono text-white transition-all flex items-center justify-between cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/80"
                         >
                           <span className="truncate pr-2 font-medium">{sess.title}</span>
-                          <span className="text-[10px] text-neutral-400 flex-shrink-0">
+                          <span className="text-xs text-[#A1A1AA] flex-shrink-0">
                             {sess.messageCount} msgs
                           </span>
                         </button>
@@ -501,24 +509,24 @@ export const FloatingChatbot: React.FC = () => {
             </AnimatePresence>
 
             {/* Chat Messages Body */}
-            <div className="flex-1 p-3.5 overflow-y-auto space-y-3.5 text-xs bg-[#09090B]">
+            <div className="flex-1 p-4 overflow-y-auto space-y-3.5 text-xs bg-[#09090B]">
               {messages.length === 0 ? (
                 <div className="h-full flex flex-col justify-center items-center text-center p-4 space-y-3">
                   <div className="w-12 h-12 rounded-2xl bg-white/5 border border-white/20 flex items-center justify-center text-white shadow-inner">
-                    <Bot className="w-6 h-6" />
+                    <Bot className="w-6 h-6 text-emerald-400" />
                   </div>
                   <div>
                     <h3 className="text-sm font-bold text-white font-mono">
                       Welcome, {user?.name || "User"}
                     </h3>
-                    <p className="text-[11px] text-neutral-400 font-mono mt-1 max-w-[260px] mx-auto">
+                    <p className="text-xs text-neutral-300 font-mono mt-1 max-w-[280px] mx-auto leading-relaxed">
                       {t("botWelcome", "Ask operational questions in English, Hindi, or Punjabi, or speak into the microphone.")}
                     </p>
                   </div>
 
                   {/* Suggested Prompts */}
                   <div className="w-full text-left pt-2">
-                    <span className="text-[10px] font-mono uppercase tracking-widest text-neutral-400 font-bold block mb-1">
+                    <span className="text-xs font-mono uppercase tracking-wider text-neutral-400 font-bold block mb-1.5">
                       {t("quickInquiries", "Quick Inquiries:")}
                     </span>
                     {renderQuickChips()}
@@ -543,7 +551,7 @@ export const FloatingChatbot: React.FC = () => {
                     >
                       {m.content}
                     </div>
-                    <span className="text-[9px] text-neutral-400 font-mono mt-1 px-1">
+                    <span className="text-[11px] text-[#888888] font-mono mt-1 px-1">
                       {m.role === "user" ? "You" : "VendorOS AI"} • {new Date(m.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </span>
                   </div>
@@ -552,9 +560,13 @@ export const FloatingChatbot: React.FC = () => {
 
               {/* Typing / Loading indicator */}
               {loading && (
-                <div className="flex items-center space-x-2 p-2 rounded-xl bg-[#18181B] border border-white/15 max-w-[140px]">
-                  <RefreshCw className="w-3.5 h-3.5 animate-spin text-white" />
-                  <span className="text-[11px] font-mono text-neutral-300">Processing...</span>
+                <div 
+                  role="status"
+                  aria-live="polite"
+                  className="flex items-center space-x-2 p-2 rounded-xl bg-[#18181B] border border-white/15 max-w-[150px]"
+                >
+                  <RefreshCw className="w-3.5 h-3.5 animate-spin text-emerald-400" />
+                  <span className="text-xs font-mono text-neutral-200">Processing...</span>
                 </div>
               )}
               <div ref={messagesEndRef} />
@@ -567,6 +579,8 @@ export const FloatingChatbot: React.FC = () => {
                   initial={{ opacity: 0, y: 15 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: 15 }}
+                  role="status"
+                  aria-live="polite"
                   className="bg-[#1C0D0D] border-t border-red-500/40 p-3 flex items-center justify-between text-white"
                 >
                   <div className="flex items-center space-x-2.5">
@@ -582,13 +596,15 @@ export const FloatingChatbot: React.FC = () => {
                   <div className="flex items-center space-x-2">
                     <button
                       onClick={cancelRecording}
-                      className="px-2.5 py-1 bg-white/10 hover:bg-white/20 rounded-md text-[10px] font-mono text-neutral-300 cursor-pointer"
+                      className="px-3 py-1.5 bg-white/10 hover:bg-white/20 rounded-md text-xs font-mono text-neutral-200 cursor-pointer min-h-[32px]"
+                      aria-label="Cancel voice recording"
                     >
                       Cancel
                     </button>
                     <button
                       onClick={stopRecording}
-                      className="px-3 py-1 bg-red-600 hover:bg-red-500 text-white rounded-md text-[10px] font-mono font-bold flex items-center space-x-1 cursor-pointer"
+                      className="px-3.5 py-1.5 bg-red-600 hover:bg-red-500 text-white rounded-md text-xs font-mono font-bold flex items-center space-x-1.5 cursor-pointer min-h-[32px]"
+                      aria-label="Submit voice recording"
                     >
                       <Send className="w-3 h-3" />
                       <span>Send</span>
@@ -613,7 +629,8 @@ export const FloatingChatbot: React.FC = () => {
                   onChange={(e) => setInputMessage(e.target.value)}
                   placeholder={t("botPlaceholder", "Ask about orders, risk, workers, stock...")}
                   disabled={loading || isRecording}
-                  className="flex-1 bg-[#18181B] border border-white/15 focus:border-white/40 rounded-xl px-3.5 py-2 text-xs font-mono text-white placeholder-neutral-500 focus:outline-none transition-colors"
+                  aria-label="Query VendorOS AI Copilot"
+                  className="flex-1 bg-[#18181B] border border-white/15 focus:border-white/40 rounded-xl px-3.5 py-2.5 text-xs font-mono text-white placeholder-neutral-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/80 transition-colors"
                 />
 
                 {/* Microphone / Audio toggle */}
@@ -622,10 +639,11 @@ export const FloatingChatbot: React.FC = () => {
                   onClick={isRecording ? stopRecording : startRecording}
                   disabled={loading}
                   title={isRecording ? "Stop Recording" : "Voice Query (Whisper)"}
-                  className={`p-2 rounded-xl border transition-all cursor-pointer ${
+                  aria-label={isRecording ? "Stop voice recording" : "Record voice query"}
+                  className={`p-2.5 rounded-xl border transition-all cursor-pointer min-w-[40px] min-h-[40px] flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/80 ${
                     isRecording
                       ? "bg-red-500/20 text-red-400 border-red-500/40"
-                      : "bg-[#18181B] text-neutral-300 hover:text-white border-white/15 hover:border-white/30"
+                      : "bg-[#18181B] text-neutral-200 hover:text-white border-white/15 hover:border-white/30"
                   }`}
                 >
                   <Mic className="w-4 h-4" />
@@ -635,7 +653,8 @@ export const FloatingChatbot: React.FC = () => {
                 <button
                   type="submit"
                   disabled={!inputMessage.trim() || loading || isRecording}
-                  className="p-2 bg-white hover:bg-neutral-200 disabled:opacity-40 disabled:hover:bg-white text-black font-bold rounded-xl transition-all cursor-pointer flex items-center justify-center shadow-md"
+                  aria-label="Send message"
+                  className="p-2.5 bg-white hover:bg-neutral-200 disabled:opacity-40 disabled:hover:bg-white text-black font-bold rounded-xl transition-all cursor-pointer flex items-center justify-center shadow-md min-w-[40px] min-h-[40px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/80"
                 >
                   <Send className="w-4 h-4 text-black" />
                 </button>
@@ -649,3 +668,4 @@ export const FloatingChatbot: React.FC = () => {
 };
 
 export default FloatingChatbot;
+

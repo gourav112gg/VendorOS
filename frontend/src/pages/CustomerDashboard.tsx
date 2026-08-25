@@ -155,7 +155,11 @@ export const CustomerDashboard: React.FC = () => {
               </p>
             </div>
 
-            <div className="flex flex-col bg-[#111111] p-1.5 border border-[#222222] rounded-sm space-y-1 shadow-md">
+            <div 
+              role="tablist" 
+              aria-label="Portal Navigation" 
+              className="flex flex-col bg-[#111111] p-1.5 border border-[#222222] rounded-sm space-y-1 shadow-md"
+            >
               {(
                 [
                   { id: "requests", label: "Requests", icon: null },
@@ -168,12 +172,14 @@ export const CustomerDashboard: React.FC = () => {
               ).map((t) => (
                 <motion.button
                   key={t.id}
+                  role="tab"
+                  aria-selected={activeTab === t.id}
                   onClick={() => setActiveTab(t.id)}
                   whileHover={{ x: activeTab === t.id ? 0 : 2 }}
-                  className={`relative w-full text-left px-4 py-2 text-[10px] font-bold rounded-sm uppercase tracking-widest cursor-pointer flex items-center justify-between group ${
+                  className={`relative w-full text-left px-4 py-2.5 text-xs font-semibold rounded-sm cursor-pointer flex items-center justify-between group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/80 min-h-[38px] ${
                     activeTab === t.id
                       ? "text-black font-extrabold"
-                      : "text-[#666666] hover:text-[#AAAAAA]"
+                      : "text-[#888888] hover:text-white"
                   }`}
                 >
                   {activeTab === t.id && (
@@ -187,7 +193,7 @@ export const CustomerDashboard: React.FC = () => {
                       }}
                     />
                   )}
-                  <span className="flex items-center space-x-1.5">
+                  <span className="flex items-center space-x-2">
                     {t.icon}
                     <span>{t.label}</span>
                   </span>
@@ -209,7 +215,7 @@ export const CustomerDashboard: React.FC = () => {
                   }
                   setIsFormOpen(true);
                 }}
-                className="w-full flex items-center justify-center space-x-1.5 px-5 py-3 bg-white hover:bg-[#F0EAD8] text-black rounded-sm text-[10px] font-bold uppercase tracking-widest shadow-md transition-colors cursor-pointer"
+                className="w-full flex items-center justify-center space-x-2 px-5 py-3 bg-white hover:bg-[#F0EAD8] text-black rounded-sm text-xs font-bold uppercase tracking-wider shadow-md transition-colors cursor-pointer min-h-[42px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/80"
               >
                 <Plus className="w-4 h-4" />
                 <span>Submit Request</span>
@@ -231,10 +237,10 @@ export const CustomerDashboard: React.FC = () => {
             <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8 pb-4 border-b border-[#222222]">
               <div>
                 <h1 className="text-3xl font-serif italic font-light text-white tracking-tight flex items-center">
-                  <ClipboardList className="w-8 h-8 mr-3 text-[#666666]" />
+                  <ClipboardList className="w-8 h-8 mr-3 text-emerald-400" />
                   My Service Portal
                 </h1>
-                <p className="text-[#666666] mt-1.5 text-xs font-mono uppercase tracking-widest">
+                <p className="text-[#888888] mt-1.5 text-xs font-mono uppercase tracking-wider">
                   Customer Dashboard • Submit requests, follow order progress,
                   and view completed jobs.
                 </p>
@@ -242,7 +248,11 @@ export const CustomerDashboard: React.FC = () => {
 
               <div className="flex items-center space-x-3 mt-4 md:mt-0">
                 {/* Sub Navigation */}
-                <div className="relative flex bg-[#111111] p-1.5 border border-[#222222] rounded-sm space-x-1 shadow-md">
+                <div 
+                  role="tablist" 
+                  aria-label="Portal Navigation" 
+                  className="relative flex bg-[#111111] p-1.5 border border-[#222222] rounded-sm space-x-1 shadow-md"
+                >
                   {(
                     [
                       { id: "requests", label: "Requests", icon: null },
@@ -255,11 +265,13 @@ export const CustomerDashboard: React.FC = () => {
                   ).map((t) => (
                     <motion.button
                       key={t.id}
+                      role="tab"
+                      aria-selected={activeTab === t.id}
                       onClick={() => setActiveTab(t.id)}
-                      className={`relative px-4 py-2 text-[10px] font-bold rounded-sm uppercase tracking-widest cursor-pointer flex items-center space-x-1.5 group ${
+                      className={`relative px-4 py-2 text-xs font-semibold rounded-sm cursor-pointer flex items-center space-x-1.5 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/80 min-h-[36px] ${
                         activeTab === t.id
-                          ? "text-black"
-                          : "text-[#666666] hover:text-[#AAAAAA]"
+                          ? "text-black font-bold"
+                          : "text-[#888888] hover:text-white"
                       }`}
                     >
                       {activeTab === t.id && (
