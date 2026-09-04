@@ -85,9 +85,9 @@ export function NotFoundPage({ onNavigateHome }: NotFoundPageProps) {
                 <Button
                   variant="outline"
                   onClick={handleGoBack}
-                  className="min-h-[42px] px-5 border-[#333333] bg-[#111111] hover:bg-[#1A1A1A] text-[#E5E5E5] font-mono text-xs uppercase tracking-wider flex items-center gap-2 cursor-pointer"
+                  className="min-h-[42px] px-5 border-[#333333] bg-[#111111] hover:bg-[#1A1A1A] !text-white font-mono text-xs uppercase tracking-wider flex items-center gap-2 cursor-pointer"
                 >
-                  <ArrowLeft className="w-4 h-4 text-[#888888]" />
+                  <ArrowLeft className="w-4 h-4 text-white" />
                   {t("goBack", "Go Back")}
                 </Button>
               </div>
